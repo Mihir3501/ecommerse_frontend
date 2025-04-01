@@ -1,56 +1,39 @@
-import React from 'react'
-import {FaHome, FaUserFriends, FaCartPlus,FaCubes, FaClipboardList } from 'react-icons/fa'
+import React from "react";
+import { FaUserFriends, FaCartPlus, FaCubes, FaClipboardList, FaChartBar } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 
 const Admin_Sidebar = () => {
   return (
-    <div className='w-64 bg-beige-300 shadow-2xl fixed h-125 px-4 ml-2 mt-12 rounded-lg py-2' rounded>
-        <div className="my-2 mb-4">
-            <h1 className='text-xl font-semibold'>Admin Portal</h1>
+    <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col justify-between">
+      <div>
+        <div className="flex flex-col items-center mb-6">
+          <h1 className="text-lg font-bold text-gray-900">Admin Portal</h1>
+          <p className="text-sm text-gray-500">System Administrator</p>
         </div>
-        <hr className='shadow-md ' />
-        <ul className='mt-3 font-semibold text-black'>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500   py-2 ">
-                <a className='px-3'>
-                <FaHome className=' inline-block w-6 h-6 mr-2 -mt-2' />
-                Home
-                </a>
-                </li>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500 py-2 ">
-                <a className='px-3'>
-                <FaUserFriends  className=' inline-block w-6 h-6 mr-2 -mt-2' />
-                User Management
-                </a>
-                </li>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500 py-2 ">
-                <a className='px-3'>
-                <FaCartPlus className='inline-block w-6 h-6 mr-2 -mt-2' />
-                Seller Management
-                </a>
-                </li>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500 py-2 ">
-                <a className='px-3'>
-                <FaCubes className='inline-block w-6 h-6 mr-2 -mt-2' />
-                Product Catalog
-                </a>
-                </li>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500 py-2 ">
-                <a className='px-3'>
-                <FaClipboardList  className='inline-block w-6 h-6 mr-2 -mt-2' />
-                Order Management
-                </a>
-                </li>
-            <li className="mb-3 rounded hover:shadow hover:bg-blue-500 py-2 ">
-                <a className='px-3'>
-                <IoLogOut className='inline-block w-6 h-6 mr-2 -mt-2' />
-                Logout
-                </a>
-                </li>
-        </ul>
-    
-    
-    </div>
-  )
-}
+        <hr className="mb-4" />
 
-export default Admin_Sidebar
+        <ul className="text-gray-800">
+          <SidebarItem Icon={FaChartBar} text="Dashboard" active />
+          <SidebarItem Icon={FaUserFriends} text="User Management" />
+          <SidebarItem Icon={FaCartPlus} text="Seller Management" />
+          <SidebarItem Icon={FaCubes} text="Product Catalog" />
+          <SidebarItem Icon={FaClipboardList} text="Order Management" />
+        </ul>
+      </div>
+      {/* Logout Button */}
+      <div>
+        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" />
+      </div>
+    </div>
+  ); 
+};
+
+const SidebarItem = ({ Icon, text, active, customClass = "" }) => {
+  return (
+    <li className={`mb-3 px-4 py-3 flex items-center rounded-lg cursor-pointer transition-all hover:bg-blue-500 hover:text-white ${active ? "bg-blue-100 text-blue-600" : ""} ${customClass}`}>
+      <Icon className="mr-3" size={20} /> {text}
+    </li>
+  );
+};
+
+export default Admin_Sidebar;
