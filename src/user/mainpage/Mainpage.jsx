@@ -12,11 +12,11 @@ import Container from '@mui/material/Container';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Button from '@mui/material/Button';
+import Button, { buttonClasses } from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import backgroundImage from '../images/main-first-section-bg.png';
+import backgroundImage from '../../assets/main-first-section-bg.png';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -25,23 +25,25 @@ import Grid from '@mui/material/Grid';
 
 const pages = [
   { name: 'Home', path: '/'  },
-  // { name: 'Shop', path: '/shop' },
   { name: 'Categories', path: '/categories' },
   { name: 'Deals', path: '/deals' },
   { name: 'Contact', path: '/contact' },
 ];
 
-const settings = [{ name: 'Login', path: '/login' }];
+const settings = [
+ { name: 'UserLogin', path: '/login'} ,
+ { name: 'SelarLogin', path:'/Selar_Login'}
+];
 
 const products = [
-  { src:("src/user/images/sec2-image1.jpeg"), price: 500 },
-  { src:("src/user/images/sec2-image2.jpeg"), price: 600 },
-  { src:("src/user/images/sec2-image3.jpeg"), price: 1000 },
-  { src:("src/user/images/sec2-image4.jpeg"), price: 900 },
-  { src:("src/user/images/sec2-image5.jpg"), price: 800 },
-  { src:("src/user/images/sec2-image6.jpg"), price: 700 },
-  { src:("src/user/images/sec2-image7.jpg"), price: 600 },
-  { src:("src/user/images/sec2-image8.jpg"), price: 900 },
+  { src:("src/assets/sec2-image1.jpeg"), price: 500 },
+  { src:("src/assets/sec2-image2.jpeg"), price: 600 },
+  { src:("src/assets/sec2-image3.jpeg"), price: 1000 },
+  { src:("src/assets/sec2-image4.jpeg"), price: 900 },
+  { src:("src/assets/sec2-image5.jpg"), price: 800 },
+  { src:("src/assets/sec2-image6.jpg"), price: 700 },
+  { src:("src/assets/sec2-image7.jpg"), price: 600 },
+  { src:("src/assets/sec2-image8.jpg"), price: 900 },
 ];
 
 const Mainpage = () => {
@@ -59,9 +61,15 @@ const Mainpage = () => {
     productSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); 
   };
 
+
+const categories = [
+  { src: "src/assets/men-image.jpeg", alt: "Men", buttonClasses: "Explore MenFashion" },
+  { src: "src/assets/woman-image.jpeg", alt: "Women", buttonClasses: "Explore WomenFashion" },
+];
+
   return (
     <>
-      {/* Hero Section */}
+      
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,
@@ -129,7 +137,7 @@ const Mainpage = () => {
               <IconButton><SearchIcon /></IconButton>
 
               <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 3}}>
                   <AccountCircleIcon />
                 </IconButton>
               </Tooltip>
@@ -169,10 +177,10 @@ const Mainpage = () => {
         </Typography>
         <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: "800px", mx: "auto" }}>
           {products.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index} sx={{display:'flex' , justifyContent: 'space-between'}}>
               <Card
                 sx={{
-                  maxWidth: 300,
+                  maxWidth: 500,
                   mx: "auto",
                   borderRadius: 3,
                   boxShadow: 5,
@@ -197,6 +205,47 @@ const Mainpage = () => {
           ))}
         </Grid>
       </Box>
+                {/* Section 3: categories */}
+
+                <Box sx={{ py: 5, textAlign: "center" }}>
+        <Typography variant="h4" fontWeight="bold" mb={3}>
+          Shop By Categories
+        </Typography>
+        <Typography variant="h5" fontWeight="semibold" mb={3}>
+          Find exactly what you're looking for by browsing our curated product categories.
+        </Typography>
+        <Grid container spacing={3} justifyContent="center">
+          {categories.map((category, index) => (
+            <Grid item xs={12} sm={6} md={6} key={index}>
+              <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: 'hidden', position: 'relative' }}>
+                <CardMedia component="img" image={category.src} alt={category.alt} sx={{ width: '100%', height: 250, objectFit: 'cover' }} />
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  sx={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', borderRadius: 3 }}
+                  onClick={() => navigate("/explore")}
+                >
+                  {category.label}
+                </Button>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+             {/* Section 4: feedback */}
+
+            <Box sx={{ py: 5, textAlign: "center" }}>
+        <Typography variant="h4" fontWeight="bold" mb={3}>
+          What Our Customers Say
+        </Typography>
+        <Typography variant="h5" fontWeight="semibold" mb={3}>
+          Hear from shoppers who have experienced our platform.
+        </Typography>
+       
+         
+      </Box>
+
     </>
   );
 };

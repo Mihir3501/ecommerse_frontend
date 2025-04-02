@@ -29,8 +29,7 @@ const validationSchema = Yup.object({
     .required('Enter your Password')
 });
 
-const Login = () => 
-  
+const Selar_Login = () => 
   
   {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +40,7 @@ const Login = () =>
 
   const handleSubmit = (values) => {
     console.log('Form Submitted:', values);
-
+    navigate("/Selar_Registrastion");
   };
 
   return (
@@ -69,7 +68,7 @@ const Login = () =>
           }}
         >
           <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-            Login
+           Sellar Login
           </Typography>
           <Formik
             initialValues={{
@@ -86,6 +85,8 @@ const Login = () =>
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                  
+             
+              
                     <TextField
                       fullWidth
                       label="Email"
@@ -98,7 +99,9 @@ const Login = () =>
                       helperText={touched.email && errors.email}
                     />
                 
-                  <TextField
+                 
+                  
+                    <TextField
                       fullWidth
                       label="Password"
                       name="password"
@@ -135,7 +138,7 @@ const Login = () =>
             
                 <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                 Don't have an account?{' '}
-                  <Link to="/Registration" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
+                  <Link to="/Selar_Registrastion" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
                     Registration  Now
                   </Link>
                 </Typography>
@@ -148,4 +151,4 @@ const Login = () =>
   );
 };
 
-export default Login;
+export default Selar_Login;
