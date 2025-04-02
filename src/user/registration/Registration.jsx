@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import backgroundImage from '../images/background-image-reg-loin.jpg';
+import backgroundImage from '../../assets/background-image-reg-loin.jpg';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer , toast } from 'react-toastify';
 
