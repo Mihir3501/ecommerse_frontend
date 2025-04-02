@@ -14,6 +14,7 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Mainpage />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/mainpage" element={<Mainpage />} />
@@ -23,9 +24,6 @@ const Router = () => {
         <Route path="/Selar_Dashboard" element={<Selar_Dashboard/>}/>
         <Route path="/Selar_Navbar" element={<Selar_Navbar/>}/>
         <Route path="/Selar_Sidebar" element={<Selar_Sidebar/>}/>
-
-
-
 
 
       </Routes>

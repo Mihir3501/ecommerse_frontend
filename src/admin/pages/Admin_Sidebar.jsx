@@ -1,8 +1,11 @@
 import React from "react";
 import { FaUserFriends, FaCartPlus, FaCubes, FaClipboardList, FaChartBar } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
-const Admin_Sidebar = () => {
+const AdminSidebar = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col justify-between">
       <div>
@@ -13,27 +16,26 @@ const Admin_Sidebar = () => {
         <hr className="mb-4" />
 
         <ul className="text-gray-800">
-          <SidebarItem Icon={FaChartBar} text="Dashboard" active />
-          <SidebarItem Icon={FaUserFriends} text="User Management" />
-          <SidebarItem Icon={FaCartPlus} text="Seller Management" />
+          <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/dashboard')} />
+          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/User_Manage')} />
+          <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/Seller_Manage')} />
           <SidebarItem Icon={FaCubes} text="Product Catalog" />
-          <SidebarItem Icon={FaClipboardList} text="Order Management" />
+          <SidebarItem Icon={FaClipboardList} text="Order Management"  />
         </ul>
       </div>
-      {/* Logout Button */}
       <div>
-        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" />
+        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" onClick={() => navigate('/logout')} />
       </div>
     </div>
-  ); 
+  );
 };
 
-const SidebarItem = ({ Icon, text, active, customClass = "" }) => {
+const SidebarItem = ({ Icon, text, onClick, customClass = "" }) => {
   return (
-    <li className={`mb-3 px-4 py-3 flex items-center rounded-lg cursor-pointer transition-all hover:bg-blue-500 hover:text-white ${active ? "bg-blue-100 text-blue-600" : ""} ${customClass}`}>
+    <li onClick={onClick} className={`mb-3 px-4 py-3 flex items-center rounded-lg cursor-pointer transition-all hover:bg-blue-500 hover:text-white ${customClass}`}>
       <Icon className="mr-3" size={20} /> {text}
     </li>
   );
 };
 
-export default Admin_Sidebar;
+export default AdminSidebar;
