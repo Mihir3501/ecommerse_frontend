@@ -24,6 +24,8 @@ const Router = () => {
         <Route path="/Selar_Dashboard" element={<Selar_Dashboard/>}/>
         <Route path="/Selar_Navbar" element={<Selar_Navbar/>}/>
         <Route path="/Selar_Sidebar" element={<Selar_Sidebar/>}/>
+
+
       </Routes>
     </BrowserRouter>
   );
