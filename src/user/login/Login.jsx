@@ -140,7 +140,7 @@ const Login = () =>
                   </Grid>
             
                 <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                  Already have an account?{' '}
+                Don't have an account?{' '}
                   <Link to="/Registration" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
                     Registration  Now
                   </Link>

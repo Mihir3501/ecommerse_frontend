@@ -56,11 +56,13 @@ const Registration = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        width: '100vw',
+        width: '100%',
+        minHeight: '100vh',
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden', 
       }}
     >
       <Container maxWidth="sm">
