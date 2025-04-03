@@ -16,7 +16,7 @@ import Button, { buttonClasses } from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import backgroundImage from '../../assets/main-first-section-bg.png';
+import backgroundImage from "../../../assets/main-first-section-bg.png";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -38,7 +38,7 @@ const settings = [
 const products = [
   { src:("src/assets/sec2-image1.jpeg"), price: 500 },
   { src:("src/assets/sec2-image2.jpeg"), price: 600 },
-  { src:("src/assets/sec2-image3.jpeg"), price: 1000 },
+  { src:("src/assets/sec2-image3.jpeg"), price: 400 },
   { src:("src/assets/sec2-image4.jpeg"), price: 900 },
   { src:("src/assets/sec2-image5.jpg"), price: 800 },
   { src:("src/assets/sec2-image6.jpg"), price: 700 },
@@ -84,12 +84,13 @@ const categories = [
       >
         <AppBar position="static" sx={{backgroundColor:"transparent" , boxShadow:'none'}}>
           <Container maxWidth="xl">
-            <Toolbar sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+            <Toolbar sx={{ width: '100%', display: 'flex', justifyContent: 'space-between'}}>
               <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
               <Typography
                 variant="h6"
                 noWrap
                 component="a"
+                
                 href="#"
                 sx={{
                   mr: 2,
@@ -161,7 +162,7 @@ const categories = [
         </AppBar>
 
         {/* Section-1 */}
-        <div  ref={productSectionRef} style={{ textAlign: 'center', color: "white" }}>
+        <div  ref={productSectionRef} style={{ textAlign: 'center', color: "white" , fontWeight:"bold" }}>
           <h1>Your One-Stop Shop For Everything</h1>
           <h3>Connecting buyers and sellers on one powerful platform</h3>
           <Button variant="contained" sx={{ mt: 1, borderRadius: 2, bgcolor: "white", color: "black" }}  onClick={scrollToProducts} >
@@ -174,6 +175,9 @@ const categories = [
       <Box  ref={productSectionRef} sx={{ py: 5, textAlign: "center" }}>
         <Typography variant="h4" fontWeight="bold" mb={3}>
           BEST OUTFIT FOR YOUR HAPPINESS
+        </Typography>
+        <Typography variant="h6" fontWeight="bold" mb={3}>
+          LOWER PRICES 
         </Typography>
         <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: "800px", mx: "auto" }}>
           {products.map((item, index) => (
@@ -242,7 +246,7 @@ const categories = [
         <Typography variant="h5" fontWeight="semibold" mb={3}>
           Hear from shoppers who have experienced our platform.
         </Typography>
-       
+          
          
       </Box>
 
