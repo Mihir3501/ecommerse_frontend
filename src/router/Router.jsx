@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Registration from "../user/registration/Registration"; 
-import Login from "../user/login/Login";
-import Mainpage from "../user/mainpage/Mainpage";
+import Registration from "../user/auth/registration/Registration"; 
+import Login from "../user/auth/login/Login";
+import Mainpage from "../user/pages/mainpage/Mainpage";
 import Admin from "../admin/Admin"
 import Selar_Registrastion from "../selar/registration/Selar_Registrastion";
 import Selar_Login from "../selar/login/Selar_Login";
