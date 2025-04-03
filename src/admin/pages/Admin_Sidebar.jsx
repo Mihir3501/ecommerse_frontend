@@ -16,6 +16,7 @@ const AdminSidebar = () => {
         <hr className="mb-4" />
 
         <ul className="text-gray-800">
+          
           <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/dashboard')} />
           <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/User_Manage')} />
           <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/Seller_Manage')} />
