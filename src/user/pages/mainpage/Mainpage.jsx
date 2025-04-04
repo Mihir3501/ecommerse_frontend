@@ -22,6 +22,12 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import Grid from '@mui/material/Grid';
+import { SiStylelint } from "react-icons/si";
+import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 
 const pages = [
   { name: 'Home', path: '/'  },
@@ -246,9 +252,69 @@ const categories = [
         <Typography variant="h5" fontWeight="semibold" mb={3}>
           Hear from shoppers who have experienced our platform.
         </Typography>
-          
+
+          <Button onClick={() => navigate("/feedback")} sx={{color:"black"}} > Share Your Feedback</Button>
          
       </Box>
+
+        {/* Section 5: footer */}
+
+        <Box
+        sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        bgcolor: "#2C2C2C",
+        color: "#FFFFFF",
+        py: 4,
+        px: 6,
+      }}
+    >
+      <Grid container spacing={4}>
+        {/* Brand Name */}
+        <Grid item xs={12} sm={6} md={3} p={10}>
+          <Typography variant="h4" fontWeight="bold" mb={2} display="flex" alignItems="center">
+            Fashion Hub <SiStylelint style={{ marginLeft: 8 }} />
+          </Typography>
+        </Grid>
+
+        {/* Customer Service Section */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="h5" fontWeight="bold" mb={2}>Customer Service</Typography>
+          <Typography variant="body1" component={Link} to="/Feedback"    sx={{ display: "block", color: "#BDBDBD", textDecoration: "none", mb: 1 }}>
+            Contact
+          </Typography>
+          <Typography variant="body1" component={Link} to="/faq" sx={{ display: "block", color: "#BDBDBD", textDecoration: "none" }}>
+            FAQ
+          </Typography>
+        </Grid>
+
+        {/* Quick Links Section */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="h5" fontWeight="bold" mb={2} >Quick Links</Typography>
+          {["Home", "Shop", "Categories", "Sellers"].map((item) => (
+            <Link
+            key={item}
+            onClick={scrollToProducts} >
+            <Typography  variant="body1"  to={`/${item.toLowerCase()}`} sx={{ display: "block", color: "#BDBDBD", textDecoration: "none", mb: 1 }}>
+              {item}
+            </Typography>
+            </Link>
+          ))}
+        </Grid>
+
+        {/* Stay Connected Section */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="h5" fontWeight="bold" mb={2}>Stay Connected</Typography>
+          <Typography variant="body1" sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <FaEnvelope style={{ marginRight: 8 }} /> fashionHub@gmail.com
+          </Typography>
+          <Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
+            <FaPhoneAlt style={{ marginRight: 8 }} /> 8160315863
+          </Typography>
+        </Grid>
+      </Grid>
+    </Box>
 
     </>
   );
