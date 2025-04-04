@@ -11,7 +11,7 @@ const Admin_Login = () => {
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    console.log(isAuthenticated,"harsh")
+    console.log("Auth State:", isAuthenticated);
     if (isAuthenticated) {
       navigate("/admin");
     }
@@ -26,7 +26,7 @@ const Admin_Login = () => {
     <div className="flex min-h-screen bg-green-400 items-center justify-center p-4">
       <div className="flex flex-col md:flex-row w-full max-w-3xl bg-white rounded-lg overflow-hidden shadow-lg">
         <div className="w-full md:w-1/2 p-6">
-          <h1 className="text-2xl font-bold text-green-700">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-green-700">Welcome </h1>
           <p className="text-gray-500 mt-2 text-sm">
             Please login to your account by filling in this form:
           </p>
