@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
   <PersistGate loading={null} persistor={persistor}>
   <StrictMode>
     < Router/>
-  </StrictMode>,
+  </StrictMode>
   </PersistGate>
   </Provider>
 
