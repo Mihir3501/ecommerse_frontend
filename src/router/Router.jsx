@@ -5,6 +5,7 @@ import Login from "../user/auth/login/Login";
 import Mainpage from "../user/pages/mainpage/Mainpage";
 import Feedback from "../user/pages/feedback/Feedback";
 import Admin_Login from "../admin/pages/Admin_Login";
+import Admin from "../admin/Admin"
 import Selar_Registrastion from "../selar/registration/Selar_Registrastion";
 import Selar_Login from "../selar/login/Selar_Login";
 import Selar_Dashboard from "../selar/dashboard/Selar_Dashboard";
@@ -26,6 +27,7 @@ const Router = () => {
  
         {/* Admin route */}  
         <Route path="/admin_login" element={<Admin_Login />} />
+        <Route path="/admin" element={<Admin />} />
         {/* Admin route end */}
  
         {/* Selar routes */} 
