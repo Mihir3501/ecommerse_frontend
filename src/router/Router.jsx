@@ -4,6 +4,8 @@ import Registration from "../user/auth/registration/Registration";
 import Login from "../user/auth/login/Login";
 import Mainpage from "../user/pages/mainpage/Mainpage";
 import Feedback from "../user/pages/feedback/Feedback";
+import Contact from "../user/pages/contact/Contact";
+import Categories from "../user/pages/categories/Categories";
 import Admin_Login from "../admin/pages/Admin_Login";
 import Selar_Registrastion from "../selar/registration/Selar_Registrastion";
 import Selar_Login from "../selar/login/Selar_Login";
@@ -22,6 +24,9 @@ const Router = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/mainpage" element={<Mainpage />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/Contact" element={<Contact />} />
+        <Route path="/categories" element={<Categories />} />
+
         {/* User routes end */}
  
         {/* Admin route */}  
