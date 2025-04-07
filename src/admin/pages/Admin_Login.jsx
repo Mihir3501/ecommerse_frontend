@@ -13,7 +13,7 @@ const Admin_Login = () => {
   useEffect(() => {
     console.log("Auth State:", isAuthenticated);
     if (isAuthenticated) {
-      navigate("/admin");
+      navigate("/Admin");
     }
   }, [isAuthenticated, navigate]);
 

@@ -2,9 +2,18 @@ import React from "react";
 import { FaUserFriends, FaCartPlus, FaCubes, FaClipboardList, FaChartBar } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import {  useDispatch } from "react-redux";
+import { logoutAdminAction } from "../../redux/adminAction";
 
 const AdminSidebar = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+
+  const handleLogout = () => {
+    dispatch(logoutAdminAction());
+    navigate("/admin_login"); 
+  };
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col justify-between">
@@ -18,14 +27,14 @@ const AdminSidebar = () => {
         <ul className="text-gray-800">
           
           <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/dashboard')} />
-          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/User_Manage')} />
+          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/user_manage')} />
           <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/Seller_Manage')} />
           <SidebarItem Icon={FaCubes} text="Product Catalog" />
           <SidebarItem Icon={FaClipboardList} text="Order Management"  />
         </ul>
       </div>
       <div>
-        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" onClick={() => navigate('/logout')} />
+        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" onClick={handleLogout} />
       </div>
     </div>
   );
