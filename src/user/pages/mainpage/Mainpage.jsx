@@ -10,13 +10,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AdbIcon from '@mui/icons-material/Adb';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-import Slider from 'react-slick';
+// import Slider from 'react-slick'; 
 import { SiStylelint } from "react-icons/si";
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import backgroundImage from "../../../assets/main-first-section-bg.jpeg";
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 
 const pages = [
   { name: 'Home', path: '/' },
@@ -231,7 +231,7 @@ const Mainpage = () => {
 
 
       {/* Section 3 */}
-      <Box sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 4 }, textAlign: "center", position: "relative" }}>
+      {/* <Box sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 4 }, textAlign: "center", position: "relative" }}>
         <Typography variant="h4" fontWeight="bold" mb={2}>Shop By Categories</Typography>
         <Typography variant="h6" fontWeight="medium" color="text.secondary" mb={4}>Find exactly what you're looking for by browsing our curated product categories.</Typography>
 
@@ -264,7 +264,7 @@ const Mainpage = () => {
             </Box>
           ))}
         </Slider>
-      </Box>
+      </Box> */}
 
       {/* Footer Section */}
       <Box sx={{ bgcolor: "#2C2C2C", color: "#FFFFFF", py: 10, px: { xs: 4, sm: 6, md: 10 } }}>

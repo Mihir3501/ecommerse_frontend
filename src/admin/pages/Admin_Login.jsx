@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginAdminAction } from "../../redux/adminAction";
+import { loginAdmin } from "../../redux/adminSlice"; // Thunk action from adminSlice
 
 const Admin_Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+
+  // ✅ Corrected reducer key to match your Redux store setup
+  const { loading, error, isAuthenticated } = useSelector((state) => state.admin);
 
   useEffect(() => {
-    console.log("Auth State:", isAuthenticated);
     if (isAuthenticated) {
       navigate("/Admin");
     }
@@ -19,14 +20,14 @@ const Admin_Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    dispatch(loginAdminAction({ email, password }));
+    dispatch(loginAdmin({ email, password })); // ✅ calls the async thunk
   };
 
   return (
     <div className="flex min-h-screen bg-green-400 items-center justify-center p-4">
       <div className="flex flex-col md:flex-row w-full max-w-3xl bg-white rounded-lg overflow-hidden shadow-lg">
         <div className="w-full md:w-1/2 p-6">
-          <h1 className="text-2xl font-bold text-green-700">Welcome </h1>
+          <h1 className="text-2xl font-bold text-green-700">Welcome</h1>
           <p className="text-gray-500 mt-2 text-sm">
             Please login to your account by filling in this form:
           </p>
@@ -59,7 +60,6 @@ const Admin_Login = () => {
                 type="submit"
                 className="w-full bg-green-700 text-white p-2 rounded-md shadow-md hover:bg-green-800 text-sm"
                 disabled={loading}
-                onClick={handleLogin}
               >
                 {loading ? "Logging in..." : "LOGIN"}
               </button>
@@ -67,7 +67,11 @@ const Admin_Login = () => {
           </form>
         </div>
         <div className="w-full md:w-1/2 h-56 md:h-auto bg-cover bg-center">
-          <img src="/login_side.jpg" className="w-full h-full object-cover" alt="Login Side" />
+          <img
+            src="/login_side.jpg"
+            className="w-full h-full object-cover"
+            alt="Login Side"
+          />
         </div>
       </div>
     </div>
@@ -75,6 +79,3 @@ const Admin_Login = () => {
 };
 
 export default Admin_Login;
-
-
-
