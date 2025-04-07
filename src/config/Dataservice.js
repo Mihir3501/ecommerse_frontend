@@ -15,4 +15,10 @@ const DataServices = (token) => {
 
 export const loginAdmin = (data) => DataServices().post(API.ADMINLOGIN, data);
 
+export const userSignup = (data) => DataServices().post(API.USERSIGNUP, data);
+
+
+
+
+
 export default DataServices;

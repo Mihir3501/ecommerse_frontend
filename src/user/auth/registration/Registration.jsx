@@ -44,10 +44,20 @@ const Registration = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Submitted:', values);
-    navigate("/Login");
-  };
+
+
+   useEffect(() => {
+      console.log(isAuthenticated,"harsh")
+      if (isAuthenticated) {
+        navigate("/Login");
+      }
+    }, [isAuthenticated, navigate]);
+  
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      dispatch(userAction({ name , email, password , mobile , address }));
+    };
+  
   const navigate = useNavigate();
   return (
     <div

@@ -39,10 +39,20 @@ const Login = () =>
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Submitted:', values);
 
+
+  useEffect(() => {
+    console.log(isAuthenticated,"harsh")
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(userAction({  email, password }));
   };
+
 
   return (
     <div
