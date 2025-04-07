@@ -2,16 +2,15 @@ import React from "react";
 import { FaUserFriends, FaCartPlus, FaCubes, FaClipboardList, FaChartBar } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import {  useDispatch } from "react-redux";
-import { logoutAdminAction } from "../../redux/adminAction";
+import { useDispatch } from "react-redux";
+import { logoutAdmin } from "../../redux/adminSlice"; // ✅ Updated import
 
 const AdminSidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   const handleLogout = () => {
-    dispatch(logoutAdminAction());
+    dispatch(logoutAdmin()); // ✅ call slice reducer
     navigate("/admin_login"); 
   };
 
@@ -25,16 +24,20 @@ const AdminSidebar = () => {
         <hr className="mb-4" />
 
         <ul className="text-gray-800">
-          
-          <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/dashboard')} />
-          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/user_manage')} />
+          <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/admin')} />
+          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/user')} />
           <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/Seller_Manage')} />
           <SidebarItem Icon={FaCubes} text="Product Catalog" />
-          <SidebarItem Icon={FaClipboardList} text="Order Management"  />
+          <SidebarItem Icon={FaClipboardList} text="Order Management" />
         </ul>
       </div>
       <div>
-        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" onClick={handleLogout} />
+        <SidebarItem
+          Icon={IoLogOut}
+          text="Logout"
+          customClass="text-red-600 hover:bg-red-500"
+          onClick={handleLogout}
+        />
       </div>
     </div>
   );
@@ -42,7 +45,10 @@ const AdminSidebar = () => {
 
 const SidebarItem = ({ Icon, text, onClick, customClass = "" }) => {
   return (
-    <li onClick={onClick} className={`mb-3 px-4 py-3 flex items-center rounded-lg cursor-pointer transition-all hover:bg-blue-500 hover:text-white ${customClass}`}>
+    <li
+      onClick={onClick}
+      className={`mb-3 px-4 py-3 flex items-center rounded-lg cursor-pointer transition-all hover:bg-blue-500 hover:text-white ${customClass}`}
+    >
       <Icon className="mr-3" size={20} /> {text}
     </li>
   );

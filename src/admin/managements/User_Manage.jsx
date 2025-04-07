@@ -1,69 +1,49 @@
-import React, { useState } from "react";
-import { FaSearch, FaTrash, FaEdit } from "react-icons/fa";
+import React from "react";
 
-const User_Manage = () => {
-  const [search, setSearch] = useState("");
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-  };
-
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", password: "password123", orders: 5, orderStatus: "Completed" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", password: "pass456", orders: 3, orderStatus: "Pending" }
+const UserManage = () => {
+  const dummyUsers = [
+    { id: 1, name: "Mihir Jayswal", email: "mihir@example.com", role: "User", status: "Active" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Admin", status: "Inactive" },
+    { id: 3, name: "Rahul Patel", email: "rahul@example.com", role: "User", status: "Active" },
   ];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">User Management</h1>
-      <div className="mb-4 flex items-center bg-white p-2 rounded-md shadow">
-        <FaSearch className="text-gray-500 mr-2" />
-        <input
-          type="text"
-          placeholder="Search users by name..."
-          className="w-full outline-none"
-          value={search}
-          onChange={handleSearch}
-        />
-      </div>
-      <div className="bg-white shadow-lg rounded-lg p-4 overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-blue-500 text-white">
-              <th className="p-3">Name</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Password</th>
-              <th className="p-3">Orders</th>
-              <th className="p-3">Order Status</th>
-              <th className="p-3">Actions</th>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">User Management</h1>
+
+      <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
+        <table className="min-w-full text-sm text-left bg-white">
+          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th className="px-6 py-3">Name</th>
+              <th className="px-6 py-3">Email</th>
+              <th className="px-6 py-3">Role</th>
+              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-100">
-                  <td className="p-3">{user.name}</td>
-                  <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.password}</td>
-                  <td className="p-3">{user.orders}</td>
-                  <td className="p-3">{user.orderStatus}</td>
-                  <td className="p-3 flex gap-3">
-                    <button className="text-blue-500 hover:text-blue-700">
-                      <FaEdit />
-                    </button>
-                    <button className="text-red-500 hover:text-red-700">
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center p-4">
-                  No users found.
+          <tbody className="divide-y divide-gray-200">
+            {dummyUsers.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{user.name}</td>
+                <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                <td className="px-6 py-4 capitalize">{user.role}</td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                      user.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {user.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 space-x-2">
+                  <button className="text-blue-600 hover:underline">View</button>
+                  <button className="text-yellow-600 hover:underline">Edit</button>
+                  <button className="text-red-600 hover:underline">Delete</button>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
@@ -71,4 +51,4 @@ const User_Manage = () => {
   );
 };
 
-export default User_Manage;
+export default UserManage;
