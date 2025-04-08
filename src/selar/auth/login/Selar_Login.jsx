@@ -15,34 +15,51 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
 import Navbar from "../../../user/pages/navbar/Navbar";
-
 
 
 const validationSchema = Yup.object({
   email: Yup.string()
-    .max(30, 'Must be 30 characters or less')
-    .matches(/@gmail\.com$/, 'Email must be a Gmail address')
-    .required('Enter your Email'),
- 
+  .max(30, 'Must be 30 characters or less')
+  .matches(/@gmail\.com$/, 'Email must be a Gmail address')
+  .required('Enter your Email'),
+  
   password: Yup.string()
-    .length(6, 'Must be exactly 6 characters')
-    .matches(/\d/, 'Password must include at least one number')
-    .required('Enter your Password')
+  .length(8, 'Must be exactly 8 characters')
+  .matches(/\d/, 'Password must include at least one number')
+  .required('Enter your Password')
 });
 
 const Selar_Login = () => 
   
   {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Submitted:', values);
-    navigate("/Selar_Registrastion");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/seller/login", values);
+      toast.success("Login successful!");
+      console.log("Login Response:", response.data);
+
+      // Optionally save the token or user data if needed
+      // localStorage.setItem("sellerAuth", JSON.stringify(response.data));
+
+      setTimeout(() => {
+        navigate("/Selar_Dashboard");
+      }, 2000);
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -112,7 +129,7 @@ const Selar_Login = () =>
                       name="password"
                       variant="outlined"
                       type={showPassword ? 'text' : 'password'}
-                      inputProps={{ maxLength: 6 }}
+                      inputProps={{ maxLength: 10 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={touched.password && Boolean(errors.password)}

@@ -12,96 +12,104 @@ import {
   InputAdornment
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer , toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
 import Navbar from "../../../user/pages/navbar/Navbar";
-
-
-
 
 const validationSchema = Yup.object({
   name: Yup.string()
     .max(35, 'Must be 35 characters or less')
-
     .required('Enter your name'),
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
     .matches(/@gmail\.com$/, 'Email must be a Gmail address')
     .required('Enter your Email'),
- 
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
     .matches(/\d/, 'Password must include at least one number')
     .required('Enter your Password'),
-    
 });
 
 const Selar_Registrastion = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Submitted:', values);
-    navigate("/Selar_Login");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/seller/signup", values);
+      toast.success("Registration successful!");
+      console.log("Registration Response:", response.data);
+
+      // Optionally save the token or user data if needed
+      // localStorage.setItem("sellerAuth", JSON.stringify(response.data));
+
+      setTimeout(() => {
+        navigate("/Selar_Login");
+      }, 2000);
+    } catch (error) {
+      console.error("Registration failed:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
-  const navigate = useNavigate();
+
   return (
     <>
-        <Navbar/>
+      <Navbar />
+      <ToastContainer />
 
-    <div
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100%',
-        minHeight: '100vh',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden', 
-      }}
-    >
-      <Container maxWidth="sm">
-        <Card
-          sx={{
-            p: 4,
-            boxShadow: 6,
-            borderRadius: 3,
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', 
-            backdropFilter: 'blur(10px)',
-          }}
-        >
-          <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-           Sellar Registrastion
-          </Typography>
-          <Formik
-            initialValues={{
-              name: '',
-              email: '',
-              password: '',
-            
+      <div
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          width: '100%',
+          minHeight: '100vh',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        <Container maxWidth="sm">
+          <Card
+            sx={{
+              p: 4,
+              boxShadow: 6,
+              borderRadius: 3,
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(10px)',
             }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-            validateOnBlur={false}
-            validateOnChange={false}
-            
           >
-            {({ touched, errors, handleChange, handleBlur, handleSubmit }) => (
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                 
+            <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
+              Seller Registration
+            </Typography>
+            <Formik
+              initialValues={{
+                name: '',
+                email: '',
+                password: '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              validateOnBlur={false}
+              validateOnChange={false}
+            >
+              {({ touched, errors, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
                     <TextField
                       fullWidth
-                      label="name"
+                      label="Name"
                       name="name"
                       variant="outlined"
                       onChange={handleChange}
@@ -109,7 +117,7 @@ const Selar_Registrastion = () => {
                       error={touched.name && Boolean(errors.name)}
                       helperText={touched.name && errors.name}
                     />
-                
+
                     <TextField
                       fullWidth
                       label="Email"
@@ -121,14 +129,13 @@ const Selar_Registrastion = () => {
                       error={touched.email && Boolean(errors.email)}
                       helperText={touched.email && errors.email}
                     />
-              
+
                     <TextField
                       fullWidth
                       label="Password"
                       name="password"
                       variant="outlined"
                       type={showPassword ? 'text' : 'password'}
-                      inputProps={{ maxLength: 6 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={touched.password && Boolean(errors.password)}
@@ -143,31 +150,32 @@ const Selar_Registrastion = () => {
                         )
                       }}
                     />
-                
+
                     <Button
                       variant="contained"
                       color="primary"
                       fullWidth
                       size="large"
                       type="submit"
-                      sx={{ mt: 2, width: '100%' }} 
+                      disabled={isSubmitting}
+                      sx={{ mt: 2 }}
                     >
-                      Register
+                      {isSubmitting ? "Registering..." : "Register"}
                     </Button>
-              
-                </Grid>
-                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                  Already have an account?{' '}
-                  <Link to="/Selar_Login" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
-                    Login Now
-                  </Link>
-                </Typography>
-              </form>
-            )}
-          </Formik>
-        </Card>
-      </Container>
-    </div>
+                  </Grid>
+
+                  <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                    Already have an account?{' '}
+                    <Link to="/Selar_Login" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
+                      Login Now
+                    </Link>
+                  </Typography>
+                </form>
+              )}
+            </Formik>
+          </Card>
+        </Container>
+      </div>
     </>
   );
 };
