@@ -16,10 +16,10 @@ export const loginAdmin = createAsyncThunk(
 );
 
 const adminSlice = createSlice({
-  name: "auth",
+  name: "admin", // ✅ updated to match store key
   initialState: {
-    adminInfo: null,
-    isAuthenticated: false,
+    adminInfo: JSON.parse(localStorage.getItem("adminAuth")) || null,
+    isAuthenticated: !!localStorage.getItem("adminAuth"),
     loading: false,
     error: null,
   },
@@ -52,4 +52,3 @@ const adminSlice = createSlice({
 
 export const { logoutAdmin } = adminSlice.actions;
 export default adminSlice.reducer;
-// export { loginAdmin }; // ✅ this makes sure it's exported

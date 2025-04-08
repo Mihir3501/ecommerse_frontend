@@ -25,8 +25,8 @@ const AdminSidebar = () => {
 
         <ul className="text-gray-800">
           <SidebarItem Icon={FaChartBar} text="Dashboard" onClick={() => navigate('/admin')} />
-          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/user')} />
-          <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/Seller_Manage')} />
+          <SidebarItem Icon={FaUserFriends} text="User Management" onClick={() => navigate('/user_manage')} />
+          <SidebarItem Icon={FaCartPlus} text="Seller Management" onClick={() => navigate('/seller_manage')} />
           <SidebarItem Icon={FaCubes} text="Product Catalog" />
           <SidebarItem Icon={FaClipboardList} text="Order Management" />
         </ul>

@@ -4,19 +4,18 @@ import {
   AppBar, Toolbar, IconButton, Typography, Menu, Container, Button,
   Tooltip, MenuItem, Box, Grid, Card, CardContent, CardMedia
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+// import MenuIcon from '@mui/icons-material/Menu';  
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AdbIcon from '@mui/icons-material/Adb';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-// import Slider from 'react-slick'; 
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { SiStylelint } from "react-icons/si";
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import backgroundImage from "../../../assets/main-first-section-bg.jpeg";
+import 'swiper/css';
 
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
 
 const pages = [
   { name: 'Home', path: '/' },
@@ -40,64 +39,13 @@ const products = [
   { src: "src/assets/sec2-image8.jpeg", price: 900 },
 ];
 
-const explore = [
-  { src: "src/assets/dress-image1.jpeg", title: "Dress" },
-  { src: "src/assets/shirt-image1.jpeg", title: "Shirts" },
-  { src: "src/assets/jwellary-image1.jpeg", title: "Accessories" },
-  { src: "src/assets/watch-image1.jpeg", title: "Watch" },
-  { src: "src/assets/glasses-image1.jpeg", title: "Glasses" },
-  { src: "src/assets/bag-image3.jpeg", title: "Bags" },
-  { src: "src/assets/footware-image4.jpeg", title: "Footwear" },
-  { src: "src/assets/shoes-image1.jpeg", title: "Shoes" },
+const swiper = [
+  { src: "src/assets/dress-image1.jpeg" },
+  { src: "src/assets/dress-image1.jpeg" },
+  { src: "src/assets/dress-image1.jpeg" },
+  { src: "src/assets/dress-image1.jpeg" },
 ];
 
-const SampleNextArrow = ({ onClick }) => (
-  <IconButton
-    onClick={onClick}
-    sx={{
-      position: "absolute",
-      top: "40%",
-      right: "-30px",
-      zIndex: 10,
-      backgroundColor: 'white',
-      borderRadius: '50%',
-      boxShadow: 3,
-      "&:hover": { backgroundColor: "#ddd" }
-    }}
-  >▶</IconButton>
-);
-
-const SamplePrevArrow = ({ onClick }) => (
-  <IconButton
-    onClick={onClick}
-    sx={{
-      position: "absolute",
-      top: "40%",
-      left: "-30px",
-      zIndex: 10,
-      backgroundColor: 'white',
-      borderRadius: '50%',
-      boxShadow: 3,
-      "&:hover": { backgroundColor: "#ddd" }
-    }}
-  >◀</IconButton>
-);
-
-const sliderSettings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  arrows: true,
-  nextArrow: <SampleNextArrow />,
-  prevArrow: <SamplePrevArrow />,
-  responsive: [
-    { breakpoint: 1200, settings: { slidesToShow: 3 } },
-    { breakpoint: 900, settings: { slidesToShow: 2 } },
-    { breakpoint: 600, settings: { slidesToShow: 1 } },
-  ]
-};
 
 const Mainpage = () => {
   const navigate = useNavigate();
@@ -106,9 +54,9 @@ const Mainpage = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+  // const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
-  const handleCloseNavMenu = () => setAnchorElNav(null);
+  // const handleCloseNavMenu = () => setAnchorElNav(null);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
   const scrollToProducts = () => {
@@ -231,40 +179,26 @@ const Mainpage = () => {
 
 
       {/* Section 3 */}
-      {/* <Box sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 4 }, textAlign: "center", position: "relative" }}>
+      <Box sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 4 }, textAlign: "center", position: "relative" }}>
         <Typography variant="h4" fontWeight="bold" mb={2}>Shop By Categories</Typography>
         <Typography variant="h6" fontWeight="medium" color="text.secondary" mb={4}>Find exactly what you're looking for by browsing our curated product categories.</Typography>
 
-        <Slider {...sliderSettings}>
-          {explore.map((item, index) => (
-            <Box key={index} px={2}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  borderRadius: 3,
-                  boxShadow: 5,
-                  transition: "transform 0.3s ease-in-out",
-                  "&:hover": { transform: "scale(1.05)" },
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  image={item.src}
-                  alt={item.title}
-                  sx={{ height: 500,width: 500 , objectFit: "cover", borderRadius: "20px 20px 0 0" }}
-                />
-                <CardContent sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontWeight="bold">{item.title}</Typography>
-                  <Button onClick={() => navigate('/categories')} >Explore more..</Button>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
-        </Slider>
-      </Box> */}
+        {swiper.map((item, index) => (
+    <Swiper
+    
+      spaceBetween={50}
+      slidesPerView={3}
+      onSlideChange={() => console.log('slide change')}
+      onSwiper={(swiper) => console.log(swiper)}
+    >
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+      <SwiperSlide>Slide 3</SwiperSlide>
+      <SwiperSlide>Slide 4</SwiperSlide>
+      ...
+    </Swiper>
+        ))}
+    </Box>
 
       {/* Footer Section */}
       <Box sx={{ bgcolor: "#2C2C2C", color: "#FFFFFF", py: 10, px: { xs: 4, sm: 6, md: 10 } }}>
