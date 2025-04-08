@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Grid,
@@ -15,6 +15,11 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import 'swiper/css';
+import { SiStylelint } from "react-icons/si";
+import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+
 const products = [
   { src: "src/assets/sec2-image1.jpeg", price: 500 },
   { src: "src/assets/sec2-image2.jpeg", price: 600 },
@@ -24,6 +29,13 @@ const products = [
   { src: "src/assets/sec2-image6.jpeg", price: 700 },
   { src: "src/assets/sec2-image7.jpeg", price: 600 },
   { src: "src/assets/sec2-image8.jpeg", price: 900 },
+];
+
+const categories = [
+  { src: "src/assets/dress-image1.jpeg", title: "Casual" },
+  { src: "src/assets/dress-image2.jpeg", title: "Party" },
+  { src: "src/assets/dress-image3.jpeg", title: "Traditional" },
+  { src: "src/assets/dress-image4.jpeg", title: "Formal" },
 ];
 
 const Mainpage = () => {
@@ -37,7 +49,7 @@ const Mainpage = () => {
   return (
     <>
       <Navbar />
-      
+
       {/* Hero Section */}
       <Box
         sx={{
@@ -130,9 +142,86 @@ const Mainpage = () => {
           ))}
         </Grid>
       </Box>
-      <Footer/>
+
+      {/* Section 3 - Categories */}
+      <Box sx={{ py: 6, px: 4, textAlign: "center" }}>
+        <Typography variant="h4" fontWeight="bold" mb={2}>
+          Shop By Categories
+        </Typography>
+        <Typography
+          variant="h6"
+          fontWeight="medium"
+          color="text.secondary"
+          mb={4}
+        >
+          Find exactly what you're looking for by browsing our curated product categories.
+        </Typography>
+
+        <Swiper spaceBetween={20} slidesPerView={3}>
+          {categories.map((item, index) => (
+            <SwiperSlide key={index}>
+              <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
+                <CardMedia
+                  component="img"
+                  image={item.src}
+                  alt={item.title}
+                  sx={{ height: 300 }}
+                />
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">
+                    {item.title}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
+
+      {/* Footer Section */}
+      <Box
+        sx={{
+          bgcolor: "#2C2C2C",
+          color: "#FFFFFF",
+          py: 10,
+          px: { xs: 4, sm: 6, md: 10 },
+        }}
+      >
+        <Grid container spacing={4} justifyContent="space-between">
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              mb={2}
+              display="flex"
+              alignItems="center"
+            >
+              Fashion Hub <SiStylelint style={{ marginLeft: 8 }} />
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h5" fontWeight="bold" mb={2}>
+              Give us a call
+            </Typography>
+            <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <FaPhoneAlt style={{ marginRight: 8 }} /> +91 81603 15863
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h5" fontWeight="bold" mb={2}>
+              Send us an email
+            </Typography>
+            <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <FaEnvelope style={{ marginRight: 8 }} /> fashionHub@gmail.com
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Footer />
     </>
   );
 };
 
 export default Mainpage;
+
