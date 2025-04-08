@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   Box,
   Grid,
@@ -15,8 +15,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 
+// ✅ Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
-import 'swiper/css';
+import "swiper/css"; // Required CSS
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+
 import { SiStylelint } from "react-icons/si";
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 
@@ -157,7 +161,12 @@ const Mainpage = () => {
           Find exactly what you're looking for by browsing our curated product categories.
         </Typography>
 
-        <Swiper spaceBetween={20} slidesPerView={3}>
+        <Swiper
+          spaceBetween={20}
+          slidesPerView={3}
+          navigation
+          modules={[Navigation]}
+        >
           {categories.map((item, index) => (
             <SwiperSlide key={index}>
               <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
@@ -178,50 +187,10 @@ const Mainpage = () => {
         </Swiper>
       </Box>
 
-      {/* Footer Section */}
-      <Box
-        sx={{
-          bgcolor: "#2C2C2C",
-          color: "#FFFFFF",
-          py: 10,
-          px: { xs: 4, sm: 6, md: 10 },
-        }}
-      >
-        <Grid container spacing={4} justifyContent="space-between">
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              mb={2}
-              display="flex"
-              alignItems="center"
-            >
-              Fashion Hub <SiStylelint style={{ marginLeft: 8 }} />
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h5" fontWeight="bold" mb={2}>
-              Give us a call
-            </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <FaPhoneAlt style={{ marginRight: 8 }} /> +91 81603 15863
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h5" fontWeight="bold" mb={2}>
-              Send us an email
-            </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <FaEnvelope style={{ marginRight: 8 }} /> fashionHub@gmail.com
-            </Typography>
-          </Grid>
-        </Grid>
-      </Box>
-
+      
       <Footer />
     </>
   );
 };
 
 export default Mainpage;
-
