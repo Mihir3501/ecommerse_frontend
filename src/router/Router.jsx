@@ -15,6 +15,8 @@ import Selar_Login from "../selar/auth/login/Selar_Login";
 import Selar_Dashboard from "../selar/page/dashboard/Selar_Dashboard";
 import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
+import User_Manage from "../admin/managements/User_Manage";
+import Seller_Manage from '../admin/managements/Seller_Manage'
  
 const Router = () => {
   return (
@@ -39,6 +41,8 @@ const Router = () => {
         {/* Admin route */}  
         <Route path="/admin_login" element={<Admin_Login />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/user_manage" element={<User_Manage/>}/>
+        <Route path="/seller_manage" element={<Seller_Manage/>}/>
         {/* Admin route end */}
  
         {/* Selar routes */} 
