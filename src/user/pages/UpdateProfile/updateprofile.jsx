@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import {
   Container,
   TextField,
@@ -10,6 +11,8 @@ import {
   Grid
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "../Navbar/navbar";
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 
@@ -22,14 +25,27 @@ const validationSchema = Yup.object({
 const Updateprofile = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (values) => {
-    console.log('Form Submitted:', values);
-    navigate("/mainpage");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.post("http://192.168.1.16:5000/api/user/profile", values);
+      toast.success("Profile updated successfully!");
+      console.log("Response:", response.data);
+
+      setTimeout(() => {
+        navigate("/mainpage");
+      }, 2000);
+    } catch (error) {
+      console.error("Update failed:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Update failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <>
       <Navbar />
+      <ToastContainer position="top-right" autoClose={3000} />
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,
@@ -57,17 +73,13 @@ const Updateprofile = () => {
               Update Profile
             </Typography>
             <Formik
-              initialValues={{
-                name: '',
-                mobileNo: '',
-                address: ''
-              }}
+              initialValues={{ name: '', mobileNo: '', address: '' }}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
               validateOnBlur={false}
               validateOnChange={false}
             >
-              {({ touched, errors, handleChange, handleBlur, handleSubmit, values }) => (
+              {({ touched, errors, handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -83,7 +95,6 @@ const Updateprofile = () => {
                         helperText={touched.name && errors.name}
                       />
                     </Grid>
-
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -98,7 +109,6 @@ const Updateprofile = () => {
                         helperText={touched.mobileNo && errors.mobileNo}
                       />
                     </Grid>
-
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -112,7 +122,6 @@ const Updateprofile = () => {
                         helperText={touched.address && errors.address}
                       />
                     </Grid>
-
                     <Grid item xs={12}>
                       <Button
                         variant="contained"
@@ -121,12 +130,12 @@ const Updateprofile = () => {
                         size="large"
                         type="submit"
                         sx={{ mt: 2 }}
+                        disabled={isSubmitting}
                       >
-                        Submit
+                        {isSubmitting ? "Submitting..." : "Submit"}
                       </Button>
                     </Grid>
                   </Grid>
-
                   <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                     Don't want to update profile?{' '}
                     <Link to="/mainpage" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
