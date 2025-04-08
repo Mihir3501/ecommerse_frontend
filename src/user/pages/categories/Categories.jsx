@@ -9,6 +9,9 @@ import {
   IconButton
 } from '@mui/material';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
+import Navbar from "../../../user/pages/navbar/Navbar";
+import Footer from '../footer/Footer';
+
 
 const dresses = [
   { src: "src/assets/dress-image2.jpeg", price: 1000 },
@@ -38,6 +41,8 @@ const Categories = () => {
   return (
 
     <>
+        <Navbar/>
+
     {/* dresses section */}
     <Box
       sx={{
@@ -169,7 +174,7 @@ const Categories = () => {
       </Grid>
     </Box>
 
-    
+    <Footer/>
 
     </>
   );

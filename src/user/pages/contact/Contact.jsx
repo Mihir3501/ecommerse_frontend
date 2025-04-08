@@ -12,6 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import backgroundImage from '../../../assets/Contact-pade-image.jpg';
+import Navbar from "../../../user/pages/navbar/Navbar";
+import Footer from '../footer/Footer';
+
 
 const Contact = () => {
   const formRef = useRef(null);
@@ -37,6 +40,8 @@ const Contact = () => {
 
   return (
     <>
+          <Navbar/>
+      
       {/* Hero Section */}
       <Box
         sx={{
@@ -208,6 +213,7 @@ const Contact = () => {
           </Paper>
         </Container>
       </Box>
+      <Footer/>
     </>
   );
 };

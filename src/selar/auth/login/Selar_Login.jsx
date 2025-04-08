@@ -13,28 +13,27 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import backgroundImage from '../../assets/background-image-reg-loin.jpg';
+import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer , toast } from 'react-toastify';
+import Navbar from "../../../user/pages/navbar/Navbar";
+
+
 
 const validationSchema = Yup.object({
-  name: Yup.string()
-    .max(35, 'Must be 35 characters or less')
-
-    .required('Enter your name'),
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
     .matches(/@gmail\.com$/, 'Email must be a Gmail address')
     .required('Enter your Email'),
  
   password: Yup.string()
-    .length(8, 'Must be exactly 8 characters')
+    .length(6, 'Must be exactly 6 characters')
     .matches(/\d/, 'Password must include at least one number')
-    .required('Enter your Password'),
-    
+    .required('Enter your Password')
 });
 
-const Selar_Registrastion = () => {
+const Selar_Login = () => 
+  
+  {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
@@ -43,23 +42,24 @@ const Selar_Registrastion = () => {
 
   const handleSubmit = (values) => {
     console.log('Form Submitted:', values);
-    navigate("/Selar_Login");
+    navigate("/Selar_Registrastion");
   };
-  const navigate = useNavigate();
+
   return (
+    <>
+            <Navbar/>
+          
     <div
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        width: '100%',
-        minHeight: '100vh',
+        width: '100vw',
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden', 
       }}
     >
       <Container maxWidth="sm">
@@ -73,14 +73,12 @@ const Selar_Registrastion = () => {
           }}
         >
           <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-           Sellar Registrastion
+           Sellar Login
           </Typography>
           <Formik
             initialValues={{
-              name: '',
               email: '',
-              password: '',
-            
+              password: ''
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -92,17 +90,8 @@ const Selar_Registrastion = () => {
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                  
-                    <TextField
-                      fullWidth
-                      label="name"
-                      name="name"
-                      variant="outlined"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.name && Boolean(errors.name)}
-                      helperText={touched.name && errors.name}
-                    />
-                
+             
+              
                     <TextField
                       fullWidth
                       label="Email"
@@ -114,7 +103,9 @@ const Selar_Registrastion = () => {
                       error={touched.email && Boolean(errors.email)}
                       helperText={touched.email && errors.email}
                     />
-              
+                
+                 
+                  
                     <TextField
                       fullWidth
                       label="Password"
@@ -136,7 +127,8 @@ const Selar_Registrastion = () => {
                         )
                       }}
                     />
-                
+              
+              
                     <Button
                       variant="contained"
                       color="primary"
@@ -145,14 +137,14 @@ const Selar_Registrastion = () => {
                       type="submit"
                       sx={{ mt: 2, width: '100%' }} 
                     >
-                      Register
+                      Login
                     </Button>
-              
-                </Grid>
+                  </Grid>
+            
                 <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                  Already have an account?{' '}
-                  <Link to="/Selar_Login" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
-                    Login Now
+                Don't have an account?{' '}
+                  <Link to="/Selar_Registrastion" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
+                    Registration  Now
                   </Link>
                 </Typography>
               </form>
@@ -161,7 +153,8 @@ const Selar_Registrastion = () => {
         </Card>
       </Container>
     </div>
+    </>
   );
 };
 
-export default Selar_Registrastion;
+export default Selar_Login;

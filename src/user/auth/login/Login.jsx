@@ -19,7 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { loginUser } from '../../../config/Dataservice';
-import { setAccessToken, setUser } from '../../../redux/reducer/slices/userSlice'; // Update this path to your actual Redux slice
+import { setAccessToken, setUser } from '../../../redux/userSlice';
 
 const validationSchema = Yup.object({
   email: Yup.string()
