@@ -11,9 +11,15 @@ import {
   IconButton,
   InputAdornment
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer , toast } from 'react-toastify';
+import Navbar from "../../../user/pages/navbar/Navbar";
+
+
+
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -24,15 +30,15 @@ const validationSchema = Yup.object({
     .max(30, 'Must be 30 characters or less')
     .matches(/@gmail\.com$/, 'Email must be a Gmail address')
     .required('Enter your Email'),
-  mobileNo: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Enter a valid 10-digit number')
-    .required('Enter your Mobile Number'),
-
-    comment:Yup.string()
-    .required('Enter your address'),
+ 
+  password: Yup.string()
+    .length(8, 'Must be exactly 8 characters')
+    .matches(/\d/, 'Password must include at least one number')
+    .required('Enter your Password'),
+    
 });
 
-const Registration = () => {
+const Selar_Registrastion = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
@@ -41,10 +47,13 @@ const Registration = () => {
 
   const handleSubmit = (values) => {
     console.log('Form Submitted:', values);
-    
+    navigate("/Selar_Login");
   };
   const navigate = useNavigate();
   return (
+    <>
+        <Navbar/>
+
     <div
       style={{
         backgroundImage: `url(${backgroundImage})`,
@@ -71,14 +80,14 @@ const Registration = () => {
           }}
         >
           <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-            Fedback Form
+           Sellar Registrastion
           </Typography>
           <Formik
             initialValues={{
               name: '',
               email: '',
-              mobileNo: '',
-             comment: '' 
+              password: '',
+            
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -112,35 +121,28 @@ const Registration = () => {
                       error={touched.email && Boolean(errors.email)}
                       helperText={touched.email && errors.email}
                     />
-                
-                  
+              
                     <TextField
                       fullWidth
-                      label="Mobile No"
-                      name="mobileNo"
+                      label="Password"
+                      name="password"
                       variant="outlined"
-                      type="tel"
+                      type={showPassword ? 'text' : 'password'}
+                      inputProps={{ maxLength: 6 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={touched.mobileNo && Boolean(errors.mobileNo)}
-                      helperText={touched.mobileNo && errors.mobileNo}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={touched.password && errors.password}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={handleTogglePassword} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
                     />
-                
-              
-                  
-
-
-                  <TextField
-                      fullWidth
-                      label="comment"
-                      name="comment"
-                      variant="outlined"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.comment && Boolean(errors.comment)}
-                      helperText={touched.comment && errors.comment}
-                    />
-                
                 
                     <Button
                       variant="contained"
@@ -150,18 +152,24 @@ const Registration = () => {
                       type="submit"
                       sx={{ mt: 2, width: '100%' }} 
                     >
-                      Submit Your Feedback
+                      Register
                     </Button>
               
                 </Grid>
-                
+                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                  Already have an account?{' '}
+                  <Link to="/Selar_Login" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
+                    Login Now
+                  </Link>
+                </Typography>
               </form>
             )}
           </Formik>
         </Card>
       </Container>
     </div>
+    </>
   );
 };
 
-export default Registration;
+export default Selar_Registrastion;

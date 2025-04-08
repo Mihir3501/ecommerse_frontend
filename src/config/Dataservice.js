@@ -21,6 +21,7 @@ export const userSignup = (data) => DataServices().post(API.USERREGISTER, data);
 
 export const loginUser = (data) => DataServices().post(API.USERLOGIN, data);
 
+export const updateUser = (data) => DataServices().post(API.USERUPDATEPROFILE , data);
 
 
 

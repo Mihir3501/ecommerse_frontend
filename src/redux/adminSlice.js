@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginAdmin as loginAdminAPI } from "../config/Dataservice";
 
-// ✅ Thunk for login
+
 export const loginAdmin = createAsyncThunk(
   "admin/login",
   async ({ email, password }, thunkAPI) => {
