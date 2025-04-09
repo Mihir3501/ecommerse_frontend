@@ -13,6 +13,7 @@ const Admin_Login = () => {
   const { loading, error, isAuthenticated } = useSelector((state) => state.admin);
 
   useEffect(() => {
+    // console.log(state.auth, "login:")
     if (isAuthenticated) {
       navigate("/Admin");
     }

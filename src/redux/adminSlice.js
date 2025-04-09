@@ -7,17 +7,20 @@ export const loginAdmin = createAsyncThunk(
     try {
       const response = await loginAdminAPI({ email, password });
 
-      // ✅ Combine token with admin object
+      console.log("🔐 ADMIN LOGIN RESPONSE:", response.data)
+      //  Combine token with admin object
       const data = {
         ...response.data.admin,
         token: response.data.token,
       };
 
-      // ✅ Store the flattened object in localStorage
+      //  Store the flattened object in localStorage
       localStorage.setItem("adminAuth", JSON.stringify(data));
 
       return data;
     } catch (error) {
+      console.error(" ADMIN LOGIN ERROR:", error.response?.data || error.message);  // Add this
+
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
