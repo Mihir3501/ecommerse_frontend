@@ -17,6 +17,9 @@ import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
 import User_Manage from "../admin/managements/User_Manage";
 import Seller_Manage from '../admin/managements/Seller_Manage'
+import Product_Catalog from "../admin/managements/Product_Catlog";
+import User_Details from "../admin/managements/User_Details";
+
  
 const Router = () => {
   return (
@@ -43,6 +46,8 @@ const Router = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/user_manage" element={<User_Manage/>}/>
         <Route path="/seller_manage" element={<Seller_Manage/>}/>
+        <Route path="/product_catlog" element={<Product_Catalog/>}/>
+        <Route path="/admin/allUsers/:id" element={<User_Details />} />
         {/* Admin route end */}
  
         {/* Selar routes */} 

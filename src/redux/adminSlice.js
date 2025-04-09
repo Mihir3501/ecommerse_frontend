@@ -1,14 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginAdmin as loginAdminAPI } from "../config/Dataservice";
 
-
 export const loginAdmin = createAsyncThunk(
   "admin/login",
   async ({ email, password }, thunkAPI) => {
     try {
       const response = await loginAdminAPI({ email, password });
-      localStorage.setItem("adminAuth", JSON.stringify(response.data));
-      return response.data;
+
+      // ✅ Combine token with admin object
+      const data = {
+        ...response.data.admin,
+        token: response.data.token,
+      };
+
+      // ✅ Store the flattened object in localStorage
+      localStorage.setItem("adminAuth", JSON.stringify(data));
+
+      return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
     }

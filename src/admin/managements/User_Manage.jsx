@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Admin_Sidebar from "../pages/Admin_Sidebar";
 import Admin_Navbar from "../pages/Admin_Navbar";
 import { FaEdit,FaEye  } from "react-icons/fa";
@@ -11,8 +12,12 @@ const UserManage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
+    console.log("🧠 adminInfo from Redux:", adminInfo); // Add this line
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://192.168.1.16:5000/api/admin/allUsers", {
@@ -75,17 +80,16 @@ const UserManage = () => {
                       <td className="px-6 py-4 capitalize">{user.role}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                            user.status === "Active"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.isActive 
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
                           }`}
-                        >
-                          {user.status}
+                      >
+                        {user?.isActive ? "Active" : "Inactive"} 
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2">
-                        <button className="text-blue-600 hover:underline cursor-pointer"><FaEye className="h-4 w-4" /></button>
+                        <button onClick={() => navigate(`/admin/user/${user._id}`)} className="text-blue-600 hover:underline cursor-pointer"><FaEye className="h-4 w-4" /></button>
                         <button className="text-yellow-600 hover:underline cursor-pointer"><FaEdit className="h-4 w-4"/></button>
                         <button className="text-red-600 hover:underline cursor-pointer"><MdOutlineDeleteForever className="h-4 w-4"/></button>
                       </td>
