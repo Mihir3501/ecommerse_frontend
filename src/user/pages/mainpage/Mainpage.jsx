@@ -36,10 +36,14 @@ const products = [
 ];
 
 const categories = [
-  { src: "src/assets/dress-image1.jpeg", title: "Casual" },
-  { src: "src/assets/dress-image2.jpeg", title: "Party" },
-  { src: "src/assets/dress-image3.jpeg", title: "Traditional" },
-  { src: "src/assets/dress-image4.jpeg", title: "Formal" },
+  { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
+  { src: "src/assets/shirt-image1.jpeg", title: "Shirts" },
+  { src: "src/assets/jwellary-image1.jpeg", title: "jwellary" },
+  { src: "src/assets/watch-image1.jpeg", title: "watch" },
+  { src: "src/assets/glasses-image1.jpeg", title: "Glasses" },
+  { src: "src/assets/bag-image1.jpeg", title: "bags" },
+  { src: "src/assets/footware-image1.jpeg", title: "footware" },
+  { src: "src/assets/shoes-image1.jpeg", title: "Shoes" },
 ];
 
 const Mainpage = () => {
@@ -168,21 +172,25 @@ const Mainpage = () => {
           modules={[Navigation]}
         >
           {categories.map((item, index) => (
-            <SwiperSlide key={index}>
-              <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
-                <CardMedia
-                  component="img"
-                  image={item.src}
-                  alt={item.title}
-                  sx={{ height: 300 }}
-                />
-                <CardContent>
-                  <Typography variant="h6" fontWeight="bold">
-                    {item.title}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </SwiperSlide>
+           <SwiperSlide key={index}>
+           <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
+             <CardMedia
+               component="img"
+               image={item.src}
+               alt={item.title}
+               sx={{ height: 600 }}
+             />
+             <CardContent>
+               <Typography variant="h6" fontWeight="bold">
+                 {item.title}
+               </Typography>
+               <Button onClick={() => navigate("/categories")}>
+                 Explore Now
+               </Button>
+             </CardContent>
+           </Card>
+         </SwiperSlide>
+         
           ))}
         </Swiper>
       </Box>
