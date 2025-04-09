@@ -12,7 +12,7 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import Navbar from "../../../user/pages/navbar/Navbar";
 import Footer from '../footer/Footer';
 
-
+ 
 const dresses = [
   { src: "src/assets/dress-image2.jpeg", price: 1000 },
   { src: "src/assets/dress-image3.jpeg", price: 2000 },

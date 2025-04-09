@@ -56,7 +56,7 @@ const UserManage = () => {
 
         {/* Content */}
         <div className="p-6 pt-24">
-          <h1 className="text-2xl font-bold mb-6 text-gray-800">User Management</h1>
+          <h1 className="text-2xl font-bold mb-6 text-gray-800">Seller Management</h1>
 
           <div className="overflow-x-auto shadow rounded-lg border border-gray-200 bg-white">
             {loading ? (
@@ -84,12 +84,12 @@ const UserManage = () => {
                       <td className="px-6 py-4 capitalize">{user.role || "Seller"}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.status === "Active"
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.isActive 
                               ? "bg-green-100 text-green-700"
                               : "bg-red-100 text-red-700"
                             }`}
                         >
-                          {user.status || "Inactive"}
+                          {user?.isActive ? "Active" : "Inactive"} 
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2">

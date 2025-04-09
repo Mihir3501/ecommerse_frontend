@@ -49,7 +49,7 @@ const Selar_Login = () =>
       console.log("Login Response:", response.data);
 
       // Optionally save the token or user data if needed
-      // localStorage.setItem("sellerAuth", JSON.stringify(response.data));
+      localStorage.setItem("sellerAuth", JSON.stringify(response.data));
 
       setTimeout(() => {
         navigate("/Selar_Dashboard");
