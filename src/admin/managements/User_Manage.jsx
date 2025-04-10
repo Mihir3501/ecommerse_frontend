@@ -8,7 +8,7 @@ import { FaEdit,FaEye  } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 
-const UserManage = () => {
+const User_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ const UserManage = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://192.168.1.16:5000/api/admin/allUsers", {
+        const response = await axios.get("http://192.168.1.29:5000/api/admin/allUsers", {
           headers: {
             Authorization: `Bearer ${adminInfo?.token}`,
           },
@@ -89,8 +89,8 @@ const UserManage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2">
-                        <button onClick={() => navigate(`/admin/user/${user._id}`)} className="text-blue-600 hover:underline cursor-pointer"><FaEye className="h-4 w-4" /></button>
-                        <button className="text-yellow-600 hover:underline cursor-pointer"><FaEdit className="h-4 w-4"/></button>
+                        {/* <button onClick={() => navigate(`/admin/user/${user._id}`)} className="text-blue-600 hover:underline cursor-pointer"><FaEye className="h-4 w-4" /></button> */}
+                        {/* <button className="text-yellow-600 hover:underline cursor-pointer"><FaEdit className="h-4 w-4"/></button> */}
                         <button className="text-red-600 hover:underline cursor-pointer"><MdOutlineDeleteForever className="h-4 w-4"/></button>
                       </td>
                     </tr>
@@ -105,4 +105,4 @@ const UserManage = () => {
   );
 };
 
-export default UserManage;
+export default User_Manage;
