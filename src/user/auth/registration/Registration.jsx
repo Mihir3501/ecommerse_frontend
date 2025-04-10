@@ -23,7 +23,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { userSignup } from "../../../config/Dataservice";
 
-// ✅ Validation Schema
 const validationSchema = Yup.object({
   name: Yup.string()
     .max(35, "Must be 35 characters or less")
@@ -45,6 +44,7 @@ const validationSchema = Yup.object({
 const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  // const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);

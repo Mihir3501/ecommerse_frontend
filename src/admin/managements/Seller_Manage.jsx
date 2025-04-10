@@ -10,13 +10,14 @@ const Seller_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.29:5000/api/admin/allSellers",
+          `${BASE_URL}/api/admin/allSellers`,
           {
             headers: {
               Authorization: `Bearer ${adminInfo?.token}`,
@@ -46,7 +47,7 @@ const Seller_Manage = () => {
     if (!confirmToggle) return;
   
     try {
-      const endpoint = `http://localhost:5000/api/admin/sellers/${id}/toggle-status`;
+      const endpoint = `${BASE_URL}/api/admin/sellers/${id}/toggle-status`;
   
       await axios.patch(
         endpoint,

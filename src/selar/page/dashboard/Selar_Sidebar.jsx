@@ -1,10 +1,17 @@
 import React from "react";
 import { FaUserFriends, FaCartPlus, FaCubes, FaClipboardList, FaChartBar } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logoutSeller } from "../../../redux/sellarSlice";
 
 const Selar_Sidebar = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch
+  const handleLogout = () => {
+    dispatch(logoutSeller()); // ✅ call slice reducer
+    navigate("/selar_login"); 
+  };
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col justify-between">
@@ -25,7 +32,7 @@ const Selar_Sidebar = () => {
       </div>
       {/* Logout Button */}
       <div>
-        <SidebarItem Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" />
+        <SidebarItem onClick={handleLogout} Icon={IoLogOut} text="Logout" customClass="text-red-600 hover:bg-red-500" />
       </div>
     </div>
   ); 
