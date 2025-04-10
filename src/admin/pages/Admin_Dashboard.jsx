@@ -1,19 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
 import Admin_Sidebar from "./Admin_Sidebar";
 import Admin_Navbar from "./Admin_Navbar";
 
 const Admin_Dashboard = () => {
+  const { adminInfo } = useSelector((state) => state.admin);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalSellers: 0,
+    totalProducts: 0,
+    totalRevenue: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/analytics/users", {
+          headers: {
+            Authorization: `Bearer ${adminInfo?.token}`,
+          },
+        });
+
+        const data = response.data;
+        setStats({
+          totalUsers: data.totalUsers || 0,
+          totalSellers: data.totalSellers || 0,
+          totalProducts: data.totalProducts || 0,
+          totalRevenue: data.totalRevenue || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (adminInfo?.token) {
+      fetchStats();
+    }
+  }, [adminInfo]);
+
   return (
     <div className="flex h-screen bg-gray-100">
-
       <Admin_Sidebar />
-
 
       <div className="flex-1 flex flex-col ml-64">
         <Admin_Navbar />
 
         <div className="flex-1 p-6 mt-15">
-
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-xl shadow-md">
             <h1 className="text-3xl font-bold">Welcome to Admin Dashboard</h1>
             <p className="mt-2 text-lg">
@@ -30,10 +67,16 @@ const Admin_Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            <StatCard title="Total Users" value="8,549" change="+124 this month" />
-            <StatCard title="Total Sellers" value="347" change="+18 this month" />
-            <StatCard title="Total Products" value="24,832" change="+342 this month" />
-            <StatCard title="Total Revenue" value="$284,521" change="+8.3% from last month" />
+            {loading ? (
+              <p className="col-span-4 text-center text-gray-500">Loading stats...</p>
+            ) : (
+              <>
+                <StatCard title="Total Users" value={stats.totalUsers} change="+124 this month" />
+                <StatCard title="Total Sellers" value={stats.totalSellers} change="+18 this month" />
+                <StatCard title="Total Products" value={stats.totalProducts} change="+342 this month" />
+                <StatCard title="Total Revenue" value={`${stats.totalRevenue.toLocaleString()}`} change="+8.3% from last month" />
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import axios from "axios";
 import { API } from "./Api";
 
 // const API_ENDPOINT = "http://localhost:5000";
-const API_ENDPOINT = "http://192.168.1.16:5000";
+const API_ENDPOINT = "http://192.168.1.29:5000";
 
 
 const DataServices = (token) => {

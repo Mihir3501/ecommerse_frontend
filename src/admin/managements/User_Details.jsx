@@ -16,7 +16,7 @@ const User_Details = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.16:5000/api/admin/allUsers/${id}`, {
+        const res = await axios.get(`http://192.168.1.29:5000/api/admin/allUsers/${id}`, {
           headers: {
             Authorization: `Bearer ${adminInfo?.token}`,
           },

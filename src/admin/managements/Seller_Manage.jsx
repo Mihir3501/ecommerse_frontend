@@ -3,31 +3,29 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Admin_Sidebar from "../pages/Admin_Sidebar";
 import Admin_Navbar from "../pages/Admin_Navbar";
-import { FaEdit,FaEye  } from "react-icons/fa";
+// import { FaEdit, FaEye } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
-const UserManage = () => {
+const Seller_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.16:5000/api/admin/allSellers",
+          "http://192.168.1.29:5000/api/admin/allSellers",
           {
             headers: {
               Authorization: `Bearer ${adminInfo?.token}`,
             },
           }
         );
-
-        console.log("API response:", response.data);
-
         setUsers(response?.data?.sellers ?? []);
       } catch (error) {
-        console.error(" Error fetching users:", error);
+        console.error("Error fetching users:", error);
       } finally {
         setLoading(false);
       }
@@ -39,6 +37,38 @@ const UserManage = () => {
       setLoading(false);
     }
   }, [adminInfo]);
+
+  // Toggle Active/Inactive status
+  const toggleUserStatus = async (id, isActive) => {
+    const confirmToggle = window.confirm(
+      `Are you sure you want to ${isActive ? "deactivate" : "activate"} this seller?`
+    );
+    if (!confirmToggle) return;
+  
+    try {
+      const endpoint = `http://localhost:5000/api/admin/sellers/${id}/toggle-status`;
+  
+      await axios.patch(
+        endpoint,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${adminInfo?.token}`,
+          },
+        }
+      );
+  
+      // Update UI
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === id ? { ...user, isActive: !isActive } : user
+        )
+      );
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      alert("Failed to update user status.");
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -76,7 +106,7 @@ const UserManage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {users.map((user) => (
-                    <tr key={user._id || user.id} className="hover:bg-gray-50">
+                    <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {user.name || "N/A"}
                       </td>
@@ -84,18 +114,26 @@ const UserManage = () => {
                       <td className="px-6 py-4 capitalize">{user.role || "Seller"}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.isActive 
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.isActive
                               ? "bg-green-100 text-green-700"
                               : "bg-red-100 text-red-700"
                             }`}
                         >
-                          {user?.isActive ? "Active" : "Inactive"} 
+                          {user?.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="px-6 py-4 space-x-2">
-                        <button className="text-blue-600 hover:underline cursor-pointer"><FaEye className="h-4 w-4" /></button>
-                        <button className="text-yellow-600 hover:underline cursor-pointer"><FaEdit className="h-4 w-4" /></button>
-                        <button className="text-red-600 hover:underline cursor-pointer"><MdOutlineDeleteForever className="h-4 w-4" /></button>
+                        {/* Optional view/edit buttons */}
+                        {/* <button className="text-blue-600"><FaEye className="h-4 w-4" /></button>
+                        <button className="text-yellow-600"><FaEdit className="h-4 w-4" /></button> */}
+
+                        <button
+                          className="text-red-600 hover:underline cursor-pointer"
+                          onClick={() => toggleUserStatus(user._id, user.isActive)}
+                          title={user.isActive ? "Deactivate" : "Activate"}
+                        >
+                          <MdOutlineDeleteForever className="h-4 w-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -109,4 +147,4 @@ const UserManage = () => {
   );
 };
 
-export default UserManage;
+export default Seller_Manage;
