@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -9,6 +9,7 @@ import {
   Typography,
   Card,
   Grid,
+  InputLabel,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -16,7 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Navbar/navbar";
 import backgroundImage from "../../../assets/background-image-reg-loin.jpg";
 import { useSelector } from "react-redux";
- 
+
 // Validation schema
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -27,31 +28,37 @@ const validationSchema = Yup.object({
     .required("Enter your Mobile Number"),
   address: Yup.string().required("Enter your address"),
 });
- 
+
 const UpdateProfile = () => {
   const navigate = useNavigate();
- 
-  // Get token from Redux store
   const token = useSelector((state) => state.auth.token);
-  console.log("Token from Redux:", token); // Add this line to see the token in the console
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { name, mobile, address } = values;
- 
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("mobile", mobile);
+      formData.append("address", address);
+      if (selectedImage) {
+        formData.append("profileImage", selectedImage);
+      }
+
       const response = await axios.patch(
-        "http://192.168.1.16:5000/api/user/profile",
-        { name, mobile, address },
+        "http://192.168.1.29:5000/api/user/profile",
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
- 
+
       toast.success("Profile updated successfully!");
       console.log("Response:", response.data);
- 
+
       setTimeout(() => {
         navigate("/mainpage");
       }, 2000);
@@ -64,7 +71,7 @@ const UpdateProfile = () => {
       setSubmitting(false);
     }
   };
- 
+
   return (
     <>
       <Navbar />
@@ -100,7 +107,7 @@ const UpdateProfile = () => {
             >
               Update Profile
             </Typography>
- 
+
             <Formik
               initialValues={{ name: "", mobile: "", address: "" }}
               validationSchema={validationSchema}
@@ -117,7 +124,7 @@ const UpdateProfile = () => {
                 values,
                 isSubmitting,
               }) => (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
                       <TextField
@@ -161,6 +168,15 @@ const UpdateProfile = () => {
                       />
                     </Grid>
                     <Grid item xs={12}>
+                      <InputLabel>Upload Profile Image</InputLabel>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setSelectedImage(e.target.files[0])}
+                        style={{ marginTop: "8px" }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -196,5 +212,5 @@ const UpdateProfile = () => {
     </>
   );
 };
- 
+
 export default UpdateProfile;

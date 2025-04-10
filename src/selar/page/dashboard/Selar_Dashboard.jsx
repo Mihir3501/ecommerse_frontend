@@ -1,8 +1,10 @@
 import React from "react";
 import Selar_Navbar from "./Selar_Navbar";
 import Selar_Sidebar from "./Selar_Sidebar"
+import { useNavigate } from "react-router-dom";
 
 const Selar_Dashboard = () => {
+  const navigate = useNavigate()
   return (
     <div className="flex h-screen bg-gray-100">
 
@@ -20,7 +22,7 @@ const Selar_Dashboard = () => {
               Your shop is performing well ! Here's your daily overview 
             </p>
             <div className="mt-4">
-              <button className="bg-white cursor-pointer text-blue-600 font-semibold px-4 py-2 rounded-lg shadow-md mr-2">
+              <button className="bg-white cursor-pointer text-blue-600 font-semibold px-4 py-2 rounded-lg shadow-md mr-2" onClick={() => navigate("/Selar_Products")}>
                 Add New Product 
               </button>
               <button className="bg-blue-800 cursor-pointer hover:bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-md">

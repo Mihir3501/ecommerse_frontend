@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 // adminOnly = true → only allow admins
 // adminOnly = false (default) → only allow normal users
 const PrivateRouter = ({ children, adminOnly = false }) => {
-  const userInfo = useSelector((state) => state.auth);         // user state
+  const userInfo = useSelector((state) => state.auth); // user state
   const adminInfo = useSelector((state) => state.admin.adminInfo); // admin state
 
   const isUserLoggedIn = !!userInfo?.token;

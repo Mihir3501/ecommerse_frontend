@@ -22,14 +22,14 @@ import Selar_Login from "../selar/auth/login/Selar_Login";
 import Selar_Dashboard from "../selar/page/dashboard/Selar_Dashboard";
 import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
+import Selar_Products from "../selar/page/products/Selar_Products";
 
-import PrivateRouter from "./PrivateRouter";
+import PrivateRouter from "./PrivateRouter"; // unified correctly
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* Public User Routes */}
         <Route path="/" element={<Mainpage />} />
         <Route path="/registration" element={<Registration />} />
@@ -95,13 +95,13 @@ const Router = () => {
           }
         />
 
-        {/* Seller Routes (you may protect these later too) */}
+        {/* Seller Routes */}
         <Route path="/selar_registrastion" element={<Selar_Registrastion />} />
         <Route path="/selar_login" element={<Selar_Login />} />
         <Route path="/selar_dashboard" element={<Selar_Dashboard />} />
         <Route path="/selar_navbar" element={<Selar_Navbar />} />
         <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
-
+        <Route path="/selar_Products" element={<Selar_Products />} />
       </Routes>
     </BrowserRouter>
   );
