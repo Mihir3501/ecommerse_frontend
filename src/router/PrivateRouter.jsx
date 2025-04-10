@@ -1,28 +1,25 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children, role }) => {
-  // Grab both user and admin info from Redux
-  const userInfo = useSelector((state) => state.auth); // user auth slice
-  const adminInfo = useSelector((state) => state.admin.adminInfo); // admin slice
+// adminOnly = true → only allow admins
+// adminOnly = false (default) → only allow normal users
+const PrivateRouter = ({ children, adminOnly = false }) => {
+  const userInfo = useSelector((state) => state.auth);         // user state
+  const adminInfo = useSelector((state) => state.admin.adminInfo); // admin state
 
   const isUserLoggedIn = !!userInfo?.token;
   const isAdminLoggedIn = !!adminInfo?.token;
 
-  const currentRole = isAdminLoggedIn ? adminInfo?.role : userInfo?.user?.role;
-
-  const isAuthenticated = isUserLoggedIn || isAdminLoggedIn;
-
-  if (!isAuthenticated) {
-    return <Navigate to={role === "admin" ? "/adminlogin" : "/login"} />;
+  if (adminOnly && !isAdminLoggedIn) {
+    return <Navigate to="/admin_login" />;
   }
 
-  if (role && currentRole !== role) {
-    return <Navigate to="/not-authorized" />; 
+  if (!adminOnly && !isUserLoggedIn) {
+    return <Navigate to="/login" />;
   }
 
   return children;
 };
 
-export default PrivateRoute;
+export default PrivateRouter;

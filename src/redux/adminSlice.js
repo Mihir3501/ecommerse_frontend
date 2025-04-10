@@ -7,7 +7,7 @@ export const loginAdmin = createAsyncThunk(
     try {
       const response = await loginAdminAPI({ email, password });
 
-      console.log("🔐 ADMIN LOGIN RESPONSE:", response.data)
+      console.log(" ADMIN LOGIN RESPONSE:", response.data)
       //  Combine token with admin object
       const data = {
         ...response.data.admin,
@@ -27,7 +27,7 @@ export const loginAdmin = createAsyncThunk(
 );
 
 const adminSlice = createSlice({
-  name: "admin", // ✅ updated to match store key
+  name: "admin", //  updated to match store key
   initialState: {
     adminInfo: JSON.parse(localStorage.getItem("adminAuth")) || null,
     isAuthenticated: !!localStorage.getItem("adminAuth"),

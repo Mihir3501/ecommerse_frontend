@@ -11,7 +11,7 @@ const Product_Catalog = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://192.168.1.16:5000/api/admin/add-categories');
+        const res = await axios.get('http://192.168.1.16:5000/api/admin/product-list');
         setProducts(res.data);
       } catch (err) {
         console.error("Failed to fetch products:", err);

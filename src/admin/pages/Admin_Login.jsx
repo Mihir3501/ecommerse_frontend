@@ -9,20 +9,24 @@ const Admin_Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ Corrected reducer key to match your Redux store setup
   const { loading, error, isAuthenticated } = useSelector((state) => state.admin);
 
   useEffect(() => {
-    // console.log(state.auth, "login:")
+    console.log(" isAuthenticated:", isAuthenticated);  
     if (isAuthenticated) {
-      navigate("/Admin");
+      navigate("/admin");
     }
   }, [isAuthenticated, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    dispatch(loginAdmin({ email, password })); // ✅ calls the async thunk
+    console.log("🟡 Submitting login with:", { email, password });
+    console.log("🚀 LOGIN FORM SUBMITTED"); // <== this MUST show in console
+
+    dispatch(loginAdmin({ email, password })); 
   };
+
+
 
   return (
     <div className="flex min-h-screen bg-green-400 items-center justify-center p-4">
@@ -60,7 +64,7 @@ const Admin_Login = () => {
               <button
                 type="submit"
                 className="w-full bg-green-700 text-white p-2 rounded-md shadow-md hover:bg-green-800 text-sm"
-                disabled={loading}
+                // disabled={loading}
               >
                 {loading ? "Logging in..." : "LOGIN"}
               </button>
