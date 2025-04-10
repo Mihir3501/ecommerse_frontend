@@ -34,6 +34,8 @@ const validationSchema = Yup.object({
 
 const Selar_Registrastion = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   const navigate = useNavigate();
 
   const handleTogglePassword = () => {
@@ -42,7 +44,7 @@ const Selar_Registrastion = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://192.168.1.29:5000/api/seller/signup", values);
+      const response = await axios.post(`${BASE_URL}/api/seller/signup`, values);
       toast.success("Registration successful!");
       console.log("Registration Response:", response.data);
 

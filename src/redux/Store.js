@@ -1,32 +1,34 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import adminReducer from "../redux/adminSlice.js"; 
-import authReducer from "../redux/authSlice";
-// Persist config
+// src/redux/Store.js
+import { configureStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { combineReducers } from 'redux';
+import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+
+import authReducer from './authSlice';
+import sellerReducer from './sellarSlice'; // if you have seller logic
+
 const persistConfig = {
-  key: "root",
+  key: 'root',
+  version: 1,
   storage,
 };
 
-// Combine reducers
 const rootReducer = combineReducers({
-  admin: adminReducer,
   auth: authReducer,
+  seller: sellerReducer, // remove if not using
 });
 
-// Wrap with persist
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Create store with Redux Toolkit
-const store = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Needed for redux-persist
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
     }),
 });
 
-const persistor = persistStore(store);
-
-export { store, persistor };
+export const persistor = persistStore(store);

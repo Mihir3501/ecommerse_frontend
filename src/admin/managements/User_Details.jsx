@@ -12,11 +12,12 @@ const User_Details = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await axios.get(`http://192.168.1.29:5000/api/admin/allUsers/${id}`, {
+        const res = await axios.get(`${BASE_URL}/api/admin/allUsers/${id}`, {
           headers: {
             Authorization: `Bearer ${adminInfo?.token}`,
           },

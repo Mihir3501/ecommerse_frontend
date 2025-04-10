@@ -7,11 +7,11 @@ import Admin_Navbar from "../pages/Admin_Navbar";
 const Product_Catalog = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://192.168.1.16:5000/api/admin/product-list');
+        const res = await axios.get(`${BASE_URL}/api/admin/product-list`);
         setProducts(res.data);
       } catch (err) {
         console.error("Failed to fetch products:", err);

@@ -7,10 +7,13 @@ import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 const Selar_Products = () => {
-  const  {sellers}  = JSON.parse(localStorage.getItem("sellerAuth"));
-
-
-  console.log(sellers, ":adminInfo")
+  const { sellerInfo } = useSelector((state) => state.seller);
+  const token = sellerInfo?.token;
+  const user = sellerInfo?.sellerData;
+  console.log("Seller Info from Redux:", sellerInfo);
+  console.log("Extracted token:", token);
+  
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef();
@@ -28,14 +31,11 @@ const Selar_Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://192.168.1.29:5000/api/seller/add-product",
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/seller/add-product`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setProducts(response?.data?.sellers ?? []);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -45,14 +45,13 @@ const Selar_Products = () => {
   };
 
   useEffect(() => {
-    if (sellers?.token) {
+    if (token) {
       fetchProducts();
     } else {
       setLoading(false);
     }
-  }, [sellers]);
+  }, [token]);
 
-  // Handle file/image upload separately (for quick upload)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -61,16 +60,12 @@ const Selar_Products = () => {
     formData.append("image", file);
 
     try {
-      await axios.post(
-        "http://192.168.1.29:5000/api/seller/upload-product-image",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/seller/upload-product-image`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Image uploaded successfully!");
       fetchProducts();
     } catch (err) {
@@ -79,15 +74,14 @@ const Selar_Products = () => {
     }
   };
 
-  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle new product form submit
   const handleProductSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting product with token:", token);
 
     if (!image) return alert("Please select an image");
 
@@ -101,16 +95,12 @@ const Selar_Products = () => {
     formData.append("image", image);
 
     try {
-      await axios.post(
-        "http://192.168.1.29:5000/api/seller/add-product",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Product added successfully!");
       setShowForm(false);
       setNewProduct({
@@ -147,8 +137,13 @@ const Selar_Products = () => {
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
-
             <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => fileInputRef.current.click()}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                <FaPlus /> Upload Product Image
+              </button>
               <input
                 type="file"
                 accept="image/*"
@@ -156,12 +151,6 @@ const Selar_Products = () => {
                 onChange={handleImageUpload}
                 style={{ display: "none" }}
               />
-              {/* <button
-                onClick={() => fileInputRef.current.click()}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                <FaPlus /> Upload Product Image
-              </button> */}
               <button
                 onClick={() => setShowForm(!showForm)}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
