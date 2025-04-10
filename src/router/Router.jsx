@@ -20,6 +20,7 @@ import Seller_Manage from '../admin/managements/Seller_Manage';
 import Product_Catalog from "../admin/managements/Product_Catlog";
 import User_Details from "../admin/managements/User_Details";
 import PrivateRoute from "./PrivateRouter"; //  Import the private route wrapper
+import Selar_Products from "../selar/page/products/Selar_Products"
 
 const Router = () => {
   return (
@@ -40,9 +41,9 @@ const Router = () => {
         <Route
           path="/updateprofile"
           element={
-            <PrivateRoute role="user">
+      
               <Updateprofile />
-            </PrivateRoute>
+          
           }
         />
 
@@ -97,6 +98,8 @@ const Router = () => {
         <Route path="/selar_dashboard" element={<Selar_Dashboard />} />
         <Route path="/selar_navbar" element={<Selar_Navbar />} />
         <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
+        <Route path="/selar_Products" element={<Selar_Products />} />
+
 
       </Routes>
     </BrowserRouter>

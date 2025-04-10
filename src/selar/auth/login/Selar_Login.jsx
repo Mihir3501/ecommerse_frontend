@@ -44,7 +44,7 @@ const Selar_Login = () =>
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/seller/login", values);
+      const response = await axios.post("http://192.168.1.29:5000/api/seller/login", values);
       toast.success("Login successful!");
       console.log("Login Response:", response.data);
 

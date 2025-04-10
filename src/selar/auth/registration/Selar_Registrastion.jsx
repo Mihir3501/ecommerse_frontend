@@ -42,7 +42,7 @@ const Selar_Registrastion = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/seller/signup", values);
+      const response = await axios.post("http://192.168.1.29:5000/api/seller/signup", values);
       toast.success("Registration successful!");
       console.log("Registration Response:", response.data);
 
