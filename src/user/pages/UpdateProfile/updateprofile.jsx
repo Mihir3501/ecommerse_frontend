@@ -33,6 +33,7 @@ const UpdateProfile = () => {
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
   const [selectedImage, setSelectedImage] = useState(null);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -46,7 +47,7 @@ const UpdateProfile = () => {
       }
 
       const response = await axios.patch(
-        "http://192.168.1.29:5000/api/user/profile",
+        `${BASE_URL}/api/user/profile`,
         formData,
         {
           headers: {

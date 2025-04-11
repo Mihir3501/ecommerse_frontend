@@ -7,14 +7,16 @@ import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 const Selar_Products = () => {
-  const { sellers } = JSON.parse(localStorage.getItem("sellerAuth"));
+  const { sellerInfo } = useSelector((state) => state.seller);
+  const token = sellerInfo?.token;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  console.log(sellers, ":adminInfo");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [image, setImage] = useState(null);
   const fileInputRef = useRef();
 
-  const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -23,18 +25,14 @@ const Selar_Products = () => {
     category: "",
     subcategories: "",
   });
-  const [image, setImage] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://192.168.1.29:5000/api/seller/add-product",
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/seller/add-product`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setProducts(response?.data?.sellers ?? []);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -44,14 +42,10 @@ const Selar_Products = () => {
   };
 
   useEffect(() => {
-    if (sellers?.token) {
-      fetchProducts();
-    } else {
-      setLoading(false);
-    }
-  }, [sellers]);
+    if (token) fetchProducts();
+    else setLoading(false);
+  }, [token]);
 
-  // Handle file/image upload separately (for quick upload)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -60,16 +54,12 @@ const Selar_Products = () => {
     formData.append("image", file);
 
     try {
-      await axios.post(
-        "http://192.168.1.29:5000/api/seller/upload-product-image",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/seller/upload-product-image`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Image uploaded successfully!");
       fetchProducts();
     } catch (err) {
@@ -78,13 +68,11 @@ const Selar_Products = () => {
     }
   };
 
-  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle new product form submit
   const handleProductSubmit = async (e) => {
     e.preventDefault();
 
@@ -100,16 +88,12 @@ const Selar_Products = () => {
     formData.append("image", image);
 
     try {
-      await axios.post(
-        "http://192.168.1.29:5000/api/seller/add-product",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${sellers?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Product added successfully!");
       setShowForm(false);
       setNewProduct({
@@ -145,11 +129,14 @@ const Selar_Products = () => {
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Seller Products
-            </h1>
-
+            <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
             <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => fileInputRef.current.click()}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                <FaPlus /> Upload Product Image
+              </button>
               <input
                 type="file"
                 accept="image/*"
@@ -157,12 +144,6 @@ const Selar_Products = () => {
                 onChange={handleImageUpload}
                 style={{ display: "none" }}
               />
-              {/* <button
-                onClick={() => fileInputRef.current.click()}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                <FaPlus /> Upload Product Image
-              </button> */}
               <button
                 onClick={() => setShowForm(!showForm)}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
@@ -179,21 +160,19 @@ const Selar_Products = () => {
               className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
             >
               <div className="grid grid-cols-2 gap-4">
-
                 <select
-                  name="Product Name"
+                  name="name"
                   value={newProduct.name}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
                 >
                   <option value="">Select Product</option>
-                  <option value="dress">dress</option>
-                  <option value="jwellary">jwellary</option>
-                  <option value="footware">footware</option>
-                  <option value="shirt">shirt</option>
-                  <option value="watch">watch</option>
-
+                  <option value="dress">Dress</option>
+                  <option value="jwellary">Jewelry</option>
+                  <option value="footware">Footwear</option>
+                  <option value="shirt">Shirt</option>
+                  <option value="watch">Watch</option>
                 </select>
 
                 <select
@@ -227,6 +206,7 @@ const Selar_Products = () => {
                   required
                 />
               </div>
+
               <textarea
                 name="description"
                 placeholder="Description"
@@ -281,10 +261,7 @@ const Selar_Products = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {products.map((product) => (
-                    <tr
-                      key={product._id || product.id}
-                      className="hover:bg-gray-50"
-                    >
+                    <tr key={product._id || product.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {product.name || "N/A"}
                       </td>
@@ -295,7 +272,9 @@ const Selar_Products = () => {
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
                       <td className="px-6 py-4">{product.category || "N/A"}</td>
                       <td className="px-6 py-4">
-                        {product.subcategories?.join(", ") || "N/A"}
+                        {Array.isArray(product.subcategories)
+                          ? product.subcategories.join(", ")
+                          : product.subcategories || "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (

@@ -1,11 +1,11 @@
-
+// redux/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
- 
+
 const initialState = {
   token: null,
-  user: null,
+  user: null, // This will store seller info
 };
- 
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -22,6 +22,6 @@ const authSlice = createSlice({
     },
   },
 });
- 
+
 export const { setToken, setUser, logout } = authSlice.actions;
 export default authSlice.reducer;

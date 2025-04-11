@@ -16,15 +16,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import { useDispatch } from "react-redux";
-import { setToken } from "../../../redux/authSlice"; // Adjust path as needed
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../../redux/authSlice';
 
 const validationSchema = Yup.object({
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
     .matches(/@gmail\.com$/, 'Email must be a Gmail address')
     .required('Enter your Email'),
-
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
     .matches(/\d/, 'Password must include at least one number')
@@ -34,6 +33,8 @@ const validationSchema = Yup.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
@@ -42,7 +43,7 @@ const Login = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://192.168.1.29:5000/api/user/login", values);
+      const response = await axios.post(`${BASE_URL}/api/user/login`, values);
       toast.success("Login successful!");
       console.log("Login Response:", response.data);
 
@@ -99,7 +100,7 @@ const Login = () => {
               validateOnBlur={false}
               validateOnChange={false}
             >
-              {({ touched, errors, handleChange, handleBlur, handleSubmit }) => (
+              {({ touched, errors, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -111,8 +112,8 @@ const Login = () => {
                         type="email"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={touched.email && Boolean(errors.email)}
-                        helperText={touched.email && errors.email}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -125,8 +126,8 @@ const Login = () => {
                         inputProps={{ maxLength: 8 }}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={touched.password && Boolean(errors.password)}
-                        helperText={touched.password && errors.password}
+                        error={Boolean(errors.password)}
+                        helperText={errors.password}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -145,9 +146,10 @@ const Login = () => {
                         fullWidth
                         size="large"
                         type="submit"
+                        disabled={isSubmitting}
                         sx={{ mt: 2 }}
                       >
-                        Login
+                        {isSubmitting ? 'Logging in...' : 'Login'}
                       </Button>
                     </Grid>
                   </Grid>
@@ -163,8 +165,8 @@ const Login = () => {
           </Card>
         </Container>
       </div>
-            </>
-  )
-}
+    </>
+  );
+};
 
- export default Login             
+export default Login;

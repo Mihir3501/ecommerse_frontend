@@ -7,26 +7,35 @@ import {
   FaChartBar,
 } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logoutSeller } from "../../../redux/sellarSlice";
 
 const Selar_Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logoutSeller()); // ✅ call slice reducer to clear seller data
+    navigate("/selar_login"); // Redirect to login page
+  };
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col justify-between">
       <div>
         <div className="flex flex-col items-center mb-6">
-          <h1 className="text-lg font-bold text-gray-900">Sellar Portal</h1>
-          <p className="text-sm text-gray-500">Premium Sellar</p>
+          <h1 className="text-lg font-bold text-gray-900">Seller Portal</h1>
+          <p className="text-sm text-gray-500">Premium Seller</p>
         </div>
         <hr className="mb-4" />
 
         <ul className="text-gray-800">
-          <SidebarItem 
-          Icon={FaChartBar}
-           text="Dashboard" active 
-           onClick={() => navigate("/Selar_Dashboard")}
-           />
+          <SidebarItem
+            Icon={FaChartBar}
+            text="Dashboard"
+            active
+            onClick={() => navigate("/Selar_Dashboard")}
+          />
           <SidebarItem
             Icon={FaCubes}
             text="Products"
@@ -39,10 +48,10 @@ const Selar_Sidebar = () => {
       {/* Logout Button */}
       <div>
         <SidebarItem
+          onClick={handleLogout}
           Icon={IoLogOut}
           text="Logout"
           customClass="text-red-600 hover:bg-red-500"
-          onClick={() => navigate("/mainpage")}
         />
       </div>
     </div>

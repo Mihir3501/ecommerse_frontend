@@ -12,30 +12,29 @@ import {
   InputAdornment
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
-import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import Navbar from "../../../user/pages/navbar/Navbar";
-
+import Navbar from '../../../user/pages/navbar/Navbar';
+import { useDispatch } from 'react-redux';
+import { setUser, setToken } from '../../../redux/authSlice';
 
 const validationSchema = Yup.object({
   email: Yup.string()
-  .max(30, 'Must be 30 characters or less')
-  .matches(/@gmail\.com$/, 'Email must be a Gmail address')
-  .required('Enter your Email'),
-  
+    .max(30, 'Must be 30 characters or less')
+    .matches(/@gmail\.com$/, 'Email must be a Gmail address')
+    .required('Enter your Email'),
   password: Yup.string()
-  .length(8, 'Must be exactly 8 characters')
-  .matches(/\d/, 'Password must include at least one number')
-  .required('Enter your Password')
+    .length(8, 'Must be exactly 8 characters')
+    .matches(/\d/, 'Password must include at least one number')
+    .required('Enter your Password')
 });
 
-const Selar_Login = () => 
-  
-  {
-  const navigate = useNavigate()
+const Selar_Login = () => {
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
@@ -44,19 +43,25 @@ const Selar_Login = () =>
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://192.168.1.29:5000/api/seller/login", values);
-      toast.success("Login successful!");
-      console.log("Login Response:", response.data);
+      const response = await axios.post(`${BASE_URL}/api/seller/login`, values);
+      const { token, ...sellerInfo } = response.data.seller;
 
-      // Optionally save the token or user data if needed
-      localStorage.setItem("sellerAuth", JSON.stringify(response.data));
+      console.log('Token:', token);
+      console.log('Seller Info:', sellerInfo);
+
+      toast.success('Login successful!');
+
+      dispatch(setToken(token));
+      dispatch(setUser(sellerInfo));
+
+      // Optional: Save to localStorage (can be removed if not desired)
+      localStorage.setItem('sellerAuth', JSON.stringify({ token, seller: sellerInfo }));
 
       setTimeout(() => {
-        navigate("/Selar_Dashboard");
+        navigate('/Selar_Dashboard');
       }, 2000);
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setSubmitting(false);
     }
@@ -64,112 +69,111 @@ const Selar_Login = () =>
 
   return (
     <>
-            <Navbar/>
-          
-    <div
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Container maxWidth="sm">
-        <Card
-          sx={{
-            p: 4,
-            boxShadow: 6,
-            borderRadius: 3,
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', 
-            backdropFilter: 'blur(10px)',
-          }}
-        >
-          <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-           Sellar Login
-          </Typography>
-          <Formik
-            initialValues={{
-              email: '',
-              password: ''
+      <Navbar />
+      <div
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Container maxWidth="sm">
+          <Card
+            sx={{
+              p: 4,
+              boxShadow: 6,
+              borderRadius: 3,
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(10px)'
             }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-            validateOnBlur={false}
-            validateOnChange={false}
-            
           >
-            {({ touched, errors, handleChange, handleBlur, handleSubmit }) => (
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                 
-             
-              
-                    <TextField
-                      fullWidth
-                      label="Email"
-                      name="email"
-                      variant="outlined"
-                      type="email"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.email && Boolean(errors.email)}
-                      helperText={touched.email && errors.email}
-                    />
-                
-                 
-                  
-                    <TextField
-                      fullWidth
-                      label="Password"
-                      name="password"
-                      variant="outlined"
-                      type={showPassword ? 'text' : 'password'}
-                      inputProps={{ maxLength: 8 }}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.password && Boolean(errors.password)}
-                      helperText={touched.password && errors.password}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={handleTogglePassword} edge="end">
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        )
-                      }}
-                    />
-              
-              
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      size="large"
-                      type="submit"
-                      sx={{ mt: 2, width: '100%' }} 
-                    >
-                      Login
-                    </Button>
+            <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
+              Seller Login
+            </Typography>
+            <Formik
+              initialValues={{ email: '', password: '' }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              validateOnBlur={false}
+              validateOnChange={false}
+            >
+              {({ touched, errors, handleChange, handleBlur, handleSubmit }) => (
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        variant="outlined"
+                        type="email"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.email && Boolean(errors.email)}
+                        helperText={touched.email && errors.email}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Password"
+                        name="password"
+                        variant="outlined"
+                        type={showPassword ? 'text' : 'password'}
+                        inputProps={{ maxLength: 8 }}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.password && Boolean(errors.password)}
+                        helperText={touched.password && errors.password}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleTogglePassword} edge="end">
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        type="submit"
+                      >
+                        Login
+                      </Button>
+                    </Grid>
                   </Grid>
-            
-                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                Don't have an account?{' '}
-                  <Link to="/Selar_Registrastion" style={{ textDecoration: 'none', color: '#1976D2', fontWeight: 'bold' }}>
-                    Registration  Now
-                  </Link>
-                </Typography>
-              </form>
-            )}
-          </Formik>
-        </Card>
-      </Container>
-    </div>
+                  <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                    Don't have an account?{' '}
+                    <Link
+                      to="/Selar_Registrastion"
+                      style={{
+                        textDecoration: 'none',
+                        color: '#1976D2',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      Register Now
+                    </Link>
+                  </Typography>
+                </form>
+              )}
+            </Formik>
+          </Card>
+        </Container>
+      </div>
+      <ToastContainer />
     </>
   );
 };

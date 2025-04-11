@@ -13,19 +13,20 @@ const User_Manage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
   useEffect(() => {
-    console.log("🧠 adminInfo from Redux:", adminInfo); // Add this line
+    console.log(" adminInfo from Redux:", adminInfo); 
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://192.168.1.29:5000/api/admin/allUsers", {
+        const response = await axios.get(`${BASE_URL}/api/admin/allUsers`, {
           headers: {
             Authorization: `Bearer ${adminInfo?.token}`,
           },
         });
-        console.log("API response:", response.data); // 🔍 Log the actual structure
+        console.log("API response:", response.data); 
 
         setUsers(response.data.users);
       } catch (error) {
