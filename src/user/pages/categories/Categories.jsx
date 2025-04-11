@@ -13,11 +13,11 @@ import {
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 const ProductSection = ({ title, products, loading }) => (
   <Box
   sx={{
@@ -37,7 +37,7 @@ const ProductSection = ({ title, products, loading }) => (
       >
       {title}
     </Typography>
-
+ 
     {loading ? (
       <CircularProgress />
     ) : (
@@ -86,7 +86,7 @@ const ProductSection = ({ title, products, loading }) => (
     )}
   </Box>
 );
-
+ 
 // Main Categories Page
 const Categories = () => {
   const [categories, setCategories] = useState([
@@ -99,22 +99,22 @@ const Categories = () => {
     "shoes",
   ]);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+ 
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loadingCategory, setLoadingCategory] = useState({});
-
+ 
   useEffect(() => {
     categories.forEach((category) => {
       fetchProducts(category);
     });
   }, []);
-
+ 
   const fetchProducts = async (category) => {
     try {
-      
+     
       setLoadingCategory((prev) => ({ ...prev, [category]: true }));
       const res = await axios.get(`${BASE_URL}/api/product/categories`);    
-
+ 
       setProductsByCategory((prev) => ({ ...prev, [category]: res.data }));
     } catch (error) {
       console.error(`Error fetching ${category}:`, error);
@@ -123,7 +123,7 @@ const Categories = () => {
       setLoadingCategory((prev) => ({ ...prev, [category]: false }));
     }
   };
-
+ 
   return (
     <>
       <Navbar />
@@ -141,7 +141,7 @@ const Categories = () => {
           Trendy & Elegant Products Await!
         </Typography>
       </Box>
-
+ 
       {categories.map((cat) => (
         <ProductSection
           key={cat}
@@ -150,10 +150,10 @@ const Categories = () => {
           loading={loadingCategory[cat]}
         />
       ))}
-
+ 
       <Footer />
     </>
   );
 };
-
+ 
 export default Categories;

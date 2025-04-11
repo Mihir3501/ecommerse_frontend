@@ -5,18 +5,18 @@ import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
 import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
-
+ 
 const Selar_Products = () => {
   const token = useSelector((state) => state.seller.sellerInfo?.token);
   // const token = sellerInfo?.token;
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+ 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [images, setImages] = useState(null);
   const fileInputRef = useRef();
-
+ 
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -25,7 +25,7 @@ const Selar_Products = () => {
     category: "",
     subcategories: "",
   });
-
+ 
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/seller/add-product`, {
@@ -40,19 +40,19 @@ const Selar_Products = () => {
       setLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     if (token) fetchProducts();
     else setLoading(false);
   }, [token]);
-
+ 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+ 
     const formData = new FormData();
     formData.append("images", file);
-
+ 
     try {
       await axios.post(`${BASE_URL}/api/seller/upload-product-images`, formData, {
         headers: {
@@ -67,22 +67,22 @@ const Selar_Products = () => {
       alert("Failed to upload image.");
     }
   };
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
-
+ 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
 console.log(token, "token");
-
+ 
 const subcategoryArray = newProduct.subcategories
 .split(",")
 .map((item) => item.trim());
-
+ 
     if (!images) return alert("Please select an image");
-
+ 
     const formData = new FormData();
     formData.append("name", newProduct.name);
     formData.append("description", newProduct.description);
@@ -91,7 +91,7 @@ const subcategoryArray = newProduct.subcategories
     formData.append("category", newProduct.category);
     formData.append("subcategories", JSON.stringify(subcategoryArray));
     formData.append("images", images);
-
+ 
     try {
       await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
         headers: {
@@ -116,21 +116,21 @@ const subcategoryArray = newProduct.subcategories
       alert("Failed to add product.");
     }
   };
-
+ 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
       </div>
-
+ 
       {/* Main Content */}
       <div className="flex-1 ml-64">
         {/* Navbar */}
         <div className="sticky top-0 z-10 bg-white shadow">
           <Selar_Navbar />
         </div>
-
+ 
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
@@ -157,7 +157,7 @@ const subcategoryArray = newProduct.subcategories
               </button>
             </div>
           </div>
-
+ 
           {/* Product Form */}
           {showForm && (
             <form
@@ -179,7 +179,7 @@ const subcategoryArray = newProduct.subcategories
                   <option value="shirt">Shirt</option>
                   <option value="watch">Watch</option>
                 </select>
-
+ 
                 <select
                   name="category"
                   value={newProduct.category}
@@ -191,7 +191,7 @@ const subcategoryArray = newProduct.subcategories
                   <option value="men">Men</option>
                   <option value="women">Women</option>
                 </select>
-
+ 
                 <input
                   type="text"
                   name="price"
@@ -211,7 +211,7 @@ const subcategoryArray = newProduct.subcategories
                   required
                 />
               </div>
-
+ 
               <textarea
                 name="description"
                 placeholder="Description"
@@ -243,7 +243,7 @@ const subcategoryArray = newProduct.subcategories
               </button>
             </form>
           )}
-
+ 
           {/* Product Table */}
           <div className="overflow-x-auto shadow rounded-lg border border-gray-200 bg-white">
             {loading ? (
@@ -314,5 +314,5 @@ const subcategoryArray = newProduct.subcategories
     </div>
   );
 };
-
+ 
 export default Selar_Products;

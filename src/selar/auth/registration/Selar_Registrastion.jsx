@@ -24,7 +24,7 @@ const validationSchema = Yup.object({
     .required('Enter your name'),
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
-    .matches(/@gmail\.com$/, 'Email must be a Gmail address')
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
     .required('Enter your Email'),
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')

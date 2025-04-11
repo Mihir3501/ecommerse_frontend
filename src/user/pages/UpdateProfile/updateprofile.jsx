@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -10,6 +10,7 @@ import {
   Card,
   Grid,
   InputLabel,
+  Avatar,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -32,8 +33,40 @@ const validationSchema = Yup.object({
 const UpdateProfile = () => {
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
-  const [selectedImage, setSelectedImage] = useState(null);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    mobile: "",
+    address: "",
+  });
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const { name, mobile, address, profileImage } = response.data;
+        setInitialValues({ name, mobile, address });
+
+        if (profileImage) {
+          setExistingImageUrl(`${BASE_URL}/${profileImage}`);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error.response?.data || error.message);
+        toast.error("Failed to fetch user data.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -110,7 +143,8 @@ const UpdateProfile = () => {
             </Typography>
 
             <Formik
-              initialValues={{ name: "", mobile: "", address: "" }}
+              initialValues={initialValues}
+              enableReinitialize
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
               validateOnBlur={false}
@@ -176,6 +210,16 @@ const UpdateProfile = () => {
                         onChange={(e) => setSelectedImage(e.target.files[0])}
                         style={{ marginTop: "8px" }}
                       />
+                      {(selectedImage || existingImageUrl) && (
+                        <Avatar
+                          src={
+                            selectedImage
+                              ? URL.createObjectURL(selectedImage)
+                              : existingImageUrl
+                          }
+                          sx={{ width: 80, height: 80, mt: 2 }}
+                        />
+                      )}
                     </Grid>
                     <Grid item xs={12}>
                       <Button

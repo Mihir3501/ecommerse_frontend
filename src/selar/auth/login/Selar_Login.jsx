@@ -18,7 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Navbar from '../../../user/pages/navbar/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSeller } from '../../../redux/sellarSlice';
-
+ 
 const validationSchema = Yup.object({
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
@@ -29,17 +29,17 @@ const validationSchema = Yup.object({
     .matches(/\d/, 'Password must include at least one number')
     .required('Enter your Password')
 });
-
+ 
 const Selar_Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const { loading } = useSelector((state) => state.seller);
-
+ 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-
+ 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const resultAction = await dispatch(loginSeller(values));
@@ -57,7 +57,7 @@ const Selar_Login = () => {
       setSubmitting(false);
     }
   };
-
+ 
   return (
     <>
       <Navbar />
@@ -169,5 +169,5 @@ const Selar_Login = () => {
     </>
   );
 };
-
+ 
 export default Selar_Login;
