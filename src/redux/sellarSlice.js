@@ -1,19 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  loginSeller as loginSellerAPI,
-  registerSeller as registerSellerAPI,
-} from "../config/Dataservice";
+import axios from "axios";
 
-// Check localStorage for saved seller info
-const savedSellerInfo = localStorage.getItem("sellerInfo");
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// Async thunk for login
+// Async thunk for login (direct API call)
 export const loginSeller = createAsyncThunk(
   "seller/login",
   async ({ email, password }, thunkAPI) => {
     try {
-      const response = await loginSellerAPI({ email, password });
-      return response.data; // { token, sellerData }
+      const response = await axios.post(`${BASE_URL}/api/seller/login`, {
+        email,
+        password,
+      });
+
+      const { token, ...sellerData } = response.data.seller;
+
+      return {
+        token,
+        sellerData,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Login failed"
@@ -22,12 +27,15 @@ export const loginSeller = createAsyncThunk(
   }
 );
 
-// Async thunk for register
+// Async thunk for register (optional if you need it)
 export const registerSeller = createAsyncThunk(
   "seller/register",
   async (sellerData, thunkAPI) => {
     try {
-      const response = await registerSellerAPI(sellerData);
+      const response = await axios.post(
+        `${BASE_URL}/api/seller/register`,
+        sellerData
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -37,12 +45,11 @@ export const registerSeller = createAsyncThunk(
   }
 );
 
-// Redux slice
 const sellerSlice = createSlice({
   name: "seller",
   initialState: {
-    sellerInfo: savedSellerInfo ? JSON.parse(savedSellerInfo) : null,
-    isAuthenticated: !!savedSellerInfo,
+    sellerInfo: null,
+    isAuthenticated: false,
     loading: false,
     error: null,
   },
@@ -52,21 +59,19 @@ const sellerSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem("sellerInfo"); // ❌ Clear saved seller info
     },
   },
   extraReducers: (builder) => {
     builder
-      // LOGIN
       .addCase(loginSeller.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(loginSeller.fulfilled, (state, action) => {
         state.loading = false;
-        state.sellerInfo = action.payload;
+        const { token, sellerData } = action.payload;
+        state.sellerInfo = { token, ...sellerData };
         state.isAuthenticated = true;
-        localStorage.setItem("sellerInfo", JSON.stringify(action.payload)); // ✅ Save info
       })
       .addCase(loginSeller.rejected, (state, action) => {
         state.loading = false;
@@ -74,7 +79,7 @@ const sellerSlice = createSlice({
         state.isAuthenticated = false;
       })
 
-      // REGISTER
+      // Optional for register
       .addCase(registerSeller.pending, (state) => {
         state.loading = true;
         state.error = null;
