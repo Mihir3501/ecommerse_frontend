@@ -15,15 +15,14 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
 import Navbar from '../../../user/pages/navbar/Navbar';
-import { useDispatch } from 'react-redux';
-import { setUser, setToken } from '../../../redux/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginSeller } from '../../../redux/sellarSlice';
  
 const validationSchema = Yup.object({
   email: Yup.string()
     .max(30, 'Must be 30 characters or less')
-    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
+    .matches(/@gmail\.com$/, 'Email must be a Gmail address')
     .required('Enter your Email'),
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
@@ -32,10 +31,10 @@ const validationSchema = Yup.object({
 });
  
 const Selar_Login = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const { loading } = useSelector((state) => state.seller);
  
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -43,25 +42,17 @@ const Selar_Login = () => {
  
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/seller/login`, values);
-      const { token, ...sellerInfo } = response.data.seller;
- 
-      console.log('Token:', token);
-      console.log('Seller Info:', sellerInfo);
- 
-      toast.success('Login successful!');
- 
-      dispatch(setToken(token));
-      dispatch(setUser(sellerInfo));
- 
-      // Optional: Save to localStorage (can be removed if not desired)
-      // localStorage.setItem('sellerAuth', JSON.stringify({ token, seller: sellerInfo }));
- 
-      setTimeout(() => {
-        navigate('/Selar_Dashboard');
-      }, 2000);
+      const resultAction = await dispatch(loginSeller(values));
+      if (loginSeller.fulfilled.match(resultAction)) {
+        toast.success('Login successful!');
+        setTimeout(() => {
+          navigate('/Selar_Dashboard');
+        }, 2000);
+      } else {
+        toast.error(resultAction.payload || 'Login failed');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error('Login failed');
     } finally {
       setSubmitting(false);
     }
@@ -149,8 +140,9 @@ const Selar_Login = () => {
                         fullWidth
                         size="large"
                         type="submit"
+                        disabled={loading}
                       >
-                        Login
+                        {loading ? 'Logging in...' : 'Login'}
                       </Button>
                     </Grid>
                   </Grid>
@@ -179,5 +171,3 @@ const Selar_Login = () => {
 };
  
 export default Selar_Login;
- 
- 

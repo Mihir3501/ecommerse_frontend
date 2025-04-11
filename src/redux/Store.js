@@ -6,7 +6,8 @@ import { combineReducers } from 'redux';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import authReducer from './authSlice';
-import sellerReducer from './sellarSlice'; // if you have seller logic
+import sellerReducer from './sellarSlice';
+import adminReducer from './adminSlice'; // ✅ Import the admin slice
 
 const persistConfig = {
   key: 'root',
@@ -16,7 +17,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  seller: sellerReducer, // remove if not using
+  seller: sellerReducer,
+  admin: adminReducer, // ✅ Add it to the combined reducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

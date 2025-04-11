@@ -5,18 +5,18 @@ import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
 import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
-
+ 
 const Selar_Products = () => {
-  const { sellerInfo } = useSelector((state) => state.seller);
-  const token = sellerInfo?.token;
+  const token = useSelector((state) => state.seller.sellerInfo?.token);
+  // const token = sellerInfo?.token;
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+ 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState(null);
   const fileInputRef = useRef();
-
+ 
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -25,7 +25,7 @@ const Selar_Products = () => {
     category: "",
     subcategories: "",
   });
-
+ 
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/seller/add-product`, {
@@ -40,30 +40,26 @@ const Selar_Products = () => {
       setLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     if (token) fetchProducts();
     else setLoading(false);
   }, [token]);
-
+ 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+ 
     const formData = new FormData();
-    formData.append("image", file);
-
+    formData.append("images", file);
+ 
     try {
-      await axios.post(
-        `${BASE_URL}/api/seller/upload-product-image`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/api/seller/upload-product-images`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Image uploaded successfully!");
       fetchProducts();
     } catch (err) {
@@ -71,26 +67,31 @@ const Selar_Products = () => {
       alert("Failed to upload image.");
     }
   };
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
-
+ 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-
-    if (!image) return alert("Please select an image");
-
+console.log(token, "token");
+ 
+const subcategoryArray = newProduct.subcategories
+.split(",")
+.map((item) => item.trim());
+ 
+    if (!images) return alert("Please select an image");
+ 
     const formData = new FormData();
     formData.append("name", newProduct.name);
     formData.append("description", newProduct.description);
     formData.append("price", newProduct.price);
     formData.append("stock", newProduct.stock);
     formData.append("category", newProduct.category);
-    formData.append("subcategories", newProduct.subcategories);
-    formData.append("image", image);
-
+    formData.append("subcategories", JSON.stringify(subcategoryArray));
+    formData.append("images", images);
+ 
     try {
       await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
         headers: {
@@ -108,34 +109,32 @@ const Selar_Products = () => {
         category: "",
         subcategories: "",
       });
-      setImage(null);
+      setImages(null);
       fetchProducts();
     } catch (err) {
       console.error("Error adding product:", err);
       alert("Failed to add product.");
     }
   };
-
+ 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
       </div>
-
+ 
       {/* Main Content */}
       <div className="flex-1 ml-64">
         {/* Navbar */}
         <div className="sticky top-0 z-10 bg-white shadow">
           <Selar_Navbar />
         </div>
-
+ 
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Seller Products
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => fileInputRef.current.click()}
@@ -158,7 +157,7 @@ const Selar_Products = () => {
               </button>
             </div>
           </div>
-
+ 
           {/* Product Form */}
           {showForm && (
             <form
@@ -180,7 +179,7 @@ const Selar_Products = () => {
                   <option value="shirt">Shirt</option>
                   <option value="watch">Watch</option>
                 </select>
-
+ 
                 <select
                   name="category"
                   value={newProduct.category}
@@ -189,10 +188,10 @@ const Selar_Products = () => {
                   required
                 >
                   <option value="">Select Category</option>
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
                 </select>
-
+ 
                 <input
                   type="text"
                   name="price"
@@ -212,7 +211,7 @@ const Selar_Products = () => {
                   required
                 />
               </div>
-
+ 
               <textarea
                 name="description"
                 placeholder="Description"
@@ -221,27 +220,18 @@ const Selar_Products = () => {
                 className="border p-2 rounded w-full"
                 required
               />
-             
-
-              <select
+              <input
+                type="text"
                 name="subcategories"
+                placeholder="Subcategories (comma-separated)"
                 value={newProduct.subcategories}
                 onChange={handleChange}
                 className="border p-2 rounded w-full"
-                required
-              >
-                <option value="">Select subcategories</option>
-                <option value="dress">Dress</option>
-                <option value="jwellary">Jewelry</option>
-                <option value="footware">Footwear</option>
-                <option value="shirt">Shirt</option>
-                <option value="watch">Watch</option>
-              </select>
-
+              />
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={(e) => setImages(e.target.files[0])}
                 className="block"
                 required
               />
@@ -253,7 +243,7 @@ const Selar_Products = () => {
               </button>
             </form>
           )}
-
+ 
           {/* Product Table */}
           <div className="overflow-x-auto shadow rounded-lg border border-gray-200 bg-white">
             {loading ? (
@@ -276,10 +266,7 @@ const Selar_Products = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {products.map((product) => (
-                    <tr
-                      key={product._id || product.id}
-                      className="hover:bg-gray-50"
-                    >
+                    <tr key={product._id || product.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {product.name || "N/A"}
                       </td>
@@ -327,5 +314,5 @@ const Selar_Products = () => {
     </div>
   );
 };
-
+ 
 export default Selar_Products;

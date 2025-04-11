@@ -8,13 +8,21 @@ const Product_Catalog = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/admin/product-list`);
-        setProducts(res.data);
+        const adminToken = JSON.parse(localStorage.getItem("adminAuth"))?.token;
+
+        const res = await axios.get(`${BASE_URL}/api/admin/product-list`, {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        });
+
+        setProducts(res.data.products); // Adjust this if your response structure is different
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error("Failed to fetch products:", err.response?.data || err.message);
       }
     };
 
@@ -75,7 +83,7 @@ const Product_Catalog = () => {
                         {product.name}
                       </button>
                     </td>
-                    <td className="px-6 py-4">{product.category}</td>
+                    <td className="px-6 py-4">{product.category?.name || 'N/A'}</td>
                     <td className="px-6 py-4">₹{product.price}</td>
                     <td className="px-6 py-4">{product.stock}</td>
                     <td className="px-6 py-4">
