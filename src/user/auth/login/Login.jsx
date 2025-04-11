@@ -31,7 +31,7 @@ const validationSchema = Yup.object({
     .required('Enter your Password')
 });
 
-const Selar_Login = () => {
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -163,3 +163,8 @@ const Selar_Login = () => {
           </Card>
         </Container>
       </div>
+            </>
+  )
+}
+
+ export default Login             

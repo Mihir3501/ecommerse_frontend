@@ -129,7 +129,7 @@ const Selar_Login = () =>
                       name="password"
                       variant="outlined"
                       type={showPassword ? 'text' : 'password'}
-                      inputProps={{ maxLength: 10 }}
+                      inputProps={{ maxLength: 8 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={touched.password && Boolean(errors.password)}

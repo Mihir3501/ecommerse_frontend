@@ -34,7 +34,9 @@ const validationSchema = Yup.object({
     .required("Enter your Email"),
   mobile: Yup.string()
     .matches(/^[0-9]{10}$/, "Enter a valid 10-digit number")
-    .required("Enter your Mobile Number"),
+    .required("Enter your Mobile Number")
+    .length(10, "Must be exactly 10 characters"),
+
   password: Yup.string()
     .length(8, "Must be exactly 8 characters")
     .matches(/\d/, "Password must include at least one number")
@@ -176,7 +178,8 @@ const Registration = () => {
                       label="Mobile No"
                       name="mobile"
                       variant="outlined"
-                      type="tel"
+                      type="number"
+                      inputProps={{ maxLength: 10 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={Boolean

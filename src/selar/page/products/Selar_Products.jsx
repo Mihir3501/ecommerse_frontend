@@ -7,10 +7,9 @@ import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 const Selar_Products = () => {
-  const  {sellers}  = JSON.parse(localStorage.getItem("sellerAuth"));
+  const { sellers } = JSON.parse(localStorage.getItem("sellerAuth"));
 
-
-  console.log(sellers, ":adminInfo")
+  console.log(sellers, ":adminInfo");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef();
@@ -146,7 +145,9 @@ const Selar_Products = () => {
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Seller Products
+            </h1>
 
             <div className="flex flex-wrap gap-4">
               <input
@@ -178,24 +179,35 @@ const Selar_Products = () => {
               className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
             >
               <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Product Name"
+
+                <select
+                  name="Product Name"
                   value={newProduct.name}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
-                />
-                <input
-                  type="text"
+                >
+                  <option value="">Select Product</option>
+                  <option value="dress">dress</option>
+                  <option value="jwellary">jwellary</option>
+                  <option value="footware">footware</option>
+                  <option value="shirt">shirt</option>
+                  <option value="watch">watch</option>
+
+                </select>
+
+                <select
                   name="category"
-                  placeholder="Category"
                   value={newProduct.category}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
-                />
+                >
+                  <option value="">Select Category</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                </select>
+
                 <input
                   type="text"
                   name="price"
@@ -269,15 +281,22 @@ const Selar_Products = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {products.map((product) => (
-                    <tr key={product._id || product.id} className="hover:bg-gray-50">
+                    <tr
+                      key={product._id || product.id}
+                      className="hover:bg-gray-50"
+                    >
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {product.name || "N/A"}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{product.description || "N/A"}</td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {product.description || "N/A"}
+                      </td>
                       <td className="px-6 py-4">{product.price || "N/A"}</td>
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
                       <td className="px-6 py-4">{product.category || "N/A"}</td>
-                      <td className="px-6 py-4">{product.subcategories?.join(", ") || "N/A"}</td>
+                      <td className="px-6 py-4">
+                        {product.subcategories?.join(", ") || "N/A"}
+                      </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (
                           <img
