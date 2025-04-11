@@ -17,7 +17,7 @@ import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../../../redux/authSlice'; // Adjust the path as needed
+import { setToken } from '../../../redux/authSlice';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
     .required('Enter your Password')
 });
 
-const Selar_Login = () => {
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -169,4 +169,4 @@ const Selar_Login = () => {
   );
 };
 
-export default Selar_Login;
+export default Login;

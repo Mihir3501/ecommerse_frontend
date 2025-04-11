@@ -9,16 +9,14 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 const Selar_Products = () => {
   const { sellerInfo } = useSelector((state) => state.seller);
   const token = sellerInfo?.token;
-  const user = sellerInfo?.sellerData;
-  console.log("Seller Info from Redux:", sellerInfo);
-  console.log("Extracted token:", token);
-  
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [image, setImage] = useState(null);
   const fileInputRef = useRef();
 
-  const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -27,7 +25,6 @@ const Selar_Products = () => {
     category: "",
     subcategories: "",
   });
-  const [image, setImage] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -45,11 +42,8 @@ const Selar_Products = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      fetchProducts();
-    } else {
-      setLoading(false);
-    }
+    if (token) fetchProducts();
+    else setLoading(false);
   }, [token]);
 
   const handleImageUpload = async (e) => {
@@ -81,7 +75,6 @@ const Selar_Products = () => {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting product with token:", token);
 
     if (!image) return alert("Please select an image");
 
@@ -167,24 +160,33 @@ const Selar_Products = () => {
               className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
             >
               <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
+                <select
                   name="name"
-                  placeholder="Product Name"
                   value={newProduct.name}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
-                />
-                <input
-                  type="text"
+                >
+                  <option value="">Select Product</option>
+                  <option value="dress">Dress</option>
+                  <option value="jwellary">Jewelry</option>
+                  <option value="footware">Footwear</option>
+                  <option value="shirt">Shirt</option>
+                  <option value="watch">Watch</option>
+                </select>
+
+                <select
                   name="category"
-                  placeholder="Category"
                   value={newProduct.category}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
-                />
+                >
+                  <option value="">Select Category</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                </select>
+
                 <input
                   type="text"
                   name="price"
@@ -204,6 +206,7 @@ const Selar_Products = () => {
                   required
                 />
               </div>
+
               <textarea
                 name="description"
                 placeholder="Description"
@@ -262,11 +265,17 @@ const Selar_Products = () => {
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {product.name || "N/A"}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{product.description || "N/A"}</td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {product.description || "N/A"}
+                      </td>
                       <td className="px-6 py-4">{product.price || "N/A"}</td>
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
                       <td className="px-6 py-4">{product.category || "N/A"}</td>
-                      <td className="px-6 py-4">{product.subcategories?.join(", ") || "N/A"}</td>
+                      <td className="px-6 py-4">
+                        {Array.isArray(product.subcategories)
+                          ? product.subcategories.join(", ")
+                          : product.subcategories || "N/A"}
+                      </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (
                           <img

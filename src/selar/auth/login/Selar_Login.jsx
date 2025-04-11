@@ -51,11 +51,10 @@ const Selar_Login = () => {
 
       toast.success('Login successful!');
 
-      // Save to Redux
       dispatch(setToken(token));
       dispatch(setUser(sellerInfo));
 
-      // Save to localStorage
+      // Optional: Save to localStorage (can be removed if not desired)
       localStorage.setItem('sellerAuth', JSON.stringify({ token, seller: sellerInfo }));
 
       setTimeout(() => {
@@ -67,7 +66,6 @@ const Selar_Login = () => {
       setSubmitting(false);
     }
   };
-  
 
   return (
     <>
@@ -128,7 +126,7 @@ const Selar_Login = () => {
                         name="password"
                         variant="outlined"
                         type={showPassword ? 'text' : 'password'}
-                        inputProps={{ maxLength: 10 }}
+                        inputProps={{ maxLength: 8 }}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         error={touched.password && Boolean(errors.password)}
