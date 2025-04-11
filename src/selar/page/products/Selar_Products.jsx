@@ -7,14 +7,14 @@ import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 const Selar_Products = () => {
-  const { sellerInfo } = useSelector((state) => state.seller);
-  const token = sellerInfo?.token;
+  const token = useSelector((state) => state.seller.sellerInfo?.token);
+  // const token = sellerInfo?.token;
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState(null);
   const fileInputRef = useRef();
 
   const [newProduct, setNewProduct] = useState({
@@ -51,10 +51,10 @@ const Selar_Products = () => {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("images", file);
 
     try {
-      await axios.post(`${BASE_URL}/api/seller/upload-product-image`, formData, {
+      await axios.post(`${BASE_URL}/api/seller/upload-product-images`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -75,8 +75,13 @@ const Selar_Products = () => {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
+console.log(token, "token");
 
-    if (!image) return alert("Please select an image");
+const subcategoryArray = newProduct.subcategories
+.split(",")
+.map((item) => item.trim());
+
+    if (!images) return alert("Please select an image");
 
     const formData = new FormData();
     formData.append("name", newProduct.name);
@@ -84,8 +89,8 @@ const Selar_Products = () => {
     formData.append("price", newProduct.price);
     formData.append("stock", newProduct.stock);
     formData.append("category", newProduct.category);
-    formData.append("subcategories", newProduct.subcategories);
-    formData.append("image", image);
+    formData.append("subcategories", JSON.stringify(subcategoryArray));
+    formData.append("images", images);
 
     try {
       await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
@@ -104,7 +109,7 @@ const Selar_Products = () => {
         category: "",
         subcategories: "",
       });
-      setImage(null);
+      setImages(null);
       fetchProducts();
     } catch (err) {
       console.error("Error adding product:", err);
@@ -183,8 +188,8 @@ const Selar_Products = () => {
                   required
                 >
                   <option value="">Select Category</option>
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
                 </select>
 
                 <input
@@ -226,7 +231,7 @@ const Selar_Products = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={(e) => setImages(e.target.files[0])}
                 className="block"
                 required
               />

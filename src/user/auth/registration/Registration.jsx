@@ -178,7 +178,7 @@ const Registration = () => {
                       label="Mobile No"
                       name="mobile"
                       variant="outlined"
-                      type="number"
+                      type="tel"
                       inputProps={{ maxLength: 10 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
