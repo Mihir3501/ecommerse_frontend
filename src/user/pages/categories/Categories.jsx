@@ -85,6 +85,10 @@ const Accessories = [
 
 
 
+
+  
+
+
 const Categories = () => {
   return (
 

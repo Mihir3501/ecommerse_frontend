@@ -54,12 +54,16 @@ const Selar_Products = () => {
     formData.append("image", file);
 
     try {
-      await axios.post(`${BASE_URL}/api/seller/upload-product-image`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${BASE_URL}/api/seller/upload-product-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       alert("Image uploaded successfully!");
       fetchProducts();
     } catch (err) {
@@ -129,7 +133,9 @@ const Selar_Products = () => {
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Seller Products
+            </h1>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => fileInputRef.current.click()}
@@ -215,14 +221,23 @@ const Selar_Products = () => {
                 className="border p-2 rounded w-full"
                 required
               />
-              <input
-                type="text"
+             
+
+              <select
                 name="subcategories"
-                placeholder="Subcategories (comma-separated)"
                 value={newProduct.subcategories}
                 onChange={handleChange}
                 className="border p-2 rounded w-full"
-              />
+                required
+              >
+                <option value="">Select subcategories</option>
+                <option value="dress">Dress</option>
+                <option value="jwellary">Jewelry</option>
+                <option value="footware">Footwear</option>
+                <option value="shirt">Shirt</option>
+                <option value="watch">Watch</option>
+              </select>
+
               <input
                 type="file"
                 accept="image/*"
@@ -261,7 +276,10 @@ const Selar_Products = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {products.map((product) => (
-                    <tr key={product._id || product.id} className="hover:bg-gray-50">
+                    <tr
+                      key={product._id || product.id}
+                      className="hover:bg-gray-50"
+                    >
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {product.name || "N/A"}
                       </td>

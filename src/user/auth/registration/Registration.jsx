@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
     .required("Enter your name"),
   email: Yup.string()
     .max(30, "Must be 30 characters or less")
-    .matches(/@gmail\.com$/, "Email must be a Gmail address")
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
     .required("Enter your Email"),
   mobile: Yup.string()
     .matches(/^[0-9]{10}$/, "Enter a valid 10-digit number")
@@ -39,6 +39,7 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .length(8, "Must be exactly 8 characters")
     .matches(/\d/, "Password must include at least one number")
+    .matches(/[@#$%!&*]/, "Must include at least one special character (@, #, $, %, !, &, *)")
     .required("Enter your Password"),
   address: Yup.string().required("Enter your address"),
 });
@@ -178,7 +179,7 @@ const Registration = () => {
                       label="Mobile No"
                       name="mobile"
                       variant="outlined"
-                      type="number"
+                      type="tel"
                       inputProps={{ maxLength: 10 }}
                       onChange={handleChange}
                       onBlur={handleBlur}
