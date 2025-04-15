@@ -25,6 +25,7 @@ import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
 import Selar_Products from "../selar/page/products/Selar_Products";
 
 import PrivateRouter from "./PrivateRouter"; // unified correctly
+import Admin_Profile from "../admin/pages/Admin_Profile";
 
 const Router = () => {
   return (
@@ -59,6 +60,14 @@ const Router = () => {
           element={
             <PrivateRouter adminOnly={true}>
               <Admin />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/admin_profile"
+          element={
+            <PrivateRouter adminOnly={true}>
+              <Admin_Profile />
             </PrivateRouter>
           }
         />

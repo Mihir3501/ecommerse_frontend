@@ -1,97 +1,90 @@
-import React from "react";
-import {
-  Box,
-  Grid,
-  Typography,
-  IconButton,
-  Stack,
-  Button,
-} from "@mui/material";
-import { SiStylelint } from "react-icons/si";
-import {
-  FaPhoneAlt,
-  FaEnvelope,
-  FaInstagram,
-  FaFacebook,
-  FaWhatsapp,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Box, Typography, TextField, Button, Grid, Link } from "@mui/material";
 
-const Footer = () => {
-  const navigate = useNavigate();
-
+export default function Footer() {
   return (
-    <Box
-      sx={{
-        bgcolor: "#2C2C2C",
-        color: "#FFFFFF",
-        py: 10,
-        px: { xs: 4, sm: 6, md: 10 },
-      }}
-    >
-      <Grid container spacing={4} justifyContent="space-between">
-        <Grid item xs={12} sm={6} md={3}>
+    <Box sx={{ bgcolor: "#000", color: "#fff", px: { xs: 2, md: 8 }, py: { xs: 5, md: 8 } }}>
+      <Grid container spacing={6}>
+        {/* Column 1: Newsletter */}
+        <Grid item xs={10} md={4}>
           <Typography
-            variant="h4"
-            fontWeight="bold"
-            mb={2}
-            display="flex"
-            alignItems="center"
+            variant="h6"
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
           >
-            Fashion Hub <SiStylelint style={{ marginLeft: 8 }} />
+            SIGN UP TO GET 10% OFF YOUR FIRST ORDER
           </Typography>
-          <Stack direction="row" spacing={2} mt={2}>
-            <IconButton
-              component="a"
-              href="https://www.instagram.com/yourInstagramUsername"
-              target="_blank"
-              rel="noopener"
-              sx={{ color: "#fff" }}
+          <Typography sx={{ fontSize: "14px", mb: 3 }}>
+            Stay up to date on the latest product releases, special offers and news.
+          </Typography>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, maxWidth: "300px" }}>
+            <TextField
+              placeholder="Your Email *"
+              variant="outlined"
+              sx={{
+                input: { color: "#fff" },
+                "& fieldset": { borderColor: "#fff" },
+              }}
+            />
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#444",
+                color: "#fff",
+                fontWeight: "bold",
+                "&:hover": { bgcolor: "#666" },
+              }}
             >
-              <FaInstagram />
-            </IconButton>
-            <IconButton
-              component="a"
-              href="https://www.facebook.com/yourFacebookPage"
-              target="_blank"
-              rel="noopener"
-              sx={{ color: "#fff" }}
-            >
-              <FaFacebook />
-            </IconButton>
-            <IconButton
-              component="a"
-              href="https://wa.me/yourNumber"
-              target="_blank"
-              rel="noopener"
-              sx={{ color: "#fff" }}
-            >
-              <FaWhatsapp />
-            </IconButton>
-          </Stack>
+              SUBSCRIBE
+            </Button>
+          </Box>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Typography variant="h5" fontWeight="bold" mb={2}>
-            Give us a call
+        {/* Column 2: Shop Links */}
+        <Grid item xs={12} md={4}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
+          >
+            SHOP
           </Typography>
-          <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <FaPhoneAlt style={{ marginRight: 8 }} /> +91 81603 15863
-          </Typography>
+          {[
+            "FAQ",
+            "Shipping",
+            "Returns",
+            "Careers",
+            "Terms & Conditions",
+            "Privacy Policy",
+          ].map((text) => (
+            <Typography key={text} sx={{ mb: 1 }}>
+              <Link href="#" underline="hover" color="inherit">
+                {text}
+              </Link>
+            </Typography>
+          ))}
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Typography variant="h5" fontWeight="bold" mb={2}>
-            Send us an email
+        {/* Column 3: Contact Info */}
+        <Grid item xs={12} md={4}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
+          >
+            CUSTOMER SERVICE
           </Typography>
-          <Typography sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <FaEnvelope style={{ marginRight: 8 }} /> fashionHub@gmail.com
+          <Typography sx={{ mb: 1 }}>
+            <strong>MONDAY - FRIDAY:</strong> 10:00–6:00 PM
           </Typography>
-          <Button onClick={() => navigate("/Selar_Login")}>Become a Sellar</Button>
+          <Typography sx={{ mb: 1 }}>
+            <strong>PHONE:</strong> +1 712-339-9294
+          </Typography>
+          <Typography sx={{ mb: 1 }}>
+            <strong>EMAIL:</strong> INFO@MODERNO-THEME.COM
+          </Typography>
+          <Typography>
+            <strong>ADDRESS:</strong> 283 N. GLENWOOD STREET, LEVITTOWN, NY
+          </Typography>
         </Grid>
       </Grid>
     </Box>
   );
-};
-
-export default Footer;
+}

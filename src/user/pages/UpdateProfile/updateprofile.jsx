@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Navbar/navbar";
-import backgroundImage from "../../../assets/background-image-reg-loin.jpg";
+import backgroundImage from "/background-image-reg-loin.jpg";
 import { useSelector } from "react-redux";
 
 // Validation schema

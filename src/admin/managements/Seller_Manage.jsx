@@ -1,10 +1,11 @@
+// pages/Seller_Manage.jsx
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Admin_Sidebar from "../pages/Admin_Sidebar";
 import Admin_Navbar from "../pages/Admin_Navbar";
-// import { FaEdit, FaEye } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import Switcher2 from "../managements/Switcher"; // Update the path if needed
 
 const Seller_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
@@ -16,14 +17,11 @@ const Seller_Manage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/api/admin/allSellers`,
-          {
-            headers: {
-              Authorization: `Bearer ${adminInfo?.token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/api/admin/allSellers`, {
+          headers: {
+            Authorization: `Bearer ${adminInfo?.token}`,
+          },
+        });
         setUsers(response?.data?.sellers ?? []);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -45,10 +43,10 @@ const Seller_Manage = () => {
       `Are you sure you want to ${isActive ? "deactivate" : "activate"} this seller?`
     );
     if (!confirmToggle) return;
-  
+
     try {
       const endpoint = `${BASE_URL}/api/admin/sellers/${id}/toggle-status`;
-  
+
       await axios.patch(
         endpoint,
         {},
@@ -58,7 +56,7 @@ const Seller_Manage = () => {
           },
         }
       );
-  
+
       // Update UI
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
@@ -114,20 +112,12 @@ const Seller_Manage = () => {
                       <td className="px-6 py-4 text-gray-600">{user.email || "N/A"}</td>
                       <td className="px-6 py-4 capitalize">{user.role || "Seller"}</td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${user.isActive
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                            }`}
-                        >
-                          {user?.isActive ? "Active" : "Inactive"}
-                        </span>
+                        <Switcher2
+                          isChecked={user.isActive}
+                          onToggle={() => toggleUserStatus(user._id, user.isActive)}
+                        />
                       </td>
                       <td className="px-6 py-4 space-x-2">
-                        {/* Optional view/edit buttons */}
-                        {/* <button className="text-blue-600"><FaEye className="h-4 w-4" /></button>
-                        <button className="text-yellow-600"><FaEdit className="h-4 w-4" /></button> */}
-
                         <button
                           className="text-red-600 hover:underline cursor-pointer"
                           onClick={() => toggleUserStatus(user._id, user.isActive)}

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import backgroundImage from '../../../assets/background-image-reg-loin.jpg';
+import backgroundImage from '/background-image-reg-loin.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import Navbar from '../../../user/pages/navbar/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -57,7 +57,7 @@ const Selar_Login = () => {
       setSubmitting(false);
     }
   };
- 
+  
   return (
     <>
       <Navbar />

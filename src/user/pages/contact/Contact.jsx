@@ -11,7 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import backgroundImage from '../../../assets/Contact-pade-image.jpg';
+import backgroundImage from '/Contact-pade-image.jpg';
 import Navbar from "../../../user/pages/navbar/Navbar";
 import Footer from '../footer/Footer';
 
