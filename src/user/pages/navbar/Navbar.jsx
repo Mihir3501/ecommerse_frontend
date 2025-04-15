@@ -17,6 +17,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, setAccessToken } from "../../../redux/userSlice"; 
 
 const pages = [
   { name: "HOMES", path: "/" },
@@ -27,30 +29,33 @@ const pages = [
   { name: "CONTACTS", path: "/contact" },
 ];
 
-const settings = [
-  { name: "User Login", path: "/login" },
-  { name: "Update Profile", path: "/updateprofile" },
-];
-
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const user = useSelector((state) => state.user.user); 
 
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
+  const handleLogout = () => {
+    dispatch(setUser(null));
+    dispatch(setAccessToken(null));
+    handleCloseUserMenu();
+    navigate("/login");
+  };
+
   return (
     <>
-      {/* Main AppBar */}
       <AppBar position="static" elevation={0} sx={{ backgroundColor: "#fff", color: "#000" }}>
         <Container maxWidth="xl">
-          <Toolbar sx={{ justifyContent: "space-between", py: 2, px: 0 }}>
-            {/* Left: Special Offer Message */}
+          <Toolbar sx={{ justifyContent: "space-between", py: 2 }}>
+           
             <Typography sx={{ fontSize: "0.85rem", fontWeight: 500 }}>
               BEST SPECIAL OFFERS! <strong>40% OFF!</strong>
             </Typography>
 
-            {/* Center: Logo */}
+          
             <Typography
               variant="h4"
               sx={{
@@ -65,7 +70,7 @@ const Navbar = () => {
               MODERNO
             </Typography>
 
-            {/* Right: Icons */}
+            {/* Icons */}
             <Box sx={{ display: "flex", gap: 1 }}>
               <Tooltip title="User">
                 <IconButton onClick={handleOpenUserMenu}>
@@ -77,18 +82,33 @@ const Navbar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
+             
+                {user ? (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/updateprofile");
+                        handleCloseUserMenu();
+                      }}
+                    >
+                      <Typography>Update Profile</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>
+                      <Typography>Logout</Typography>
+                    </MenuItem>
+                  </>
+                ) : (
                   <MenuItem
-                    key={setting.name}
                     onClick={() => {
-                      navigate(setting.path);
+                      navigate("/login");
                       handleCloseUserMenu();
                     }}
                   >
-                    <Typography>{setting.name}</Typography>
+                    <Typography>User Login</Typography>
                   </MenuItem>
-                ))}
+                )}
               </Menu>
+
               <IconButton>
                 <SearchIcon sx={{ color: "#000" }} />
               </IconButton>
@@ -102,10 +122,8 @@ const Navbar = () => {
           </Toolbar>
         </Container>
 
-        {/* Divider Line */}
         <Divider sx={{ borderColor: "#ccc" }} />
 
-        {/* Bottom Navigation Row */}
         <Box sx={{ backgroundColor: "#fff", py: 1 }}>
           <Container maxWidth="xl">
             <Box sx={{ display: "flex", justifyContent: "center", gap: 4 }}>

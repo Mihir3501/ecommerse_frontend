@@ -6,9 +6,11 @@ import { Navigate } from "react-router-dom";
 // adminOnly = false (default) → only allow normal users
 const PrivateRouter = ({ children, adminOnly = false }) => {
   const userInfo = useSelector((state) => state.auth); // user state
+  const sellerInfo = useSelector((state) => state.auth); // user state
   const adminInfo = useSelector((state) => state.admin?.adminInfo); // safely access adminInfo
 
   const isUserLoggedIn = !!userInfo?.token;
+  const isSellerLoggedIn = !!sellerInfo?.token;
   const isAdminLoggedIn = !!adminInfo?.token;
 
   if (adminOnly && !isAdminLoggedIn) {
@@ -17,6 +19,9 @@ const PrivateRouter = ({ children, adminOnly = false }) => {
 
   if (!adminOnly && !isUserLoggedIn) {
     return <Navigate to="/login" />;
+  }
+  if(!adminOnly && !isSellerLoggedIn){
+    return <Navigate to="selar_login"/>
   }
 
   return children;

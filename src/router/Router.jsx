@@ -50,6 +50,22 @@ const Router = () => {
             </PrivateRouter>
           }
         />
+        <Route
+          path="/selar_dashboard"
+          element={
+            <PrivateRouter>
+              <Selar_Dashboard />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/selar_login"
+          element={
+            <PrivateRouter>
+              <Selar_Login />
+            </PrivateRouter>
+          }
+        />
 
         {/* Public Admin Route */}
         <Route path="/admin_login" element={<Admin_Login />} />

@@ -14,8 +14,10 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Product section component
 const ProductSection = ({ title, products, loading }) => (
+  
   <Box
     sx={{
       py: { xs: 6, sm: 8 },
@@ -56,10 +58,11 @@ const ProductSection = ({ title, products, loading }) => (
                   boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
                 },
               }}
+              
             >
               <CardMedia
                 component="img"
-                image={`${import.meta.env.VITE_BASE_URL}/uploads`}
+                image={item?.images?.length ? BASE_URL + item.images[0] : "./18505047_SL-070720-32260-21.svg"}
                 alt={`Product ${index + 1}`}
                 sx={{
                   height: 400,
@@ -95,7 +98,6 @@ const Categories = () => {
     "footwear",
     "shoes",
   ]);
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loadingCategory, setLoadingCategory] = useState({});
