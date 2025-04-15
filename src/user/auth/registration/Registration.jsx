@@ -320,7 +320,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import HomeIcon from "@mui/icons-material/Home";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import backgroundImage from "../../../assets/background-image-reg-loin.jpg";
+import backgroundImage from "/background-image-reg-loin.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { userSignup } from "../../../config/Dataservice";

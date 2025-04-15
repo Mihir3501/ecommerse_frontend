@@ -7,19 +7,19 @@ export const loginAdmin = createAsyncThunk(
     try {
       const response = await loginAdminAPI({ email, password });
 
-      console.log(" ADMIN LOGIN RESPONSE:", response.data)
-      //  Combine token with admin object
+      console.log(" ADMIN LOGIN RESPONSE:", response.data);
+
+      // Combine token with admin object
       const data = {
         ...response.data.admin,
         token: response.data.token,
       };
 
-      //  Store the flattened object in localStorage
-      localStorage.setItem("adminAuth", JSON.stringify(data));
+      // ❌ No localStorage here
 
       return data;
     } catch (error) {
-      console.error(" ADMIN LOGIN ERROR:", error.response?.data || error.message);  // Add this
+      console.error(" ADMIN LOGIN ERROR:", error.response?.data || error.message);
 
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
     }
@@ -27,16 +27,16 @@ export const loginAdmin = createAsyncThunk(
 );
 
 const adminSlice = createSlice({
-  name: "admin", //  updated to match store key
+  name: "admin",
   initialState: {
-    adminInfo: JSON.parse(localStorage.getItem("adminAuth")) || null,
-    isAuthenticated: !!localStorage.getItem("adminAuth"),
+    adminInfo: null, // ❌ No localStorage here
+    isAuthenticated: false,
     loading: false,
     error: null,
   },
   reducers: {
     logoutAdmin: (state) => {
-      localStorage.removeItem("adminAuth");
+      // ❌ No localStorage.removeItem here
       state.adminInfo = null;
       state.isAuthenticated = false;
       state.error = null;

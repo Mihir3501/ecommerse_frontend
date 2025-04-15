@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
-import backgroundImage from "../../../assets/main-first-section-bg.jpg";
+import backgroundImage from "/main-first-section-bg.jpg";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
@@ -195,8 +195,10 @@ const Mainpage = () => {
         </Swiper>
       </Box>
 
-      
-      <Footer />
+      <Box sx={{ maxWidth: "1250px", mx: "auto" }}>
+  <Footer />
+</Box>
+
     </>
   );
 };
