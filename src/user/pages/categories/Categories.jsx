@@ -13,20 +13,17 @@ import {
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
- 
- 
- 
- 
- 
+
+// Product section component
 const ProductSection = ({ title, products, loading }) => (
   <Box
-  sx={{
-    py: { xs: 6, sm: 8 },
-    px: { xs: 2, sm: 4 },
-    textAlign: "center",
-    background: "linear-gradient(to right, #fff5f7, #f0f4ff)",
-    minHeight: "100vh",
-  }}
+    sx={{
+      py: { xs: 6, sm: 8 },
+      px: { xs: 2, sm: 4 },
+      textAlign: "center",
+      background: "linear-gradient(to right, #fff5f7, #f0f4ff)",
+      minHeight: "100vh",
+    }}
   >
     <Typography
       variant="h6"
@@ -34,16 +31,16 @@ const ProductSection = ({ title, products, loading }) => (
       color="text.secondary"
       mb={4}
       sx={{ fontStyle: "italic" }}
-      >
+    >
       {title}
     </Typography>
- 
+
     {loading ? (
       <CircularProgress />
     ) : (
       <Grid container spacing={4} justifyContent="center">
         {products.map((item, index) => (
-          <Grid item key={item.id || index} xs={12} sm={6} md={4} lg={3}>
+          <Grid item key={item._id || index} xs={12} sm={6} md={4} lg={3}>
             <Card
               sx={{
                 height: "100%",
@@ -59,10 +56,10 @@ const ProductSection = ({ title, products, loading }) => (
                   boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
                 },
               }}
-              >
+            >
               <CardMedia
                 component="img"
-                image={item.src}
+                image={`${import.meta.env.VITE_BASE_URL}/uploads`}
                 alt={`Product ${index + 1}`}
                 sx={{
                   height: 400,
@@ -70,7 +67,7 @@ const ProductSection = ({ title, products, loading }) => (
                   objectFit: "cover",
                   borderRadius: "12px 12px 0 0",
                 }}
-                />
+              />
               <CardContent sx={{ textAlign: "center" }}>
                 <Typography variant="h6" fontWeight="bold" mb={1}>
                   Price: ₹{item.price}
@@ -86,8 +83,8 @@ const ProductSection = ({ title, products, loading }) => (
     )}
   </Box>
 );
- 
-// Main Categories Page
+
+// Main categories page
 const Categories = () => {
   const [categories, setCategories] = useState([
     "dresses",
@@ -99,22 +96,20 @@ const Categories = () => {
     "shoes",
   ]);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
- 
+
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loadingCategory, setLoadingCategory] = useState({});
- 
+
   useEffect(() => {
     categories.forEach((category) => {
       fetchProducts(category);
     });
   }, []);
- 
+
   const fetchProducts = async (category) => {
     try {
-     
       setLoadingCategory((prev) => ({ ...prev, [category]: true }));
-      const res = await axios.get(`${BASE_URL}/api/product/categories`);    
- 
+      const res = await axios.get(`${BASE_URL}/api/product/categories?category=${category}`);
       setProductsByCategory((prev) => ({ ...prev, [category]: res.data }));
     } catch (error) {
       console.error(`Error fetching ${category}:`, error);
@@ -123,7 +118,7 @@ const Categories = () => {
       setLoadingCategory((prev) => ({ ...prev, [category]: false }));
     }
   };
- 
+
   return (
     <>
       <Navbar />
@@ -141,7 +136,7 @@ const Categories = () => {
           Trendy & Elegant Products Await!
         </Typography>
       </Box>
- 
+
       {categories.map((cat) => (
         <ProductSection
           key={cat}
@@ -150,10 +145,10 @@ const Categories = () => {
           loading={loadingCategory[cat]}
         />
       ))}
- 
+
       <Footer />
     </>
   );
 };
- 
+
 export default Categories;
