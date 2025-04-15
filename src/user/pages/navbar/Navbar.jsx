@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 const pages = [
   { name: "HOMES", path: "/" },
-  { name: "SHOP", path: "/shop" },
+  { name: "SHOP", path: "/Categories" },
   { name: "BLOG", path: "/blog" },
   { name: "PAGES", path: "/pages" },
   { name: "MEGA", path: "/mega" },

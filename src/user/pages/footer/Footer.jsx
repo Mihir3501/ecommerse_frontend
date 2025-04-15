@@ -1,11 +1,14 @@
 import { Box, Typography, TextField, Button, Grid, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
+  const navigate = useNavigate();
+
   return (
     <Box sx={{ bgcolor: "#000", color: "#fff", px: { xs: 2, md: 8 }, py: { xs: 5, md: 8 } }}>
       <Grid container spacing={6}>
         {/* Column 1: Newsletter */}
-        <Grid item xs={10} md={4}>
+        <Grid item xs={12} md={4}>
           <Typography
             variant="h6"
             sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
@@ -85,6 +88,25 @@ export default function Footer() {
           </Typography>
         </Grid>
       </Grid>
+
+      {/* Sell on Moderno Button */}
+      <Box sx={{ mt: 6, textAlign: "center" }}>
+        <Button
+          variant="outlined"
+          sx={{
+            color: "#fff",
+            borderColor: "#fff",
+            fontWeight: "bold",
+            "&:hover": {
+              bgcolor: "#fff",
+              color: "#000",
+            },
+          }}
+          onClick={() => navigate("/Selar_Registrastion")}
+        >
+          SELL ON MODERNO
+        </Button>
+      </Box>
     </Box>
   );
 }
