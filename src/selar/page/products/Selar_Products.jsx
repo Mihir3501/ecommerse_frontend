@@ -28,7 +28,7 @@ const Selar_Products = () => {
  
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/seller/add-product`, {
+      const response = await axios.get(`${BASE_URL}/api/seller/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

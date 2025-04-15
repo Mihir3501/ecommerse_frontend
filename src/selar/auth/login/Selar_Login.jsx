@@ -60,7 +60,7 @@ const Selar_Login = () => {
   
   return (
     <>
-      <Navbar />
+      
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,

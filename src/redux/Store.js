@@ -7,7 +7,8 @@ import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist
 
 import authReducer from './authSlice';
 import sellerReducer from './sellarSlice';
-import adminReducer from './adminSlice'; // ✅ Import the admin slice
+import adminReducer from './adminSlice';
+import userReducer from './userSlice'; // ✅ Import user slice
 
 const persistConfig = {
   key: 'root',
@@ -18,7 +19,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   seller: sellerReducer,
-  admin: adminReducer, // ✅ Add it to the combined reducers
+  admin: adminReducer,
+  user: userReducer, // ✅ Add user reducer here
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
