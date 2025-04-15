@@ -23,6 +23,10 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 
+// Redux
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/createSlice"; // Adjust path as needed
+
 const categories = [
   { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
   { src: "src/assets/shirt-image1.jpeg", title: "Shirts" },
@@ -36,6 +40,7 @@ const categories = [
 
 const Mainpage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const productSectionRef = useRef(null);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -46,11 +51,16 @@ const Mainpage = () => {
     productSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+    // navigate("/addtocart");
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/product`);
-        setProducts(res.data.products || []); // Adjust based on your API structure
+        setProducts(res.data.products || []);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -95,7 +105,7 @@ const Mainpage = () => {
         </Box>
       </Box>
 
-      {/* Section 2 - Products */}
+      {/* Products Section */}
       <Box
         ref={productSectionRef}
         sx={{
@@ -133,7 +143,11 @@ const Mainpage = () => {
                 >
                   <CardMedia
                     component="img"
-                    image={item?.images.length ? BASE_URL + item.images[0] : "./18505047_SL-070720-32260-21.svg"} // Make sure your product object has `image`
+                    image={
+                      item?.images?.length
+                        ? `${BASE_URL}${item.images[0]}`
+                        : "./18505047_SL-070720-32260-21.svg"
+                    }
                     alt={item.name || `Product ${index + 1}`}
                     sx={{
                       height: 400,
@@ -146,7 +160,10 @@ const Mainpage = () => {
                       ₹{item.price}
                     </Typography>
                     <Typography variant="subtitle1">{item.name}</Typography>
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleAddToCart(item)}
+                    >
                       <LocalMallIcon />
                     </IconButton>
                   </CardContent>
@@ -157,7 +174,7 @@ const Mainpage = () => {
         )}
       </Box>
 
-      {/* Section 3 - Categories */}
+      {/* Categories Section */}
       <Box sx={{ py: 6, px: 4, textAlign: "center" }}>
         <Typography variant="h4" fontWeight="bold" mb={2}>
           Shop By Categories
@@ -195,6 +212,7 @@ const Mainpage = () => {
         </Swiper>
       </Box>
 
+      {/* Footer */}
       <Box sx={{ maxWidth: "1250px", mx: "auto" }}>
         <Footer />
       </Box>
