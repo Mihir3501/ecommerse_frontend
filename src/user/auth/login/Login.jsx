@@ -18,6 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setToken } from "../../../redux/authSlice";
+import { setUser } from "../../../redux/userSlice"; // ✅ import setUser
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -44,9 +45,14 @@ const Login = () => {
 
       toast.success("Login successful!");
 
+      // Save to localStorage
       localStorage.setItem("userAuth", JSON.stringify(response.data));
+
+      // ✅ Set user and token in Redux
+      dispatch(setUser(response.data.user));
       dispatch(setToken(response.data.user.token));
 
+      // Redirect to main page
       setTimeout(() => navigate("/mainpage"), 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
@@ -70,7 +76,14 @@ const Login = () => {
         }}
       >
         <Container maxWidth="sm">
-          <Card sx={{ p: 4, boxShadow: 6, borderRadius: 3, backgroundColor: "rgba(255,255,255,0.85)" }}>
+          <Card
+            sx={{
+              p: 4,
+              boxShadow: 6,
+              borderRadius: 3,
+              backgroundColor: "rgba(255,255,255,0.85)",
+            }}
+          >
             <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Login
             </Typography>

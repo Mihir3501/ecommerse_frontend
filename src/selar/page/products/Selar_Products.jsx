@@ -33,7 +33,9 @@ const Selar_Products = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setProducts(response?.data?.sellers ?? []);
+      console.log("Response from API:", response.data); 
+      setProducts(response.data); 
+
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -180,7 +182,7 @@ const Selar_Products = () => {
                 >
                   <option value="">Select Product</option>
                   <option value="dress">Dress</option>
-                  <option value="jwellary">Jewelry</option>
+                  <option value="jwellery">jwellary</option>
                   <option value="footware">Footwear</option>
                   <option value="shirt">Shirt</option>
                   <option value="watch">Watch</option>
@@ -236,7 +238,7 @@ const Selar_Products = () => {
               >
                 <option value="">Select Subcategories</option>
                 <option value="dress">Dress</option>
-                <option value="jwellary">Jewelry</option>
+                <option value="jwellery">jwellary</option>
                 <option value="footware">Footwear</option>
                 <option value="shirt">Shirt</option>
                 <option value="watch">Watch</option>
