@@ -16,16 +16,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import axios from "axios";
-
-// Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-
-// Redux
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/createSlice"; // Adjust path as needed
+import { addToCart } from "../../../redux/createSlice";
 
 const categories = [
   { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
@@ -53,7 +49,6 @@ const Mainpage = () => {
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
-    // navigate("/addtocart");
   };
 
   useEffect(() => {
@@ -134,13 +129,69 @@ const Mainpage = () => {
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-between",
                     borderRadius: 3,
                     boxShadow: 5,
+                    position: "relative",
                     transition: "transform 0.3s ease-in-out",
-                    "&:hover": { transform: "scale(1.05)" },
+                    "&:hover": { transform: "scale(1.03)" },
                   }}
                 >
+                  {/* Tags */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      zIndex: 2,
+                    }}
+                  >
+                    {item.isBestSeller && (
+                      <Box
+                        sx={{
+                          bgcolor: "black",
+                          color: "white",
+                          fontSize: "12px",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                        }}
+                      >
+                        BEST SELLER
+                      </Box>
+                    )}
+                    {item.isFeatured && (
+                      <Box
+                        sx={{
+                          bgcolor: "#616161",
+                          color: "white",
+                          fontSize: "12px",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                        }}
+                      >
+                        FEATURED
+                      </Box>
+                    )}
+                    {item.discount && (
+                      <Box
+                        sx={{
+                          bgcolor: "#f44336",
+                          color: "white",
+                          fontSize: "12px",
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                        }}
+                      >
+                        -{item.discount}%
+                      </Box>
+                    )}
+                  </Box>
+
                   <CardMedia
                     component="img"
                     image={
@@ -148,24 +199,66 @@ const Mainpage = () => {
                         ? `${BASE_URL}${item.images[0]}`
                         : "./18505047_SL-070720-32260-21.svg"
                     }
-                    alt={item.name || `Product ${index + 1}`}
+                    alt={item.name}
                     sx={{
                       height: 400,
                       objectFit: "cover",
                       borderRadius: "12px 12px 0 0",
                     }}
                   />
-                  <CardContent sx={{ textAlign: "center" }}>
-                    <Typography variant="h6" fontWeight="bold">
-                      ₹{item.price}
+
+                  <CardContent sx={{ textAlign: "left" }}>
+                    <Typography fontSize={14} color="text.secondary">
+                      {item.brand || "BRAND NAME"}
                     </Typography>
-                    <Typography variant="subtitle1">{item.name}</Typography>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleAddToCart(item)}
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {item.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      mb={1}
+                      sx={{
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
                     >
-                      <LocalMallIcon />
-                    </IconButton>
+                      {item.description || "Product description..."}
+                    </Typography>
+
+                    <Typography variant="body1" fontWeight="bold" gutterBottom>
+                      ₹{item.price}{" "}
+                      {item.originalPrice && (
+                        <Typography
+                          component="span"
+                          sx={{
+                            textDecoration: "line-through",
+                            ml: 1,
+                            fontSize: 14,
+                          }}
+                          color="text.secondary"
+                        >
+                          ₹{item.originalPrice}
+                        </Typography>
+                      )}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {item.stock > 0
+                        ? `Available: ${item.stock}`
+                        : "Out of Stock"}
+                    </Typography>
+
+                    <Box mt={2} textAlign="center">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleAddToCart(item)}
+                        sx={{ border: "1px solid", borderRadius: 2 }}
+                      >
+                        <LocalMallIcon />
+                      </IconButton>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
@@ -213,7 +306,7 @@ const Mainpage = () => {
       </Box>
 
       {/* Footer */}
-      <Box sx={{ maxWidth: "1250px", mx: "auto" }}>
+      <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
         <Footer />
       </Box>
     </>

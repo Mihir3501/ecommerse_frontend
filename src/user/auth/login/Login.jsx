@@ -18,7 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setToken } from "../../../redux/authSlice";
-import { setUser } from "../../../redux/userSlice"; // ✅ import setUser
+import { setUser } from "../../../redux/userSlice"; 
 
 const validationSchema = Yup.object({
   email: Yup.string()

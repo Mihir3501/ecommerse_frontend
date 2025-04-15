@@ -5,13 +5,13 @@ export default function Footer() {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ bgcolor: "#000", color: "#fff", px: { xs: 2, md: 8 }, py: { xs: 5, md: 8 } }}>
-      <Grid container spacing={6}>
+    <Box sx={{ bgcolor: "#000", color: "#fff", px: { xs: 2, md: 6 }, py: { xs: 4, md: 6 } }}>
+      <Grid container spacing={8}>
         {/* Column 1: Newsletter */}
         <Grid item xs={12} md={4}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "14px", md: "16px" } }}
           >
             SIGN UP TO GET 10% OFF YOUR FIRST ORDER
           </Typography>
@@ -46,7 +46,7 @@ export default function Footer() {
         <Grid item xs={12} md={4}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "14px", md: "16px" } }}
           >
             SHOP
           </Typography>
@@ -70,7 +70,7 @@ export default function Footer() {
         <Grid item xs={12} md={4}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "16px", md: "18px" } }}
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "14px", md: "16px" } }}
           >
             CUSTOMER SERVICE
           </Typography>
