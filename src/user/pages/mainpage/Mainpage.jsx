@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import backgroundImage from "/main-first-section-bg.jpg";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import axios from "axios";
@@ -23,20 +23,22 @@ import { Navigation } from "swiper/modules";
 import { useDispatch } from "react-redux";
 import { addToCartLocal } from "../../../redux/createSlice"; // ✅ correct import
 
-const categories = [
-  { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
-  { src: "src/assets/shirt-image1.jpeg", title: "Shirts" },
-  { src: "src/assets/jwellary-image1.jpeg", title: "jwellary" },
-  { src: "src/assets/watch-image1.jpeg", title: "watch" },
-  { src: "src/assets/glasses-image1.jpeg", title: "Glasses" },
-  { src: "src/assets/bag-image1.jpeg", title: "bags" },
-  { src: "src/assets/footware-image1.jpeg", title: "footware" },
-  { src: "src/assets/shoes-image1.jpeg", title: "Shoes" },
-];
+// const categories = [
+//   { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
+//   { src: "src/assets/shirt-image1.jpeg", title: "Shirts" },
+//   { src: "src/assets/jwellary-image1.jpeg", title: "jwellary" },
+//   { src: "src/assets/watch-image1.jpeg", title: "watch" },
+//   { src: "src/assets/glasses-image1.jpeg", title: "Glasses" },
+//   { src: "src/assets/bag-image1.jpeg", title: "bags" },
+//   { src: "src/assets/footware-image1.jpeg", title: "footware" },
+//   { src: "src/assets/shoes-image1.jpeg", title: "Shoes" },
+// ];
 
 const Mainpage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  console.log( "location:" , location)
   const productSectionRef = useRef(null);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -45,7 +47,18 @@ const Mainpage = () => {
 
   const scrollToProducts = () => {
     productSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+
   };
+
+  useEffect(() => {
+    if (location.hash) {
+      const elementId = location.hash.replace('#', '');
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
 
   const handleAddToCart = (product) => {
     dispatch(addToCartLocal(product)); // ✅ correct usage
@@ -108,6 +121,7 @@ const Mainpage = () => {
           px: { xs: 2, sm: 4 },
           textAlign: "center",
         }}
+        id="ishika"
       >
         <Typography variant="h4" fontWeight="bold" mb={2}>
           BEST OUTFIT FOR YOUR HAPPINESS
@@ -115,6 +129,9 @@ const Mainpage = () => {
         <Typography variant="h6" color="text.secondary" mb={4}>
           LOWER PRICES
         </Typography>
+        <Button onClick={() => navigate("/categories")}>
+                    Explore Now
+         </Button>
 
         {loading ? (
           <CircularProgress />
