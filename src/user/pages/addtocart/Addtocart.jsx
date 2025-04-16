@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, Typography, CardMedia, IconButton, Button, Divider,
-  Radio, RadioGroup, FormControlLabel,
+  Box,
+  Typography,
+  CardMedia,
+  IconButton,
+  Button,
+  Divider,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +19,6 @@ import {
   fetchCartItems,
   updateQuantityAsync,
   clearCartAsync,
-  // Removed unused addToCartLocal
 } from "../../../redux/createSlice";
 
 const Addtocart = () => {
@@ -20,36 +26,46 @@ const Addtocart = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
   const [shipping, setShipping] = useState("flat");
-
-  const shippingCost = shipping === "flat" ? 30 : 0;
-  const subtotal = Array.isArray(cartItems)
-  ? cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  : 0;
-  const total = subtotal + shippingCost;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     dispatch(fetchCartItems());
   }, [dispatch]);
 
+  const shippingCost = shipping === "flat" ? 30 : 0;
+
+  const subtotal = Array.isArray(cartItems)
+    ? cartItems.reduce((sum, item) => {
+        const price = item?.product?.price ?? 0;
+        const quantity = item?.quantity ?? 1;
+        return sum + price * quantity;
+      }, 0)
+    : 0;
+
+  const total = subtotal + shippingCost;
+
   const handleQuantityChange = (itemId, type) => {
     dispatch(updateQuantityAsync({ itemId, type }));
   };
 
-  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+  if (!Array.isArray(cartItems) || cartItems?.length === 0) {
     return (
-      <Box sx={{ textAlign: "center", py: 10 }}>
-        <Typography variant="h6">Your Cart Is Currently Empty</Typography>
-        <Button
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={() => navigate("/categories")}
-        >
-          Return to Shop
-        </Button>
-      </Box>
+      <>
+        <Navbar />
+        <Box sx={{ textAlign: "center", py: 10 }}>
+          <Typography variant="h6">Your Cart Is Currently Empty</Typography>
+          <Button
+            variant="outlined"
+            sx={{ mt: 2 }}
+            onClick={() => navigate("/categories")}
+          >
+            Return to Shop
+          </Button>
+        </Box>
+        <Footer />
+      </>
     );
   }
-  
 
   return (
     <>
@@ -79,66 +95,84 @@ const Addtocart = () => {
               <Box width="25%">Subtotal</Box>
             </Box>
 
-            {cartItems.map((item) => (
-              <Box
-                key={item._id}
-                display="flex"
-                alignItems="center"
-                py={3}
-                borderBottom="1px solid #eee"
-              >
-                <Box width="50%" display="flex" alignItems="center">
-                  <CardMedia
-                    component="img"
-                    image={item.images[0]}
-                    alt={item.name}
-                    sx={{
-                      width: 90,
-                      height: 110,
-                      objectFit: "cover",
-                      borderRadius: 2,
-                      mr: 2,
-                    }}
-                  />
-                  <Box>
-                    <Typography fontWeight="bold">{item.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      PRADA
-                    </Typography>
-                    <Typography variant="body2" mt={0.5}>
-                      ₹{item.price.toFixed(2)} × {item.quantity}
-                    </Typography>
+            {cartItems
+              .filter((item) => item && typeof item === "object" && item._id)
+              .map((item) => {
+                const product = item?.product || {};
+                const imageUrl = product?.images?.[0]
+                  ? `${BASE_URL}${product.images[0]}`
+                  : "./18505047_SL-070720-32260-21.svg";
+
+                const name = product?.name || "Unnamed Product";
+                const quantity = item?.quantity ?? 1;
+                const price = product?.price ?? 0;
+                const subtotalPerItem = price * quantity;
+
+                return (
+                  <Box
+                    key={item._id}
+                    display="flex"
+                    alignItems="center"
+                    py={3}
+                    borderBottom="1px solid #eee"
+                  >
+                    <Box width="50%" display="flex" alignItems="center">
+                      <CardMedia
+                        component="img"
+                        image={imageUrl}
+                        alt={name}
+                        sx={{
+                          width: 90,
+                          height: 110,
+                          objectFit: "cover",
+                          borderRadius: 2,
+                          mr: 2,
+                        }}
+                      />
+                      <Box>
+                        <Typography fontWeight="bold">{name}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          PRADA
+                        </Typography>
+                        <Typography variant="body2" mt={0.5}>
+                          ₹{price.toFixed(2)} × {quantity}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box
+                      width="25%"
+                      display="flex"
+                      alignItems="center"
+                      gap={1.5}
+                    >
+                      <IconButton
+                        onClick={() =>
+                          handleQuantityChange(item._id, "decrease")
+                        }
+                        sx={{ border: "1px solid #ccc", p: 0.5 }}
+                      >
+                        <Remove />
+                      </IconButton>
+                      <Typography fontWeight="bold">{quantity}</Typography>
+                      <IconButton
+                        onClick={() =>
+                          handleQuantityChange(item._id, "increase")
+                        }
+                        sx={{ border: "1px solid #ccc", p: 0.5 }}
+                      >
+                        <Add />
+                      </IconButton>
+                    </Box>
+
+                    <Box width="25%">
+                      <Typography fontWeight="bold" color="primary">
+                        ₹{subtotalPerItem.toFixed(2)}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-
-                <Box
-                  width="25%"
-                  display="flex"
-                  alignItems="center"
-                  gap={1.5}
-                >
-                  <IconButton
-                    onClick={() => handleQuantityChange(item._id, "decrease")}
-                    sx={{ border: "1px solid #ccc", p: 0.5 }}
-                  >
-                    <Remove />
-                  </IconButton>
-                  <Typography fontWeight="bold">{item.quantity}</Typography>
-                  <IconButton
-                    onClick={() => handleQuantityChange(item._id, "increase")}
-                    sx={{ border: "1px solid #ccc", p: 0.5 }}
-                  >
-                    <Add />
-                  </IconButton>
-                </Box>
-
-                <Box width="25%">
-                  <Typography fontWeight="bold" color="primary">
-                    ₹{(item.price * item.quantity).toFixed(2)}
-                  </Typography>
-                </Box>
-              </Box>
-            ))}
+                );
+              })}
           </Box>
 
           {/* Right - Summary */}
@@ -177,10 +211,23 @@ const Addtocart = () => {
             </Box>
 
             <Box mt={2}>
-              <Typography fontWeight="bold" mb={1}>Shipping</Typography>
-              <RadioGroup value={shipping} onChange={(e) => setShipping(e.target.value)}>
-                <FormControlLabel value="flat" control={<Radio />} label="Flat rate: ₹30.00" />
-                <FormControlLabel value="pickup" control={<Radio />} label="Local pickup" />
+              <Typography fontWeight="bold" mb={1}>
+                Shipping
+              </Typography>
+              <RadioGroup
+                value={shipping}
+                onChange={(e) => setShipping(e.target.value)}
+              >
+                <FormControlLabel
+                  value="flat"
+                  control={<Radio />}
+                  label="Flat rate: ₹30.00"
+                />
+                <FormControlLabel
+                  value="pickup"
+                  control={<Radio />}
+                  label="Local pickup"
+                />
               </RadioGroup>
             </Box>
 

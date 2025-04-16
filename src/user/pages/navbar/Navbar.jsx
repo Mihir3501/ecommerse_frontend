@@ -35,14 +35,15 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.user.user);
-  const totalQuantity = cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-
+  const totalQuantity = Array.isArray(cartItems)
+  ? cartItems.reduce((sum, item) => sum + (item?.quantity || 0), 0)
+  : 0;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
+  };  
 
   const handleClose = () => {
     setAnchorEl(null);
