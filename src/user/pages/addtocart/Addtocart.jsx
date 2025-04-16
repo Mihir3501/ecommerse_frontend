@@ -49,53 +49,120 @@ const Addtocart = () => {
     <>
       <Navbar />
       <Box sx={{ px: { xs: 2, md: 6 }, py: 6, maxWidth: "1450px", mx: "auto" }}>
-        <Typography variant="h5" mb={3}>Shopping Cart</Typography>
+        <Typography variant="h4" fontWeight="bold" mb={4}>
+          Shopping Cart
+        </Typography>
 
-        <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={6}>
-          {/* Cart Items */}
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }}
+          gap={6}
+          alignItems="flex-start"
+        >
+          {/* Left - Product List */}
           <Box flex={2}>
-            <Box display="flex" fontWeight="bold" pb={1} borderBottom="1px solid #ccc">
+            <Box
+              display="flex"
+              fontWeight="bold"
+              pb={1}
+              borderBottom="2px solid #ccc"
+              color="gray"
+            >
               <Box width="50%">Product</Box>
               <Box width="25%">Quantity</Box>
               <Box width="25%">Subtotal</Box>
             </Box>
 
             {cartItems.map((item) => (
-              <Box key={item._id} display="flex" alignItems="center" py={2} borderBottom="1px solid #eee">
+              <Box
+                key={item._id}
+                display="flex"
+                alignItems="center"
+                py={3}
+                borderBottom="1px solid #eee"
+              >
                 <Box width="50%" display="flex" alignItems="center">
                   <CardMedia
                     component="img"
                     image={item.images[0]}
                     alt={item.name}
-                    sx={{ width: 80, height: 100, objectFit: "cover", mr: 2 }}
+                    sx={{
+                      width: 90,
+                      height: 110,
+                      objectFit: "cover",
+                      borderRadius: 2,
+                      mr: 2,
+                    }}
                   />
                   <Box>
                     <Typography fontWeight="bold">{item.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">PRADA</Typography>
-                    <Typography variant="body2">1 × ₹{item.price}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      PRADA
+                    </Typography>
+                    <Typography variant="body2" mt={0.5}>
+                      ₹{item.price.toFixed(2)} × {item.quantity}
+                    </Typography>
                   </Box>
                 </Box>
 
-                <Box width="25%" display="flex" alignItems="center">
-                  <IconButton onClick={() => handleQuantityChange(item._id, "decrease")}>
+                <Box
+                  width="25%"
+                  display="flex"
+                  alignItems="center"
+                  gap={1.5}
+                >
+                  <IconButton
+                    onClick={() => handleQuantityChange(item._id, "decrease")}
+                    sx={{ border: "1px solid #ccc", p: 0.5 }}
+                  >
                     <Remove />
                   </IconButton>
-                  <Typography>{item.quantity}</Typography>
-                  <IconButton onClick={() => handleQuantityChange(item._id, "increase")}>
+                  <Typography fontWeight="bold">{item.quantity}</Typography>
+                  <IconButton
+                    onClick={() => handleQuantityChange(item._id, "increase")}
+                    sx={{ border: "1px solid #ccc", p: 0.5 }}
+                  >
                     <Add />
                   </IconButton>
                 </Box>
 
                 <Box width="25%">
-                  <Typography fontWeight="bold">₹{(item.price * item.quantity).toFixed(2)}</Typography>
+                  <Typography fontWeight="bold" color="primary">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </Typography>
                 </Box>
               </Box>
             ))}
           </Box>
 
-          {/* Summary */}
-          <Box flex={1} border="1px solid #ddd" borderRadius={2} p={3} sx={{ minWidth: "300px" }}>
-            <Typography fontWeight="bold">COUPON CODE</Typography>
+          {/* Right - Summary */}
+          <Box
+            flex={1}
+            border="1px solid #ddd"
+            borderRadius={3}
+            p={3}
+            boxShadow={2}
+            sx={{
+              position: { md: "sticky" },
+              top: 100,
+              minWidth: "300px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography fontWeight="bold" fontSize="16px">
+                COUPON CODE
+              </Typography>
+              <Button size="small" variant="outlined">
+                +
+              </Button>
+            </Box>
+
             <Divider sx={{ my: 2 }} />
 
             <Box display="flex" justifyContent="space-between" mb={1}>
@@ -113,12 +180,29 @@ const Addtocart = () => {
 
             <Divider sx={{ my: 2 }} />
 
-            <Box display="flex" justifyContent="space-between" fontWeight="bold" mb={2}>
-              <Typography>Total</Typography>
-              <Typography>₹{total.toFixed(2)}</Typography>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              fontWeight="bold"
+              mb={2}
+            >
+              <Typography variant="h6">Total</Typography>
+              <Typography variant="h6">₹{total.toFixed(2)}</Typography>
             </Box>
 
-            <Button fullWidth variant="contained" sx={{ py: 1.5 }} onClick={() => alert("Proceed to Checkout")}>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{
+                backgroundColor: "#000",
+                color: "#fff",
+                py: 1.5,
+                "&:hover": {
+                  backgroundColor: "#333",
+                },
+              }}
+              onClick={() => alert("Proceed to Payment")}
+            >
               Checkout
             </Button>
           </Box>

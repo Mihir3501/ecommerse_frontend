@@ -5,20 +5,18 @@ import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
 import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
- 
+
 const Selar_Products = () => {
   const token = useSelector((state) => state.seller.sellerInfo?.token);
-  // const token = sellerInfo?.token;
   const BASE_URL = import.meta.env.VITE_BASE_URL;
- 
+  const ImageBaseURL = import.meta.env.VITE_BASE_URL;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [images, setImages] = useState(null);
   const fileInputRef = useRef();
 
-  console.log(products , ":hhh")
- 
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -27,7 +25,7 @@ const Selar_Products = () => {
     category: "",
     subcategories: "",
   });
- 
+
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/seller/products`, {
@@ -37,25 +35,25 @@ const Selar_Products = () => {
       });
       console.log("Response from API:", response.data.products); 
       setProducts(response.data.products); 
-
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
   };
- 
+
   useEffect(() => {
-    fetchProducts();
-  }, []);
- 
+    if (token) fetchProducts();
+    else setLoading(false);
+  }, [token]);
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
- 
+
     const formData = new FormData();
     formData.append("images", file);
- 
+
     try {
       await axios.post(
         `${BASE_URL}/api/seller/upload-product-images`,
@@ -74,22 +72,21 @@ const Selar_Products = () => {
       alert("Failed to upload image.");
     }
   };
- 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
- 
+
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    console.log(token, "token");
- 
+
     const subcategoryArray = newProduct.subcategories
       .split(",")
       .map((item) => item.trim());
- 
+
     if (!images) return alert("Please select an image");
- 
+
     const formData = new FormData();
     formData.append("name", newProduct.name);
     formData.append("description", newProduct.description);
@@ -98,7 +95,7 @@ const Selar_Products = () => {
     formData.append("category", newProduct.category);
     formData.append("subcategories", JSON.stringify(subcategoryArray));
     formData.append("images", images);
- 
+
     try {
       await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
         headers: {
@@ -124,22 +121,20 @@ const Selar_Products = () => {
     }
   };
 
-  const ImageBaseURL = import.meta.env.VITE_BASE_URL
- 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
       </div>
- 
+
       {/* Main Content */}
       <div className="flex-1 ml-64">
         {/* Navbar */}
         <div className="sticky top-0 z-10 bg-white shadow">
           <Selar_Navbar />
         </div>
- 
+
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
@@ -168,7 +163,7 @@ const Selar_Products = () => {
               </button>
             </div>
           </div>
- 
+
           {/* Product Form */}
           {showForm && (
             <form
@@ -176,21 +171,16 @@ const Selar_Products = () => {
               className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
             >
               <div className="grid grid-cols-2 gap-4">
-                <select
+                <input
+                  type="text"
                   name="name"
+                  placeholder="name"
                   value={newProduct.name}
                   onChange={handleChange}
                   className="border p-2 rounded w-full"
                   required
-                >
-                  <option value="">Select Product</option>
-                  <option value="dress">Dress</option>
-                  <option value="jwellery">jwellary</option>
-                  <option value="footware">Footwear</option>
-                  <option value="shirt">Shirt</option>
-                  <option value="watch">Watch</option>
-                </select>
- 
+                />
+
                 <select
                   name="category"
                   value={newProduct.category}
@@ -202,7 +192,7 @@ const Selar_Products = () => {
                   <option value="men">Men</option>
                   <option value="women">Women</option>
                 </select>
- 
+
                 <input
                   type="text"
                   name="price"
@@ -222,7 +212,7 @@ const Selar_Products = () => {
                   required
                 />
               </div>
- 
+
               <textarea
                 name="description"
                 placeholder="Description"
@@ -231,7 +221,7 @@ const Selar_Products = () => {
                 className="border p-2 rounded w-full"
                 required
               />
-             
+
               <select
                 name="subcategories"
                 value={newProduct.subcategories}
@@ -246,7 +236,7 @@ const Selar_Products = () => {
                 <option value="shirt">Shirt</option>
                 <option value="watch">Watch</option>
               </select>
- 
+
               <input
                 type="file"
                 accept="image/*"
@@ -262,7 +252,7 @@ const Selar_Products = () => {
               </button>
             </form>
           )}
- 
+
           {/* Product Table */}
           <div className="overflow-x-auto shadow rounded-lg border border-gray-200 bg-white">
             {loading ? (
@@ -299,7 +289,6 @@ const Selar_Products = () => {
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
                       <td className="px-6 py-4">{product.category?.name || "N/A"}</td>
                       <td className="px-6 py-4">
-              
                         {Array.isArray(product.subcategories)
                           ? product.subcategories?.toString()
                           : "N/A"}
@@ -337,5 +326,5 @@ const Selar_Products = () => {
     </div>
   );
 };
- 
-export default Selar_Products
+
+export default Selar_Products;

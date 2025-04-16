@@ -268,7 +268,7 @@ const Mainpage = () => {
       </Box>
 
       {/* Categories Section */}
-      <Box sx={{ py: 6, px: 4, textAlign: "center" }}>
+      {/* <Box sx={{ py: 6, px: 4, textAlign: "center" }}>
         <Typography variant="h4" fontWeight="bold" mb={2}>
           Shop By Categories
         </Typography>
@@ -303,7 +303,7 @@ const Mainpage = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-      </Box>
+      </Box> */}
 
       {/* Footer */}
       <Box sx={{ maxWidth: "1400px", mx: "auto" }}>

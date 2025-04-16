@@ -14,10 +14,10 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-// Product section component
+// Fixed base URL
+const BASE_URL = "http://192.168.1.37:5000";
+
 const ProductSection = ({ title, products, loading }) => (
-  
   <Box
     sx={{
       py: { xs: 6, sm: 8 },
@@ -58,11 +58,14 @@ const ProductSection = ({ title, products, loading }) => (
                   boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
                 },
               }}
-              
             >
               <CardMedia
                 component="img"
-                image={item?.images?.length ? BASE_URL + item.images[0] : "./18505047_SL-070720-32260-21.svg"}
+                image={
+                  item?.images?.length
+                    ? `${BASE_URL}/${item.images[0]}`
+                    : "./18505047_SL-070720-32260-21.svg"
+                }
                 alt={`Product ${index + 1}`}
                 sx={{
                   height: 400,
@@ -87,9 +90,8 @@ const ProductSection = ({ title, products, loading }) => (
   </Box>
 );
 
-// Main categories page
 const Categories = () => {
-  const [categories, setCategories] = useState([
+  const [categories] = useState([
     "dresses",
     "shirts",
     "accessories",
@@ -111,7 +113,9 @@ const Categories = () => {
   const fetchProducts = async (category) => {
     try {
       setLoadingCategory((prev) => ({ ...prev, [category]: true }));
-      const res = await axios.get(`${BASE_URL}/api/product/categories?category=${category}`);
+      const res = await axios.get(
+        `${BASE_URL}/api/product/categories?category=${category}`
+      );
       setProductsByCategory((prev) => ({ ...prev, [category]: res.data }));
     } catch (error) {
       console.error(`Error fetching ${category}:`, error);

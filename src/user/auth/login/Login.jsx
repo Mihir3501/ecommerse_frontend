@@ -45,14 +45,11 @@ const Login = () => {
 
       toast.success("Login successful!");
 
-      // Save to localStorage
       localStorage.setItem("userAuth", JSON.stringify(response.data));
 
-      // ✅ Set user and token in Redux
       dispatch(setUser(response.data.user));
       dispatch(setToken(response.data.user.token));
 
-      // Redirect to main page
       setTimeout(() => navigate("/mainpage"), 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
