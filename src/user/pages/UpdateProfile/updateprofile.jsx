@@ -31,10 +31,17 @@ const UpdateProfile = () => {
   const token = useSelector((state) => state.auth.token);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  const [initialValues, setInitialValues] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const initialValues = {
+    name : userDetails?.name ?? "" ,
+    mobile : userDetails?.mobile ?? "",
+    address : userDetails?.address ?? "" ,
+    profileImage : userDetails?.name ?? "",
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -45,18 +52,15 @@ const UpdateProfile = () => {
           },
         });
 
-        const {
-          name = "",
-          mobile = "",
-          address = "",
-          profileImage,
-        } = response.data;
+    
 
-        setInitialValues({ name, mobile, address });
+        console.log(response.data, ":response.data")
 
-        if (profileImage) {
-          setExistingImageUrl(`${BASE_URL}/${profileImage}`);
-        }
+        setUserDetails(response.data.user);
+
+        // if (profileImage) {
+        //   setExistingImageUrl(`${BASE_URL}/${profileImage}`);
+        // }
 
         setLoading(false);
       } catch (error) {

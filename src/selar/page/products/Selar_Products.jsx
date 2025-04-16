@@ -16,6 +16,8 @@ const Selar_Products = () => {
   const [showForm, setShowForm] = useState(false);
   const [images, setImages] = useState(null);
   const fileInputRef = useRef();
+
+  console.log(products , ":hhh")
  
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -33,8 +35,8 @@ const Selar_Products = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Response from API:", response.data); 
-      setProducts(response.data); 
+      console.log("Response from API:", response.data.products); 
+      setProducts(response.data.products); 
 
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -44,9 +46,8 @@ const Selar_Products = () => {
   };
  
   useEffect(() => {
-    if (token) fetchProducts();
-    else setLoading(false);
-  }, [token]);
+    fetchProducts();
+  }, []);
  
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -122,6 +123,8 @@ const Selar_Products = () => {
       alert("Failed to add product.");
     }
   };
+
+  const ImageBaseURL = import.meta.env.VITE_BASE_URL
  
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -294,16 +297,17 @@ const Selar_Products = () => {
                       </td>
                       <td className="px-6 py-4">{product.price || "N/A"}</td>
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
-                      <td className="px-6 py-4">{product.category || "N/A"}</td>
+                      <td className="px-6 py-4">{product.category?.name || "N/A"}</td>
                       <td className="px-6 py-4">
+              
                         {Array.isArray(product.subcategories)
-                          ? product.subcategories.join(", ")
-                          : product.subcategories || "N/A"}
+                          ? product.subcategories?.toString()
+                          : "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (
                           <img
-                            src={product.images[0]}
+                            src={`${ImageBaseURL}${product.images[0]}`}
                             alt="Product"
                             className="w-10 h-10 object-cover rounded"
                           />
