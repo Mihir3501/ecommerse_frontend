@@ -1,4 +1,3 @@
-// src/pages/addtocart/Addtocart.jsx
 import React, { useEffect, useState } from "react";
 import {
   Box, Typography, CardMedia, IconButton, Button, Divider,
@@ -13,8 +12,8 @@ import {
   fetchCartItems,
   updateQuantityAsync,
   clearCartAsync,
+  // Removed unused addToCartLocal
 } from "../../../redux/createSlice";
-import cartService from "../../../config/cartService";
 
 const Addtocart = () => {
   const dispatch = useDispatch();
@@ -23,7 +22,9 @@ const Addtocart = () => {
   const [shipping, setShipping] = useState("flat");
 
   const shippingCost = shipping === "flat" ? 30 : 0;
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = Array.isArray(cartItems)
+  ? cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  : 0;
   const total = subtotal + shippingCost;
 
   useEffect(() => {
@@ -34,16 +35,21 @@ const Addtocart = () => {
     dispatch(updateQuantityAsync({ itemId, type }));
   };
 
-  if (cartItems.length === 0) {
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return (
       <Box sx={{ textAlign: "center", py: 10 }}>
         <Typography variant="h6">Your Cart Is Currently Empty</Typography>
-        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/categories")}>
+        <Button
+          variant="outlined"
+          sx={{ mt: 2 }}
+          onClick={() => navigate("/categories")}
+        >
           Return to Shop
         </Button>
       </Box>
     );
   }
+  
 
   return (
     <>
