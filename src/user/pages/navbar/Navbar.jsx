@@ -35,7 +35,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.user.user);
-  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQuantity = cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -60,7 +60,6 @@ const Navbar = () => {
     navigate("/updateprofile");
   };
 
-  // Search related state
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = async () => {
@@ -72,7 +71,7 @@ const Navbar = () => {
 
       const products = response.data;
       if (products.length > 0) {
-        navigate(`/product/${products[0]._id}`); 
+        navigate(`/product/${products[0]._id}`);
       } else {
         alert("No products found.");
       }
@@ -100,7 +99,6 @@ const Navbar = () => {
             MODERNO
           </Typography>
 
-          {/* Inline Search Box */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, backgroundColor: "#f1f1f1", px: 1, borderRadius: 1 }}>
             <InputBase
               placeholder="Search products..."

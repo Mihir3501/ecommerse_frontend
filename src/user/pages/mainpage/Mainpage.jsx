@@ -21,7 +21,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../../redux/createSlice";
+import { addToCartLocal } from "../../../redux/createSlice"; // ✅ correct import
 
 // const categories = [
 //   { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
@@ -61,7 +61,7 @@ const Mainpage = () => {
   }, [location]);
 
   const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+    dispatch(addToCartLocal(product)); // ✅ correct usage
   };
 
   useEffect(() => {
@@ -283,44 +283,6 @@ const Mainpage = () => {
           </Grid>
         )}
       </Box>
-
-      {/* Categories Section */}
-      {/* <Box sx={{ py: 6, px: 4, textAlign: "center" }}>
-        <Typography variant="h4" fontWeight="bold" mb={2}>
-          Shop By Categories
-        </Typography>
-        <Typography variant="h6" color="text.secondary" mb={4}>
-          Find exactly what you're looking for by browsing our curated product categories.
-        </Typography>
-
-        <Swiper
-          spaceBetween={20}
-          slidesPerView={3}
-          navigation
-          modules={[Navigation]}
-        >
-          {categories.map((item, index) => (
-            <SwiperSlide key={index}>
-              <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
-                <CardMedia
-                  component="img"
-                  image={item.src}
-                  alt={item.title}
-                  sx={{ height: 600 }}
-                />
-                <CardContent>
-                  <Typography variant="h6" fontWeight="bold">
-                    {item.title}
-                  </Typography>
-                  <Button onClick={() => navigate("/categories")}>
-                    Explore Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Box> */}
 
       {/* Footer */}
       <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
