@@ -17,6 +17,8 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
 
+// Same imports...
+
 const Addtocart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
@@ -54,7 +56,7 @@ const Addtocart = () => {
       <Navbar />
 
       <Box sx={{ px: { xs: 2, md: 6 }, py: 6, maxWidth: "1450px", mx: "auto" }}>
-        <Typography variant="h5" mb={3}>
+        <Typography variant="h4" fontWeight="bold" mb={4}>
           Shopping Cart
         </Typography>
 
@@ -64,13 +66,14 @@ const Addtocart = () => {
           gap={6}
           alignItems="flex-start"
         >
-          {/* Left Side - Product Cart */}
+          {/* Left - Product List */}
           <Box flex={2}>
             <Box
               display="flex"
               fontWeight="bold"
               pb={1}
-              borderBottom="1px solid #ccc"
+              borderBottom="2px solid #ccc"
+              color="gray"
             >
               <Box width="50%">Product</Box>
               <Box width="25%">Quantity</Box>
@@ -82,7 +85,7 @@ const Addtocart = () => {
                 key={item._id}
                 display="flex"
                 alignItems="center"
-                py={2}
+                py={3}
                 borderBottom="1px solid #eee"
               >
                 <Box width="50%" display="flex" alignItems="center">
@@ -90,35 +93,48 @@ const Addtocart = () => {
                     component="img"
                     image={item?.images?.[0]}
                     alt={item.name}
-                    sx={{ width: 80, height: 100, objectFit: "cover", mr: 2 }}
+                    sx={{
+                      width: 90,
+                      height: 110,
+                      objectFit: "cover",
+                      borderRadius: 2,
+                      mr: 2,
+                    }}
                   />
                   <Box>
                     <Typography fontWeight="bold">{item.name}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       PRADA
                     </Typography>
-                    <Typography variant="body2">
-                      1 × ₹{item.price.toFixed(2)}
+                    <Typography variant="body2" mt={0.5}>
+                      ₹{item.price.toFixed(2)} × {item.quantity}
                     </Typography>
                   </Box>
                 </Box>
 
-                <Box width="25%" display="flex" alignItems="center">
+                <Box
+                  width="25%"
+                  display="flex"
+                  alignItems="center"
+                  gap={1.5}
+                >
                   <IconButton
                     onClick={() => handleQuantityChange(item._id, "decrease")}
+                    sx={{ border: "1px solid #ccc", p: 0.5 }}
                   >
                     <Remove />
                   </IconButton>
-                  <Typography>{item.quantity}</Typography>
+                  <Typography fontWeight="bold">{item.quantity}</Typography>
                   <IconButton
                     onClick={() => handleQuantityChange(item._id, "increase")}
+                    sx={{ border: "1px solid #ccc", p: 0.5 }}
                   >
                     <Add />
                   </IconButton>
                 </Box>
 
                 <Box width="25%">
-                  <Typography fontWeight="bold">
+                  <Typography fontWeight="bold" color="primary">
                     ₹{(item.price * item.quantity).toFixed(2)}
                   </Typography>
                 </Box>
@@ -126,13 +142,19 @@ const Addtocart = () => {
             ))}
           </Box>
 
-          {/* Right Side - Summary Box */}
+          {/* Right - Summary */}
           <Box
             flex={1}
             border="1px solid #ddd"
-            borderRadius={2}
+            borderRadius={3}
             p={3}
-            sx={{ position: "sticky", top: 100, minWidth: "300px" }}
+            boxShadow={2}
+            sx={{
+              position: { md: "sticky" },
+              top: 100,
+              minWidth: "300px",
+              backgroundColor: "#f9f9f9",
+            }}
           >
             <Box
               display="flex"
@@ -140,8 +162,12 @@ const Addtocart = () => {
               alignItems="center"
               mb={2}
             >
-              <Typography fontWeight="bold">COUPON CODE</Typography>
-              <Button size="small">+</Button>
+              <Typography fontWeight="bold" fontSize="16px">
+                COUPON CODE
+              </Typography>
+              <Button size="small" variant="outlined">
+                +
+              </Button>
             </Box>
 
             <Divider sx={{ my: 2 }} />
@@ -187,14 +213,21 @@ const Addtocart = () => {
               fontWeight="bold"
               mb={2}
             >
-              <Typography>Total</Typography>
-              <Typography>₹{total.toFixed(2)}</Typography>
+              <Typography variant="h6">Total</Typography>
+              <Typography variant="h6">₹{total.toFixed(2)}</Typography>
             </Box>
 
             <Button
               variant="contained"
               fullWidth
-              sx={{ backgroundColor: "#000", color: "#fff", py: 1.5 }}
+              sx={{
+                backgroundColor: "#000",
+                color: "#fff",
+                py: 1.5,
+                "&:hover": {
+                  backgroundColor: "#333",
+                },
+              }}
               onClick={() => alert("Proceed to Payment")}
             >
               Checkout

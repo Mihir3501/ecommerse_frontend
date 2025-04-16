@@ -19,7 +19,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../../redux/authSlice"; // add this action in your authSlice
+import { logout } from "../../../redux/authSlice"; 
 
 const pages = [
   { name: "HOME", path: "/" },
@@ -32,7 +32,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
-  const user = useSelector((state) => state.user.user); // assuming userSlice has user object
+  const user = useSelector((state) => state.user.user); 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const [anchorEl, setAnchorEl] = useState(null);
