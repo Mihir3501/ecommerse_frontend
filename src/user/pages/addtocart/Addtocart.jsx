@@ -1,50 +1,44 @@
-import React, { useState } from "react";
+// src/pages/addtocart/Addtocart.jsx
+import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Typography,
-  CardMedia,
-  IconButton,
-  Button,
-  Divider,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
+  Box, Typography, CardMedia, IconButton, Button, Divider,
+  Radio, RadioGroup, FormControlLabel,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
-import { useSelector, useDispatch } from "react-redux";
-import { updateQuantity } from "../../../redux/createSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import { useNavigate } from "react-router-dom";
-
-// Same imports...
+import {
+  fetchCartItems,
+  updateQuantityAsync,
+  clearCartAsync,
+} from "../../../redux/createSlice";
+import cartService from "../../../config/cartService";
 
 const Addtocart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
   const [shipping, setShipping] = useState("flat");
+
   const shippingCost = shipping === "flat" ? 30 : 0;
-  const navigate = useNavigate();
-
-  const handleQuantityChange = (id, type) => {
-    dispatch(updateQuantity({ id, type }));
-  };
-
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + shippingCost;
+
+  useEffect(() => {
+    dispatch(fetchCartItems());
+  }, [dispatch]);
+
+  const handleQuantityChange = (itemId, type) => {
+    dispatch(updateQuantityAsync({ itemId, type }));
+  };
 
   if (cartItems.length === 0) {
     return (
       <Box sx={{ textAlign: "center", py: 10 }}>
         <Typography variant="h6">Your Cart Is Currently Empty</Typography>
-        <Button
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={() => navigate("/categories")}
-        >
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/categories")}>
           Return to Shop
         </Button>
       </Box>
@@ -54,7 +48,6 @@ const Addtocart = () => {
   return (
     <>
       <Navbar />
-
       <Box sx={{ px: { xs: 2, md: 6 }, py: 6, maxWidth: "1450px", mx: "auto" }}>
         <Typography variant="h4" fontWeight="bold" mb={4}>
           Shopping Cart
@@ -91,7 +84,7 @@ const Addtocart = () => {
                 <Box width="50%" display="flex" alignItems="center">
                   <CardMedia
                     component="img"
-                    image={item?.images?.[0]}
+                    image={item.images[0]}
                     alt={item.name}
                     sx={{
                       width: 90,
@@ -178,32 +171,12 @@ const Addtocart = () => {
             </Box>
 
             <Box mt={2}>
-              <Typography fontWeight="bold" mb={1}>
-                Shipping
-              </Typography>
-              <RadioGroup
-                value={shipping}
-                onChange={(e) => setShipping(e.target.value)}
-              >
-                <FormControlLabel
-                  value="flat"
-                  control={<Radio />}
-                  label="Flat rate: ₹30.00"
-                />
-                <FormControlLabel
-                  value="pickup"
-                  control={<Radio />}
-                  label="Local pickup"
-                />
+              <Typography fontWeight="bold" mb={1}>Shipping</Typography>
+              <RadioGroup value={shipping} onChange={(e) => setShipping(e.target.value)}>
+                <FormControlLabel value="flat" control={<Radio />} label="Flat rate: ₹30.00" />
+                <FormControlLabel value="pickup" control={<Radio />} label="Local pickup" />
               </RadioGroup>
             </Box>
-
-            <Typography mt={1} mb={1}>
-              Shipping to <b>CA</b>.
-            </Typography>
-            <Button size="small" sx={{ textTransform: "none" }}>
-              Change Address
-            </Button>
 
             <Divider sx={{ my: 2 }} />
 
@@ -235,10 +208,7 @@ const Addtocart = () => {
           </Box>
         </Box>
       </Box>
-
-      <Box sx={{ maxWidth: "1450px", mx: "auto" }}>
-        <Footer />
-      </Box>
+      <Footer />
     </>
   );
 };

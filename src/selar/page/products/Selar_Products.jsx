@@ -9,6 +9,7 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 const Selar_Products = () => {
   const token = useSelector((state) => state.seller.sellerInfo?.token);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const ImageBaseURL = import.meta.env.VITE_BASE_URL;
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,8 +33,8 @@ const Selar_Products = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Response from API:", response.data);
-      setProducts(response.data);
+      console.log("Response from API:", response.data.products); 
+      setProducts(response.data.products); 
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -79,7 +80,6 @@ const Selar_Products = () => {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    console.log(token, "token");
 
     const subcategoryArray = newProduct.subcategories
       .split(",")
@@ -171,21 +171,6 @@ const Selar_Products = () => {
               className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
             >
               <div className="grid grid-cols-2 gap-4">
-                {/* <select
-                  name="name"
-                  value={newProduct.name}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full"
-                  required
-                >
-                  <option value="">Select Product</option>
-                  <option value="dress">Dress</option>
-                  <option value="jwellery">jwellary</option>
-                  <option value="footware">Footwear</option>
-                  <option value="shirt">Shirt</option>
-                  <option value="watch">Watch</option>
-                </select> */}
-
                 <input
                   type="text"
                   name="name"
@@ -302,16 +287,16 @@ const Selar_Products = () => {
                       </td>
                       <td className="px-6 py-4">{product.price || "N/A"}</td>
                       <td className="px-6 py-4">{product.stock || "N/A"}</td>
-                      <td className="px-6 py-4">{product.category || "N/A"}</td>
+                      <td className="px-6 py-4">{product.category?.name || "N/A"}</td>
                       <td className="px-6 py-4">
                         {Array.isArray(product.subcategories)
-                          ? product.subcategories.join(", ")
-                          : product.subcategories || "N/A"}
+                          ? product.subcategories?.toString()
+                          : "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (
                           <img
-                            src={product.images[0]}
+                            src={`${ImageBaseURL}${product.images[0]}`}
                             alt="Product"
                             className="w-10 h-10 object-cover rounded"
                           />
