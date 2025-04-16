@@ -1,193 +1,209 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateProduct = () => {
-  const { state } = useLocation();
+  const { productId } = useParams(); // Get productId from URL params
+  const [product, setProduct] = useState({
+    name: "",
+    price: "",
+    stock: "",
+    category: "",
+    subcategory: "",
+    description: "",
+    images: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [newProduct, setNewProduct] = useState({ ...product });
+  const [images, setImages] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const token = useSelector((state) => state.auth.token); // Assuming you are using Redux for auth
   const navigate = useNavigate();
-  const productData = state?.product;
-  const [image, setImage] = useState(null);
-  const token = useSelector((state) => state.seller.sellerInfo?.token);
 
-  const initialValues = {
-    name: productData?.name || "",
-    description: productData?.description || "",
-    price: productData?.price || "",
-    stock: productData?.stock || "",
-    category: productData?.category || "",
-    subcategories: Array.isArray(productData?.subcategories)
-      ? productData?.subcategories[0]
-      : productData?.subcategories || "",
+  useEffect(() => {
+    if (productId) {
+      fetchProduct();
+    } else {
+      alert("Product not found");
+    }
+  }, [productId]);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/seller/products/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setProduct(response.data.product);
+      setNewProduct(response.data.product);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      setLoading(false);
+    }
   };
 
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Product name is required"),
-    description: Yup.string().required("Description is required"),
-    price: Yup.number().required("Price is required"),
-    stock: Yup.number().required("Stock is required"),
-    category: Yup.string().required("Category is required"),
-    subcategories: Yup.string().required("Subcategory is required"),
-  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct({
+      ...newProduct,
+      [name]: value,
+    });
+  };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    const subcategoryArray = values.subcategories
-      .split(",")
-      .map((item) => item.trim());
+  const handleImageUpload = (e) => {
+    setImages(e.target.files[0]);
+  };
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", values.name);
-    formDataToSend.append("description", values.description);
-    formDataToSend.append("price", values.price);
-    formDataToSend.append("stock", values.stock);
-    formDataToSend.append("category", values.category);
-    formDataToSend.append("subcategories", JSON.stringify(subcategoryArray));
-    if (image) {
-      formDataToSend.append("images", image);
+  const handleProductSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", newProduct.name);
+    formData.append("price", newProduct.price);
+    formData.append("stock", newProduct.stock);
+    formData.append("category", newProduct.category);
+    formData.append("subcategory", newProduct.subcategory);
+    formData.append("description", newProduct.description);
+    if (images) {
+      formData.append("images", images);
     }
 
     try {
-      const baseUrl = process.env.VITE_BASE_URL;
-      const response = await axios.patch(
-        `${baseUrl}${productData._id}`,
-        formDataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      if (response.status === 200) {
-        alert("Product updated successfully!");
-        navigate("/Selar_Product");
-      }
+      const response = await axios.put(`${BASE_URL}/api/seller/products/${productId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Product updated successfully!");
+      navigate("/sellerproducts"); // Redirect to the product list after success
     } catch (error) {
       console.error("Error updating product:", error);
-      alert("Failed to update product. Please try again.");
-    } finally {
-      setSubmitting(false);
+      alert("Failed to update product.");
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 ml-64">
+        {/* Navbar */}
         <div className="sticky top-0 z-10 bg-white shadow">
           <Selar_Navbar />
         </div>
 
-        <div className="flex justify-center items-center min-h-screen p-6 bg-gray-50">
-          <div className="bg-white p-6 rounded shadow-md w-full max-w-2xl">
-            <h2 className="text-xl font-semibold mb-4">Update Product</h2>
-
-            <Formik
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={handleSubmit}
-              enableReinitialize
-            >
-              {({ isSubmitting }) => (
-                <Form className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Field
-                        type="text"
-                        name="name"
-                        placeholder="Product Name"
-                        className="border p-2 rounded w-full"
-                      />
-                      <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
-                    </div>
-
-                    <div>
-                      <Field
-                        type="text"
-                        name="price"
-                        placeholder="Price"
-                        className="border p-2 rounded w-full"
-                      />
-                      <ErrorMessage name="price" component="div" className="text-red-500 text-sm" />
-                    </div>
-
-                    <div>
-                      <Field
-                        type="text"
-                        name="stock"
-                        placeholder="Stock"
-                        className="border p-2 rounded w-full"
-                      />
-                      <ErrorMessage name="stock" component="div" className="text-red-500 text-sm" />
-                    </div>
-
-                    <div>
-                      <Field
-                        as="select"
-                        name="category"
-                        className="border p-2 rounded w-full"
-                      >
-                        <option value="">Select Category</option>
-                        <option value="men">Men</option>
-                        <option value="women">Women</option>
-                      </Field>
-                      <ErrorMessage name="category" component="div" className="text-red-500 text-sm" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Field
-                      as="textarea"
-                      name="description"
-                      placeholder="Description"
-                      className="border p-2 rounded w-full"
-                    />
-                    <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
-                  </div>
-
-                  <div>
-                    <Field
-                      as="select"
-                      name="subcategories"
-                      className="border p-2 rounded w-full"
-                    >
-                      <option value="">Select Subcategory</option>
-                      <option value="dress">Dress</option>
-                      <option value="jewellery">Jewellery</option>
-                      <option value="footwear">Footwear</option>
-                      <option value="shirt">Shirt</option>
-                      <option value="watch">Watch</option>
-                    </Field>
-                    <ErrorMessage name="subcategories" component="div" className="text-red-500 text-sm" />
-                  </div>
-
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setImage(e.target.files[0])}
-                      className="block"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
-                  >
-                    {isSubmitting ? "Updating..." : "Update Product"}
-                  </button>
-                </Form>
-              )}
-            </Formik>
+        {/* Content */}
+        <div className="p-6 pt-24">
+          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <h1 className="text-2xl font-bold text-gray-800">Update Product</h1>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                <FaPlus /> {showForm ? "Close Form" : "Edit Product"}
+              </button>
+            </div>
           </div>
+
+          {/* Product Form */}
+          {loading ? (
+            <p>Loading product data...</p>
+          ) : showForm ? (
+            <form
+              onSubmit={handleProductSubmit}
+              className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Product Name"
+                  value={newProduct.name}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                />
+                <input
+                  type="text"
+                  name="price"
+                  placeholder="Price"
+                  value={newProduct.price}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                />
+                <input
+                  type="text"
+                  name="stock"
+                  placeholder="Stock"
+                  value={newProduct.stock}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                />
+                <select
+                  name="category"
+                  value={newProduct.category}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                </select>
+              </div>
+
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={newProduct.description}
+                onChange={handleChange}
+                className="border p-2 rounded w-full"
+                required
+              />
+
+              <select
+                name="subcategory"
+                value={newProduct.subcategory}
+                onChange={handleChange}
+                className="border p-2 rounded w-full"
+                required
+              >
+                <option value="">Select Subcategory</option>
+                <option value="dress">Dress</option>
+                <option value="jewelry">Jewelry</option>
+                <option value="footwear">Footwear</option>
+                <option value="shirt">Shirt</option>
+                <option value="watch">Watch</option>
+              </select>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="block"
+              />
+
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Update Product
+              </button>
+            </form>
+          ) : null}
         </div>
       </div>
     </div>
