@@ -19,6 +19,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setToken } from "../../../redux/authSlice";
 import { setUser } from "../../../redux/userSlice"; 
+import "react-toastify/dist/ReactToastify.css";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -26,7 +27,7 @@ const validationSchema = Yup.object({
     .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email")
     .required("Enter your Email"),
   password: Yup.string()
-    .length(8)
+    .length(8, "Password must be exactly 8 characters")
     .matches(/\d/, "At least one number")
     .required("Enter your Password"),
 });
@@ -42,14 +43,12 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await axios.post(`${BASE_URL}/api/user/login`, values);
+      const { user } = response.data;
+
+      dispatch(setUser(user));
+      dispatch(setToken(user.token));
 
       toast.success("Login successful!");
-
-      localStorage.setItem("userAuth", JSON.stringify(response.data));
-
-      dispatch(setUser(response.data.user));
-      dispatch(setToken(response.data.user.token));
-
       setTimeout(() => navigate("/mainpage"), 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");

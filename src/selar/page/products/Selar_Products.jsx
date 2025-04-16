@@ -5,11 +5,14 @@ import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
 import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const Selar_Products = () => {
   const token = useSelector((state) => state.seller.sellerInfo?.token);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const ImageBaseURL = import.meta.env.VITE_BASE_URL;
+
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,12 +145,12 @@ const Selar_Products = () => {
               Seller Products
             </h1>
             <div className="flex flex-wrap gap-4">
-              <button
+              {/* <button
                 onClick={() => fileInputRef.current.click()}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
               >
                 <FaPlus /> Upload Product Image
-              </button>
+              </button> */}
               <input
                 type="file"
                 accept="image/*"
@@ -308,7 +311,7 @@ const Selar_Products = () => {
                         <button className="text-blue-600 hover:underline cursor-pointer">
                           <FaEye className="h-4 w-4" />
                         </button>
-                        <button className="text-yellow-600 hover:underline cursor-pointer">
+                        <button className="text-yellow-600 hover:underline cursor-pointer"  onClick={() => navigate ("/UpdateProduct")}>
                           <FaEdit className="h-4 w-4" />
                         </button>
                         <button className="text-red-600 hover:underline cursor-pointer">

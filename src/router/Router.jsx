@@ -23,6 +23,7 @@ import Selar_Dashboard from "../selar/page/dashboard/Selar_Dashboard";
 import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
 import Selar_Products from "../selar/page/products/Selar_Products";
+import UpdateProduct from "../selar/page/updateProduct/UpdateProduct";
 
 import PrivateRouter from "./PrivateRouter"; // unified correctly
 import Admin_Profile from "../admin/pages/Admin_Profile";
@@ -44,6 +45,7 @@ const Router = () => {
         <Route path="/footer" element={<Footer />} />
         <Route path="/addtocart" element={<Addtocart />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/updateproduct" element={<UpdateProduct />} />
 
         {/* Protected User Route */}
         <Route
@@ -131,6 +133,8 @@ const Router = () => {
         <Route path="/selar_navbar" element={<Selar_Navbar />} />
         <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
         <Route path="/selar_Products" element={<Selar_Products />} />
+        
+
       </Routes>
     </BrowserRouter>
   );

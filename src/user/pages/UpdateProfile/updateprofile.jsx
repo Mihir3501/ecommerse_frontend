@@ -9,8 +9,6 @@ import {
   Typography,
   Card,
   Grid,
-  InputLabel,
-  Avatar,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -32,16 +30,13 @@ const UpdateProfile = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [userDetails, setUserDetails] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [existingImageUrl, setExistingImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
 
   const initialValues = {
-    name : userDetails?.name ?? "" ,
-    mobile : userDetails?.mobile ?? "",
-    address : userDetails?.address ?? "" ,
-    profileImage : userDetails?.name ?? "",
-  }
+    name: userDetails?.name ?? "",
+    mobile: userDetails?.mobile ?? "",
+    address: userDetails?.address ?? "",
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,16 +47,7 @@ const UpdateProfile = () => {
           },
         });
 
-    
-
-        console.log(response.data, ":response.data")
-
         setUserDetails(response.data.user);
-
-        // if (profileImage) {
-        //   setExistingImageUrl(`${BASE_URL}/${profileImage}`);
-        // }
-
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error.response?.data || error.message);
@@ -76,21 +62,13 @@ const UpdateProfile = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { name, mobile, address } = values;
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("mobile", mobile);
-      formData.append("address", address);
-      if (selectedImage) {
-        formData.append("profileImage", selectedImage);
-      }
 
       const response = await axios.patch(
         `${BASE_URL}/api/user/profile`,
-        formData,
+        { name, mobile, address },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -147,7 +125,7 @@ const UpdateProfile = () => {
               <Typography align="center" sx={{ mt: 2 }}>
                 Loading profile...
               </Typography>
-            ) : initialValues ? (
+            ) : userDetails ? (
               <Formik
                 initialValues={initialValues}
                 enableReinitialize
@@ -165,7 +143,7 @@ const UpdateProfile = () => {
                   values,
                   isSubmitting,
                 }) => (
-                  <form onSubmit={handleSubmit} encType="multipart/form-data">
+                  <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <TextField
@@ -209,27 +187,6 @@ const UpdateProfile = () => {
                           error={touched.address && Boolean(errors.address)}
                           helperText={touched.address && errors.address}
                         />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <InputLabel>Upload Profile Image</InputLabel>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            setSelectedImage(e.target.files[0])
-                          }
-                          style={{ marginTop: "8px" }}
-                        />
-                        {(selectedImage || existingImageUrl) && (
-                          <Avatar
-                            src={
-                              selectedImage
-                                ? URL.createObjectURL(selectedImage)
-                                : existingImageUrl
-                            }
-                            sx={{ width: 80, height: 80, mt: 2 }}
-                          />
-                        )}
                       </Grid>
                       <Grid item xs={12}>
                         <Button

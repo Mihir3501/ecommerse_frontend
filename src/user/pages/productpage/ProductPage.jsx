@@ -26,7 +26,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/products/${id}`, {
+        const res = await axios.get(`${BASE_URL}/api/product/product/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

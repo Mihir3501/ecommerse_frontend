@@ -57,7 +57,7 @@ const Addtocart = () => {
           <Button
             variant="outlined"
             sx={{ mt: 2 }}
-            onClick={() => navigate("/categories")}
+            onClick={() => navigate("/#ishika")}
           >
             Return to Shop
           </Button>
