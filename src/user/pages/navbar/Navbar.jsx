@@ -12,6 +12,7 @@ import {
   Menu,
   MenuItem,
   Avatar,
+  InputBase,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
@@ -19,11 +20,12 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../../redux/authSlice"; 
+import { logout } from "../../../redux/authSlice";
+import axios from "axios";
 
 const pages = [
   { name: "HOME", path: "/" },
-  { name: "SHOP", path: "/categories" },
+  { name: "SHOP", path: "/#ishika" },
   { name: "BLOG", path: "/blog" },
   { name: "CONTACT", path: "/contact" },
 ];
@@ -32,7 +34,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
-  const user = useSelector((state) => state.user.user); 
+  const user = useSelector((state) => state.user.user);
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -58,6 +60,34 @@ const Navbar = () => {
     navigate("/updateprofile");
   };
 
+  // Search related state
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const response = await axios.get(
+        `http://192.168.1.37:5000/api/product/search?q=${searchQuery}`
+      );
+
+      const products = response.data;
+      if (products.length > 0) {
+        navigate(`/product/${products[0]._id}`); 
+      } else {
+        alert("No products found.");
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      alert("Something went wrong during search.");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: "#fff", color: "#000" }}>
       <Container maxWidth="xl">
@@ -70,11 +100,25 @@ const Navbar = () => {
             MODERNO
           </Typography>
 
+          {/* Inline Search Box */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, backgroundColor: "#f1f1f1", px: 1, borderRadius: 1 }}>
+            <InputBase
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              sx={{ ml: 1, flex: 1 }}
+            />
+            <IconButton onClick={handleSearch}>
+              <SearchIcon />
+            </IconButton>
+          </Box>
+
           <Box sx={{ display: "flex", gap: 2 }}>
             {user ? (
               <>
                 <IconButton onClick={handleMenuClick}>
-                  <Avatar >
+                  <Avatar>
                     {user.name?.charAt(0).toUpperCase() || "U"}
                   </Avatar>
                 </IconButton>
@@ -94,10 +138,6 @@ const Navbar = () => {
                 <AccountCircleIcon />
               </IconButton>
             )}
-
-            <IconButton>
-              <SearchIcon />
-            </IconButton>
 
             <IconButton>
               <FavoriteBorderIcon />
