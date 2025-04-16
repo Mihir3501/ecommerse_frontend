@@ -126,14 +126,14 @@ const Categories = () => {
         setAllProducts(res.data.products || []);
 
         // Log the fetched allProducts data
-        console.log('All Products:', res.data.products);
+        // console.log('All Products:', res.data.products);
 
         // Fetch products for each category
         categories.forEach((category) => {
           fetchProducts(category);
         });
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        // console.error("Failed to fetch products:", error);
       } finally {
         setLoading(false);
       }

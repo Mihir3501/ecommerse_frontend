@@ -21,7 +21,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { useDispatch } from "react-redux";
-import { addToCartLocal } from "../../../redux/createSlice"; // ✅ correct import
+import { addToCartAsync  } from "../../../redux/createSlice"; // ✅ correct import
 
 // const categories = [
 //   { src: "src/assets/dress-image1.jpeg", title: "Dresses" },
@@ -61,7 +61,7 @@ const Mainpage = () => {
   }, [location]);
 
   const handleAddToCart = (product) => {
-    dispatch(addToCartLocal(product)); // ✅ correct usage
+    dispatch(addToCartAsync(product)); 
   };
 
   useEffect(() => {
@@ -142,8 +142,10 @@ const Mainpage = () => {
             {products.map((item, index) => (
               <Grid item key={item._id || index} xs={12} sm={6} md={4} lg={3}>
                 <Card
+                onClick={() => navigate(`/product/${item._id}`)}
                   sx={{
                     height: "100%",
+                    cursor: "pointer",
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 3,

@@ -11,6 +11,7 @@ import userReducer from './userSlice';
 import authReducer from './authSlice';
 import sellerReducer from './sellarSlice';
 import adminReducer from './adminSlice';
+import productDetailReducer from './productDetailSlice'; // ✅ Import added
 
 const persistConfig = {
   key: 'root',
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   seller: sellerReducer,
   admin: adminReducer,
+  productDetail: productDetailReducer, // ✅ Added to root reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

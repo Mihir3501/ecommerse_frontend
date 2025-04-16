@@ -34,9 +34,14 @@ const getCart = async () => {
 };
 
 const addToCart = async (item) => {
-  const res = await axios.post(`${BASE_URL}/api/cart/addIn`, item, authHeader());
+  const res = await axios.post(
+    `${BASE_URL}/api/cart/addIn`,
+    { productId: item._id, quantity: 1 }, 
+    authHeader()
+  );
   return res.data;
 };
+
 
 const updateCart = async (itemId, type) => {
   const res = await axios.patch(
