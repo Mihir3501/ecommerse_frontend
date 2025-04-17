@@ -26,7 +26,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/products/${id}`, {
+        const res = await axios.get(`${BASE_URL}/api/product/product/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -55,8 +55,11 @@ const ProductPage = () => {
       <Box sx={{ p: 4, display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
         <CardMedia
           component="img"
-          image={`${BASE_URL}${product.images[0]}`}
-          alt={product.name}
+          image={
+            product?.images?.length
+              ? `${BASE_URL}${product.images[0]}`
+              : "./18505047_SL-070720-32260-21.svg"
+          }          alt={product.name}
           sx={{ width: "100%", maxWidth: 500, objectFit: "contain" }}
         />
         <Box>

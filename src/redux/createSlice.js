@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "../config/cartService";
 
-// Thunk: Fetch cart items
+// Async thunks (same as before)
 export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async (_, thunkAPI) => {
     try {
-      const data = await cartService.getCart();
+      const token = thunkAPI.getState().auth.user?.token;
+      const data = await cartService.getCart(token);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
@@ -14,29 +15,13 @@ export const fetchCartItems = createAsyncThunk(
   }
 );
 
-// Thunk: Add item to cart via API
 export const addToCartAsync = createAsyncThunk(
   "cart/addToCartAsync",
   async (item, thunkAPI) => {
     try {
-      await cartService.addToCart(item);
-      const updatedCart = await cartService.getCart(); 
-      return updatedCart;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
-    }
-  }
-);
-
-// Thunk: Update quantity
-export const updateQuantityAsync = createAsyncThunk(
-  "cart/updateQuantityAsync",
-  async ({ itemId, type }, thunkAPI) => {
-    try {
-      await cartService.updateCart(itemId, type);
-      const updatedCart = await cartService.getCart();
+      const token = thunkAPI.getState().auth.user?.token;
+      await cartService.addToCart(item, token);
+      const updatedCart = await cartService.getCart(token);
       return updatedCart;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
@@ -44,12 +29,35 @@ export const updateQuantityAsync = createAsyncThunk(
   }
 );
 
-// Thunk: Clear cart
+export const updateQuantityAsync = createAsyncThunk(
+  "cart/updateQuantityAsync",
+  async ({ itemId, currentQuantity, type }, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user?.token;
+      const newQuantity =
+        type === "increment" ? currentQuantity + 1 :
+        type === "decrement" ? currentQuantity - 1 : 
+        currentQuantity;
+
+      if (newQuantity < 1) {
+        return thunkAPI.rejectWithValue("Quantity cannot be less than 1");
+      }
+
+      await cartService.updateCart(itemId, newQuantity, token);
+      const updatedCart = await cartService.getCart(token);
+      return updatedCart;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 export const clearCartAsync = createAsyncThunk(
   "cart/clearCartAsync",
   async (_, thunkAPI) => {
     try {
-      await cartService.clearCart();
+      const token = thunkAPI.getState().auth.user?.token;
+      await cartService.clearCart(token);
       return [];
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
@@ -57,6 +65,7 @@ export const clearCartAsync = createAsyncThunk(
   }
 );
 
+// ✅ Correct usage of createSlice
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -88,7 +97,6 @@ const cartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Cart
       .addCase(fetchCartItems.pending, (state) => {
         state.status = "loading";
       })
@@ -100,28 +108,17 @@ const cartSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
-
-      // Add to Cart
       .addCase(addToCartAsync.fulfilled, (state, action) => {
         state.items = action.payload || [];
       })
-
-      // Update Quantity
       .addCase(updateQuantityAsync.fulfilled, (state, action) => {
         state.items = action.payload || [];
       })
-
-      // Clear Cart
       .addCase(clearCartAsync.fulfilled, (state, action) => {
         state.items = action.payload || [];
       });
   },
 });
 
-export const {
-  removeFromCart,
-  updateQuantity,
-  clearCart,
-} = cartSlice.actions;
-
+export const { removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
