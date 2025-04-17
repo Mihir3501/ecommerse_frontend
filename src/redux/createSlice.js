@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "../config/cartService";
 
-// Async thunks (same as before)
 export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async (_, thunkAPI) => {
@@ -65,7 +64,6 @@ export const clearCartAsync = createAsyncThunk(
   }
 );
 
-// ✅ Correct usage of createSlice
 const cartSlice = createSlice({
   name: "cart",
   initialState: {

@@ -30,6 +30,7 @@ import Selar_Products from "../selar/page/products/Selar_Products";
 import UpdateProduct from "../selar/page/updateProduct/UpdateProduct";
 
 import PrivateRouter from "./PrivateRouter";
+import Order_Manage from "../admin/managements/Order_Manage";
 
 const Router = () => {
   return (
@@ -46,14 +47,14 @@ const Router = () => {
         <Route path="/footer" element={<Footer />} />
         <Route path="/addtocart" element={<Addtocart />} />
         <Route path="/product/:id" element={<ProductPage />} />
-        <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+        <Route path="/ordersuccess/:orderid" element={<OrderSuccess />} />
         <Route path="/updateproduct" element={<UpdateProduct />} />
 
         {/* Protected User Routes */}
         <Route
           path="/updateprofile"
           element={
-            <PrivateRouter>
+            <PrivateRouter userOnly={true}>
               <Updateprofile />
             </PrivateRouter>
           }
@@ -61,19 +62,13 @@ const Router = () => {
         <Route
           path="/selar_dashboard"
           element={
-            <PrivateRouter>
+            <PrivateRouter sellerOnly={true}>
               <Selar_Dashboard />
             </PrivateRouter>
           }
         />
-        <Route
-          path="/selar_login"
-          element={
-            <PrivateRouter>
-              <Selar_Login />
-            </PrivateRouter>
-          }
-        />
+        <Route path="/selar_login" element={<Selar_Login />} />
+
 
         {/* Public Admin Route */}
         <Route path="/admin_login" element={<Admin_Login />} />
@@ -92,6 +87,14 @@ const Router = () => {
           element={
             <PrivateRouter adminOnly={true}>
               <Admin_Profile />
+            </PrivateRouter>
+          }
+        />
+        <Route
+          path="/order_manage"
+          element={
+            <PrivateRouter adminOnly={true}>
+              <Order_Manage />
             </PrivateRouter>
           }
         />

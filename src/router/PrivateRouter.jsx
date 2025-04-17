@@ -2,12 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-// adminOnly = true → only allow admins
-// adminOnly = false (default) → only allow normal users
-const PrivateRouter = ({ children, adminOnly = false }) => {
-  const userInfo = useSelector((state) => state.auth); // user state
-  const sellerInfo = useSelector((state) => state.auth); // user state
-  const adminInfo = useSelector((state) => state.admin?.adminInfo); // safely access adminInfo
+const PrivateRouter = ({ children, adminOnly = false, sellerOnly = false }) => {
+  const userInfo = useSelector((state) => state.user?.userInfo);
+  const sellerInfo = useSelector((state) => state.seller?.sellerInfo);
+  const adminInfo = useSelector((state) => state.admin?.adminInfo);
 
   const isUserLoggedIn = !!userInfo?.token;
   const isSellerLoggedIn = !!sellerInfo?.token;
@@ -17,11 +15,12 @@ const PrivateRouter = ({ children, adminOnly = false }) => {
     return <Navigate to="/admin_login" />;
   }
 
-  if (!adminOnly && !isUserLoggedIn) {
-    return <Navigate to="/login" />;
+  if (sellerOnly && !isSellerLoggedIn) {
+    return <Navigate to="/selar_login" />;
   }
-  if(!adminOnly && !isSellerLoggedIn){
-    return <Navigate to="selar_login"/>
+
+  if (!adminOnly && !sellerOnly && !isUserLoggedIn) {
+    return <Navigate to="/login" />;
   }
 
   return children;
