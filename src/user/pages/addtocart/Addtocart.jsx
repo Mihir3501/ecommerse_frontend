@@ -9,46 +9,82 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
+  TextField,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import {
-  fetchCartItems,
-  updateQuantityAsync,
-  clearCartAsync,
-} from "../../../redux/createSlice";
+import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice"; // Make sure this is correct
+import { createOrderAsync } from "../../../redux/orderSlice";
+import { createOrder } from "../../../config/orderService";
 
-const Addtocart = () => {
+const AddToCart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
+  const token = useSelector((state) => state.user.token);
+  console.log(token, ":token")
+
   const [shipping, setShipping] = useState("flat");
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+  });
 
   useEffect(() => {
-    dispatch(fetchCartItems());
+    dispatch(fetchCartItems())
+      .unwrap()
+      .then((data) => {
+        console.log("Cart fetched successfully:", data);
+      })
+      .catch((err) => {
+        console.error("Error fetching cart:", err);
+      });
   }, [dispatch]);
 
   const shippingCost = shipping === "flat" ? 30 : 0;
-
   const subtotal = Array.isArray(cartItems)
     ? cartItems.reduce((sum, item) => {
-        const price = item?.product?.price ?? 0;
-        const quantity = item?.quantity ?? 1;
-        return sum + price * quantity;
-      }, 0)
+      const price = item?.product?.price ?? 0;
+      const quantity = item?.quantity ?? 1;
+      return sum + price * quantity;
+    }, 0)
     : 0;
 
   const total = subtotal + shippingCost;
 
-  const handleQuantityChange = (itemId, type) => {
-    dispatch(updateQuantityAsync({ itemId, type }));
+  const handleCheckout = async() => {
+    const { street, city, state, postalCode } = shippingAddress;
+    if (!street || !city || !state || !postalCode) {
+      alert("Please fill in your complete shipping address.");
+      return;
+    }
+
+    const orderData = {
+      items: cartItems,
+      shippingType: shipping,
+      shippingAddress: shippingAddress,
+      total,
+    };
+
+
+       const response = await createOrder(orderData, token);
+       console.log(response , ":data")
+
+   
   };
 
-  if (!Array.isArray(cartItems) || cartItems?.length === 0) {
+  const handleQuantityChange = (itemId, currentQuantity, type) => {
+    let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
+    if (newQuantity < 1) newQuantity = 1;
+    dispatch(updateQuantityAsync({ itemId, newQuantity }));
+  };
+
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return (
       <>
         <Navbar />
@@ -81,7 +117,6 @@ const Addtocart = () => {
           gap={6}
           alignItems="flex-start"
         >
-          {/* Left - Product List */}
           <Box flex={2}>
             <Box
               display="flex"
@@ -95,87 +130,80 @@ const Addtocart = () => {
               <Box width="25%">Subtotal</Box>
             </Box>
 
-            {cartItems
-              .filter((item) => item && typeof item === "object" && item._id)
-              .map((item) => {
-                const product = item?.product || {};
-                const imageUrl = product?.images?.[0]
-                  ? `${BASE_URL}${product.images[0]}`
-                  : "./18505047_SL-070720-32260-21.svg";
+            {cartItems.map((item) => {
+              const product = item?.product || {};
+              const imageUrl = product?.images?.[0]
+                ? `${import.meta.env.VITE_BASE_URL}${product.images[0]}`
+                : "./18505047_SL-070720-32260-21.svg";
+              const name = product?.name || "Unnamed Product";
+              const quantity = item?.quantity ?? 1;
+              const price = product?.price ?? 0;
+              const subtotalPerItem = price * quantity;
 
-                const name = product?.name || "Unnamed Product";
-                const quantity = item?.quantity ?? 1;
-                const price = product?.price ?? 0;
-                const subtotalPerItem = price * quantity;
-
-                return (
-                  <Box
-                    key={item._id}
-                    display="flex"
-                    alignItems="center"
-                    py={3}
-                    borderBottom="1px solid #eee"
-                  >
-                    <Box width="50%" display="flex" alignItems="center">
-                      <CardMedia
-                        component="img"
-                        image={imageUrl}
-                        alt={name}
-                        sx={{
-                          width: 90,
-                          height: 110,
-                          objectFit: "cover",
-                          borderRadius: 2,
-                          mr: 2,
-                        }}
-                      />
-                      <Box>
-                        <Typography fontWeight="bold">{name}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          PRADA
-                        </Typography>
-                        <Typography variant="body2" mt={0.5}>
-                          ₹{price.toFixed(2)} × {quantity}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <Box
-                      width="25%"
-                      display="flex"
-                      alignItems="center"
-                      gap={1.5}
-                    >
-                      <IconButton
-                        onClick={() =>
-                          handleQuantityChange(item._id, "decrease")
-                        }
-                        sx={{ border: "1px solid #ccc", p: 0.5 }}
-                      >
-                        <Remove />
-                      </IconButton>
-                      <Typography fontWeight="bold">{quantity}</Typography>
-                      <IconButton
-                        onClick={() =>
-                          handleQuantityChange(item._id, "increase")
-                        }
-                        sx={{ border: "1px solid #ccc", p: 0.5 }}
-                      >
-                        <Add />
-                      </IconButton>
-                    </Box>
-
-                    <Box width="25%">
-                      <Typography fontWeight="bold" color="primary">
-                        ₹{subtotalPerItem.toFixed(2)}
+              return (
+                <Box
+                  key={item._id}
+                  display="flex"
+                  alignItems="center"
+                  py={3}
+                  borderBottom="1px solid #eee"
+                >
+                  <Box width="50%" display="flex" alignItems="center">
+                    <CardMedia
+                      component="img"
+                      image={imageUrl}
+                      alt={name}
+                      sx={{
+                        width: 90,
+                        height: 110,
+                        objectFit: "cover",
+                        borderRadius: 2,
+                        mr: 2,
+                      }}
+                    />
+                    <Box>
+                      <Typography fontWeight="bold">{name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        PRADA
+                      </Typography>
+                      <Typography variant="body2" mt={0.5}>
+                        ₹{price.toFixed(2)} × {quantity}
                       </Typography>
                     </Box>
                   </Box>
-                );
-              })}
+
+                  <Box width="25%" display="flex" alignItems="center" gap={1.5}>
+                    <IconButton
+                      onClick={() =>
+                        handleQuantityChange(item._id, quantity, "decrease")
+                      }
+                      sx={{ border: "1px solid #ccc", p: 0.5 }}
+                    >
+                      <Remove />
+                    </IconButton>
+
+                    <Typography fontWeight="bold">{quantity}</Typography>
+
+                    <IconButton
+                      onClick={() =>
+                        handleQuantityChange(item._id, quantity, "increase")
+                      }
+                      sx={{ border: "1px solid #ccc", p: 0.5 }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Box>
+
+                  <Box width="25%">
+                    <Typography fontWeight="bold" color="primary">
+                      ₹{subtotalPerItem.toFixed(2)}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
           </Box>
 
-          {/* Right - Summary */}
           <Box
             flex={1}
             border="1px solid #ddd"
@@ -233,6 +261,57 @@ const Addtocart = () => {
 
             <Divider sx={{ my: 2 }} />
 
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="Street"
+                variant="outlined"
+                value={shippingAddress.street}
+                onChange={(e) =>
+                  setShippingAddress({ ...shippingAddress, street: e.target.value })
+                }
+                required
+              />
+            </Box>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="City"
+                variant="outlined"
+                value={shippingAddress.city}
+                onChange={(e) =>
+                  setShippingAddress({ ...shippingAddress, city: e.target.value })
+                }
+                required
+              />
+            </Box>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="State"
+                variant="outlined"
+                value={shippingAddress.state}
+                onChange={(e) =>
+                  setShippingAddress({ ...shippingAddress, state: e.target.value })
+                }
+                required
+              />
+            </Box>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="Postal Code"
+                variant="outlined"
+                value={shippingAddress.postalCode}
+                onChange={(e) =>
+                  setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
+                }
+                required
+              />
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
             <Box
               display="flex"
               justifyContent="space-between"
@@ -254,7 +333,7 @@ const Addtocart = () => {
                   backgroundColor: "#333",
                 },
               }}
-              onClick={() => alert("Proceed to Payment")}
+              onClick={handleCheckout}
             >
               Checkout
             </Button>
@@ -266,4 +345,4 @@ const Addtocart = () => {
   );
 };
 
-export default Addtocart;
+export default AddToCart;

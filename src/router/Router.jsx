@@ -9,6 +9,7 @@ import Footer from "../user/pages/footer/Footer";
 import Contact from "../user/pages/contact/Contact";
 import Categories from "../user/pages/categories/Categories";
 import Updateprofile from "../user/pages/UpdateProfile/updateprofile";
+import OrderSuccess from "../user/pages/order/OrderSuccess";
 
 import Admin_Login from "../admin/pages/Admin_Login";
 import Admin from "../admin/Admin";
@@ -44,6 +45,8 @@ const Router = () => {
         <Route path="/footer" element={<Footer />} />
         <Route path="/addtocart" element={<Addtocart />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+
 
         {/* Protected User Route */}
         <Route

@@ -5,7 +5,7 @@ import { combineReducers } from 'redux';
 import {
   FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER,
 } from 'redux-persist';
-
+import orderReducer from "./orderSlice";
 import cartReducer from './createSlice';
 import userReducer from './userSlice';
 import authReducer from './authSlice';
@@ -25,6 +25,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   seller: sellerReducer,
   admin: adminReducer,
+  order: orderReducer,
   productDetail: productDetailReducer, // ✅ Added to root reducer
 });
 

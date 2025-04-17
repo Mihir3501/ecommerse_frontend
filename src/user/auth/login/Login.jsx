@@ -15,10 +15,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "/background-image-reg-loin.jpg";
 import { ToastContainer, toast } from "react-toastify";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setToken } from "../../../redux/authSlice";
-import { setUser } from "../../../redux/userSlice"; 
+import { loginUser } from "../../../redux/authSlice"; // Import the login async thunk
+import "react-toastify/dist/ReactToastify.css";
+import { setAccessToken } from "../../../redux/userSlice";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -26,7 +26,7 @@ const validationSchema = Yup.object({
     .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email")
     .required("Enter your Email"),
   password: Yup.string()
-    .length(8)
+    .length(8, "Password must be exactly 8 characters")
     .matches(/\d/, "At least one number")
     .required("Enter your Password"),
 });
@@ -34,25 +34,27 @@ const validationSchema = Yup.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/user/login`, values);
+      // Dispatch the loginUser async thunk action
+      const resultAction = await dispatch(loginUser(values));
 
-      toast.success("Login successful!");
+      dispatch(setAccessToken(resultAction.payload.user.token))
 
-      localStorage.setItem("userAuth", JSON.stringify(response.data));
-
-      dispatch(setUser(response.data.user));
-      dispatch(setToken(response.data.user.token));
-
-      setTimeout(() => navigate("/mainpage"), 2000);
+      if (loginUser.fulfilled.match(resultAction)) {
+        // Login successful, navigate to the main page
+        toast.success("Login successful!");
+        setTimeout(() => navigate("/mainpage"), 2000);
+      } else {
+        // Login failed, display the error
+        toast.error(resultAction.payload || "Login failed");
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error.message || "Login failed");
     } finally {
       setSubmitting(false);
     }

@@ -1,59 +1,43 @@
-// src/services/cartService.js
 import axios from "axios";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// Get token from localStorage
-const getToken = () => {
-  const authData = localStorage.getItem("userAuth");
-  if (!authData) return null;
+// 🔐 Auth header builder
+const authHeader = (token) => ({
+  headers: {
+    Authorization: token ? `Bearer ${token}` : "",
+  },
+  withCredentials: true,
+});
 
-  try {
-    const parsed = JSON.parse(authData);
-    return parsed.user?.token || null;
-  } catch (error) {
-    console.error("Failed to parse userAuth:", error);
-    return null;
-  }
+// 🛒 Get cart
+const getCart = async (token) => {
+  const res = await axios.get(`${BASE_URL}/api/cart/view`, authHeader(token));
+  return res.data.data?.items || [];
 };
 
-// Create header with Authorization
-const authHeader = () => {
-  const token = getToken();
-  return {
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    withCredentials: true,
-  };
-};
-
-// API calls
-const getCart = async () => {
-  const res = await axios.get(`${BASE_URL}/api/cart/view`, authHeader());
-  return res.data.cartItems;
-};
-
-const addToCart = async (item) => {
+// ➕ Add to cart
+const addToCart = async (item, token) => {
   const res = await axios.post(
     `${BASE_URL}/api/cart/addIn`,
-    { productId: item._id, quantity: 1 }, 
-    authHeader()
+    { productId: item._id, quantity: 1 },
+    authHeader(token)
   );
   return res.data;
 };
 
-
-const updateCart = async (itemId, type) => {
-  const res = await axios.patch(
+// 🔄 Update quantity
+const updateCart = async (itemId, newQuantity, token) => {
+  const res = await axios.patch( 
     `${BASE_URL}/api/cart/updateCart/${itemId}`,
-    { type },
-    authHeader()
+    { quantity: newQuantity },
+    authHeader(token)
   );
   return res.data;
 };
 
-const clearCart = async () => {
-  await axios.delete(`${BASE_URL}/api/cart/clear`, authHeader());
+const clearCart = async (token) => {
+  await axios.delete(`${BASE_URL}/api/cart/clear`, authHeader(token));
 };
 
 export default { getCart, addToCart, updateCart, clearCart };
