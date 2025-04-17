@@ -25,8 +25,8 @@ const Selar_Dashboard = () => {
               <button className="bg-white cursor-pointer text-blue-600 font-semibold px-4 py-2 rounded-lg shadow-md mr-2" onClick={() => navigate("/Selar_Products")}>
                 Add New Product 
               </button>
-              <button className="bg-blue-800 cursor-pointer hover:bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-md">
-                View Store Analytics
+              <button className="bg-blue-800 cursor-pointer hover:bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-md" onClick={() => navigate ("/Selar_Products")}>
+                View Store Products
               </button>
             </div>
           </div>

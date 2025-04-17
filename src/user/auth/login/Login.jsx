@@ -19,7 +19,7 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../../../redux/authSlice"; // Import the login async thunk
 import "react-toastify/dist/ReactToastify.css";
 import { setAccessToken } from "../../../redux/userSlice";
-
+ 
 const validationSchema = Yup.object({
   email: Yup.string()
     .max(30)
@@ -30,21 +30,21 @@ const validationSchema = Yup.object({
     .matches(/\d/, "At least one number")
     .required("Enter your Password"),
 });
-
+ 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-
+ 
   const handleTogglePassword = () => setShowPassword(!showPassword);
-
+ 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       // Dispatch the loginUser async thunk action
       const resultAction = await dispatch(loginUser(values));
-
+ 
       dispatch(setAccessToken(resultAction.payload.user.token))
-
+ 
       if (loginUser.fulfilled.match(resultAction)) {
         // Login successful, navigate to the main page
         toast.success("Login successful!");
@@ -59,7 +59,7 @@ const Login = () => {
       setSubmitting(false);
     }
   };
-
+ 
   return (
     <>
       <ToastContainer />
@@ -86,7 +86,7 @@ const Login = () => {
             <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Login
             </Typography>
-
+ 
             <Formik
               initialValues={{ email: "", password: "" }}
               validationSchema={validationSchema}
@@ -107,7 +107,7 @@ const Login = () => {
                         helperText={errors.email}
                       />
                     </Grid>
-
+ 
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -131,7 +131,7 @@ const Login = () => {
                         }}
                       />
                     </Grid>
-
+ 
                     <Grid item xs={12}>
                       <Button
                         variant="contained"
@@ -145,7 +145,7 @@ const Login = () => {
                       </Button>
                     </Grid>
                   </Grid>
-
+ 
                   <Typography align="center" sx={{ mt: 2 }}>
                     Don’t have an account?{" "}
                     <Link to="/registration" style={{ color: "#1976D2", fontWeight: "bold" }}>
@@ -161,5 +161,5 @@ const Login = () => {
     </>
   );
 };
-
+ 
 export default Login;

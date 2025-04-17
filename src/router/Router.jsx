@@ -10,6 +10,8 @@ import Contact from "../user/pages/contact/Contact";
 import Categories from "../user/pages/categories/Categories";
 import Updateprofile from "../user/pages/UpdateProfile/updateprofile";
 import OrderSuccess from "../user/pages/order/OrderSuccess";
+import Addtocart from "../user/pages/addtocart/Addtocart";
+import ProductPage from "../user/pages/productpage/ProductPage";
 
 import Admin_Login from "../admin/pages/Admin_Login";
 import Admin from "../admin/Admin";
@@ -17,6 +19,7 @@ import User_Manage from "../admin/managements/User_Manage";
 import Seller_Manage from "../admin/managements/Seller_Manage";
 import Product_Catalog from "../admin/managements/Product_Catlog";
 import User_Details from "../admin/managements/User_Details";
+import Admin_Profile from "../admin/pages/Admin_Profile";
 
 import Selar_Registrastion from "../selar/auth/registration/Selar_Registrastion";
 import Selar_Login from "../selar/auth/login/Selar_Login";
@@ -24,11 +27,9 @@ import Selar_Dashboard from "../selar/page/dashboard/Selar_Dashboard";
 import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
 import Selar_Products from "../selar/page/products/Selar_Products";
+import UpdateProduct from "../selar/page/updateProduct/UpdateProduct";
 
-import PrivateRouter from "./PrivateRouter"; // unified correctly
-import Admin_Profile from "../admin/pages/Admin_Profile";
-import Addtocart from "../user/pages/addtocart/Addtocart";
-import ProductPage from "../user/pages/productpage/ProductPage";
+import PrivateRouter from "./PrivateRouter";
 
 const Router = () => {
   return (
@@ -46,9 +47,9 @@ const Router = () => {
         <Route path="/addtocart" element={<Addtocart />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+        <Route path="/updateproduct" element={<UpdateProduct />} />
 
-
-        {/* Protected User Route */}
+        {/* Protected User Routes */}
         <Route
           path="/updateprofile"
           element={
@@ -129,8 +130,6 @@ const Router = () => {
 
         {/* Seller Routes */}
         <Route path="/selar_registrastion" element={<Selar_Registrastion />} />
-        <Route path="/selar_login" element={<Selar_Login />} />
-        <Route path="/selar_dashboard" element={<Selar_Dashboard />} />
         <Route path="/selar_navbar" element={<Selar_Navbar />} />
         <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
         <Route path="/selar_Products" element={<Selar_Products />} />
