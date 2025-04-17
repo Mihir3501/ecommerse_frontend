@@ -15,12 +15,12 @@ export const loginAdmin = createAsyncThunk(
         token: response.data.token,
       };
 
-
+      // Save admin data in localStorage
+      localStorage.setItem("adminAuth", JSON.stringify(data));
 
       return data;
     } catch (error) {
       console.error(" ADMIN LOGIN ERROR:", error.response?.data || error.message);
-
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
@@ -29,14 +29,15 @@ export const loginAdmin = createAsyncThunk(
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
-    adminInfo: null, // ❌ No localStorage here
+    adminInfo: JSON.parse(localStorage.getItem("adminAuth")) || null, // Get data from localStorage
     isAuthenticated: false,
     loading: false,
     error: null,
   },
   reducers: {
     logoutAdmin: (state) => {
-      // ❌ No localStorage.removeItem here
+      // Clear admin info and token from localStorage on logout
+      localStorage.removeItem("adminAuth");
       state.adminInfo = null;
       state.isAuthenticated = false;
       state.error = null;

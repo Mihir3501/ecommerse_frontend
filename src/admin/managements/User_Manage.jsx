@@ -11,6 +11,8 @@ const User_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(10); // Set how many users per page
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -47,15 +49,11 @@ const User_Manage = () => {
     try {
       const endpoint = `${BASE_URL}/api/admin/users/${id}/toggle-status`;
 
-      await axios.patch(
-        endpoint,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${adminInfo?.token}`,
-          },
-        }
-      );
+      await axios.patch(endpoint, {}, {
+        headers: {
+          Authorization: `Bearer ${adminInfo?.token}`,
+        },
+      });
 
       // Update UI
       setUsers((prevUsers) =>
@@ -68,6 +66,13 @@ const User_Manage = () => {
       alert("Failed to update user status.");
     }
   };
+
+  // Pagination Logic
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -94,11 +99,11 @@ const User_Manage = () => {
                     <th className="px-6 py-3">Email</th>
                     <th className="px-6 py-3">Role</th>
                     <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Actions</th>
+                    {/* <th className="px-6 py-3">Actions</th> */}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {users.map((user) => (
+                  {currentUsers.map((user) => (
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {user.name}
@@ -117,7 +122,7 @@ const User_Manage = () => {
                           onClick={() => toggleUserStatus(user._id, user.isActive)}
                           title={user.isActive ? "Deactivate" : "Activate"}
                         >
-                          <MdOutlineDeleteForever className="h-4 w-4" />
+                          {/* <MdOutlineDeleteForever className="h-4 w-4" /> */}
                         </button>
                       </td>
                     </tr>
@@ -126,6 +131,24 @@ const User_Manage = () => {
               </table>
             </div>
           )}
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center mt-6">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              className="px-4 py-2 border border-gray-300 rounded-l-lg bg-white hover:bg-gray-100"
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              className="px-4 py-2 border border-gray-300 rounded-r-lg bg-white hover:bg-gray-100"
+              disabled={currentPage === Math.ceil(users.length / usersPerPage)}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>
