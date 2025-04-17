@@ -45,7 +45,7 @@ const Product_Catalog = () => {
         <div className="p-6 pt-24">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Product Catalog</h2>
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               <button
                 className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-gray-100"
                 onClick={() => navigate('/sellers')}
@@ -58,7 +58,7 @@ const Product_Catalog = () => {
               >
                 See All Products
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="overflow-x-auto rounded-lg shadow">
