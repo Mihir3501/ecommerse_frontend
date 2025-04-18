@@ -3,12 +3,12 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const PrivateRouter = ({ children, adminOnly = false, sellerOnly = false }) => {
-  const userInfo = useSelector((state) => state.user?.userInfo);
-  const sellerInfo = useSelector((state) => state.seller?.sellerInfo);
+  const userInfo = useSelector((state) => state.user?.user); 
+    const sellerInfo = useSelector((state) => state.seller?.sellerInfo);
   const adminInfo = useSelector((state) => state.admin?.adminInfo);
 
-  const isUserLoggedIn = !!userInfo?.token;
-  const isSellerLoggedIn = !!sellerInfo?.token;
+  const isUserLoggedIn = !!userInfo;
+    const isSellerLoggedIn = !!sellerInfo?.token;
   const isAdminLoggedIn = !!adminInfo?.token;
 
   if (adminOnly && !isAdminLoggedIn) {

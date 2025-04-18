@@ -18,7 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../../redux/authSlice"; // Import the login async thunk
 import "react-toastify/dist/ReactToastify.css";
-import { setAccessToken, setUser } from "../../../redux/userSlice";
+import { setAccessToken } from "../../../redux/userSlice";
  
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -46,11 +46,7 @@ const Login = () => {
       dispatch(setAccessToken(resultAction.payload.user.token))
  
       if (loginUser.fulfilled.match(resultAction)) {
-        const { user, token } = resultAction.payload;
-
-        dispatch(setUser(user));              // <-- sets the user info
-        dispatch(setAccessToken(token));  
-
+        // Login successful, navigate to the main page
         toast.success("Login successful!");
         setTimeout(() => navigate("/mainpage"), 2000);
       } else {
