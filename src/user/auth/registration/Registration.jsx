@@ -336,8 +336,10 @@ const validationSchema = Yup.object({
     .required("Enter your Mobile Number"),
   password: Yup.string()
     .length(8)
-    .matches(/\d/, "At least one number")
-    .matches(/[@#$%!&*]/, "At least one special character")
+    .matches(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+      "Password must contain at least one uppercase letter, one number, and one special character"
+    )
     .required("Enter your Password"),
   address: Yup.string().required("Enter your address"),
 });

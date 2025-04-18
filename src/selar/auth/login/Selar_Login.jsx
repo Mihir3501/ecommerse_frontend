@@ -26,7 +26,10 @@ const validationSchema = Yup.object({
     .required('Enter your Email'),
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
-    .matches(/\d/, 'Password must include at least one number')
+.matches(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+      "Password must contain at least one uppercase letter, one number, and one special character"
+    )
     .required('Enter your Password')
 });
  

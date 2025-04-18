@@ -118,7 +118,8 @@ const Navbar = () => {
               <>
                 <IconButton onClick={handleMenuClick}>
                   <Avatar>
-                    {user.name?.charAt(0).toUpperCase() || "U"}
+                
+
                   </Avatar>
                 </IconButton>
                 <Menu

@@ -26,17 +26,13 @@ const validationSchema = Yup.object({
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
-  const token = useSelector((state) => state.auth.token);
+
+  // Fetch token from localStorage if not in Redux
+  const token = useSelector((state) => state.auth.token) || localStorage.getItem("token");
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const initialValues = {
-    name: userDetails?.name ?? "",
-    mobile: userDetails?.mobile ?? "",
-    address: userDetails?.address ?? "",
-  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,7 +42,6 @@ const UpdateProfile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         setUserDetails(response.data.user);
         setLoading(false);
       } catch (error) {
@@ -57,13 +52,13 @@ const UpdateProfile = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [token, BASE_URL]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { name, mobile, address } = values;
 
-      const response = await axios.patch(
+      await axios.patch(
         `${BASE_URL}/api/user/profile`,
         { name, mobile, address },
         {
@@ -112,12 +107,7 @@ const UpdateProfile = () => {
               backdropFilter: "blur(10px)",
             }}
           >
-            <Typography
-              variant="h4"
-              align="center"
-              gutterBottom
-              fontWeight="bold"
-            >
+            <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Update Profile
             </Typography>
 
@@ -127,7 +117,11 @@ const UpdateProfile = () => {
               </Typography>
             ) : userDetails ? (
               <Formik
-                initialValues={initialValues}
+                initialValues={{
+                  name: userDetails.name || "",
+                  mobile: userDetails.mobile || "",
+                  address: userDetails.address || "",
+                }}
                 enableReinitialize
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
@@ -135,12 +129,12 @@ const UpdateProfile = () => {
                 validateOnChange={false}
               >
                 {({
-                  touched,
+                  values,
                   errors,
+                  touched,
                   handleChange,
                   handleBlur,
                   handleSubmit,
-                  values,
                   isSubmitting,
                 }) => (
                   <form onSubmit={handleSubmit}>
@@ -154,27 +148,25 @@ const UpdateProfile = () => {
                           value={values.name}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          error={touched.name && Boolean(errors.name)}
-                          helperText={touched.name && errors.name}
+                          error={Boolean(errors.name && touched.name)}
+                          helperText={errors.name && touched.name && errors.name}
                         />
                       </Grid>
+
                       <Grid item xs={12}>
                         <TextField
                           fullWidth
-                          label="Mobile No"
+                          label="Mobile"
                           name="mobile"
                           variant="outlined"
-                          inputProps={{
-                            inputMode: "numeric",
-                            pattern: "[0-9]*",
-                          }}
                           value={values.mobile}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          error={touched.mobile && Boolean(errors.mobile)}
-                          helperText={touched.mobile && errors.mobile}
+                          error={Boolean(errors.mobile && touched.mobile)}
+                          helperText={errors.mobile && touched.mobile && errors.mobile}
                         />
                       </Grid>
+
                       <Grid item xs={12}>
                         <TextField
                           fullWidth
@@ -184,10 +176,11 @@ const UpdateProfile = () => {
                           value={values.address}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          error={touched.address && Boolean(errors.address)}
-                          helperText={touched.address && errors.address}
+                          error={Boolean(errors.address && touched.address)}
+                          helperText={errors.address && touched.address && errors.address}
                         />
                       </Grid>
+
                       <Grid item xs={12}>
                         <Button
                           variant="contained"
@@ -195,32 +188,18 @@ const UpdateProfile = () => {
                           fullWidth
                           size="large"
                           type="submit"
-                          sx={{ mt: 2 }}
                           disabled={isSubmitting}
                         >
-                          {isSubmitting ? "Submitting..." : "Submit"}
+                          {isSubmitting ? "Updating..." : "Update"}
                         </Button>
                       </Grid>
                     </Grid>
-                    <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                      Don't want to update profile?{" "}
-                      <Link
-                        to="/mainpage"
-                        style={{
-                          textDecoration: "none",
-                          color: "#1976D2",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Go to Homepage
-                      </Link>
-                    </Typography>
                   </form>
                 )}
               </Formik>
             ) : (
-              <Typography color="error" align="center" sx={{ mt: 2 }}>
-                Failed to load profile data.
+              <Typography align="center" sx={{ mt: 2 }}>
+                No user data available.
               </Typography>
             )}
           </Card>
