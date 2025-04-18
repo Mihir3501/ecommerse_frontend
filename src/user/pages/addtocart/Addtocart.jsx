@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice"; 
+import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice";
 import { createOrder } from "../../../config/orderService";
 
 const AddToCart = () => {
@@ -34,17 +34,11 @@ const AddToCart = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchCartItems())
-      .unwrap()
-      .then((data) => {
-        console.log("Cart fetched successfully:", data);
-      })
-      .catch((err) => {
-        console.error("Error fetching cart:", err);
-      });
+    dispatch(fetchCartItems());
   }, [dispatch]);
 
   const shippingCost = shipping === "flat" ? 30 : 0;
+
   const subtotal = Array.isArray(cartItems)
     ? cartItems.reduce((sum, item) => {
         const price = item?.product?.price ?? 0;
@@ -55,50 +49,46 @@ const AddToCart = () => {
 
   const total = subtotal + shippingCost;
 
+  const handleQuantityChange = (productId, currentQuantity, type) => {
+    let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
+    if (newQuantity < 1) newQuantity = 1;
+  
+    // 🔄 Use productId instead of cart item ID
+    dispatch(updateQuantityAsync({ productId, quantity: newQuantity }));
+  };
+  
+
   const handleCheckout = async () => {
     const { street, city, state, postalCode } = shippingAddress;
     if (!street || !city || !state || !postalCode) {
       alert("Please fill in your complete shipping address.");
       return;
     }
-  
-    // Ensure each item has productId before sending to backend
+
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
-  
+
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
-  
+
     try {
       const response = await createOrder(orderData, token);
-      console.log("Order response:", response);
-  
-      // ✅ Fix here: use `id` instead of `_id`
-      const orderId = response?.order?.id.item || response?.order?._id;
-  
+      const orderId = response?.order?.id || response?.order?._id;
       if (orderId) {
         navigate(`/ordersuccess/${orderId}`);
       } else {
         alert("Something went wrong while placing your order.");
-        console.log("Unexpected order response:", response);
       }
     } catch (error) {
       console.error("Checkout error:", error);
       alert("An error occurred during checkout.");
     }
-  };
-
-  const handleQuantityChange = (itemId, currentQuantity, type) => {
-    let newQuantity =
-      type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
-    if (newQuantity < 1) newQuantity = 1;
-    dispatch(updateQuantityAsync({ itemId, newQuantity }));
   };
 
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
@@ -128,12 +118,7 @@ const AddToCart = () => {
           Shopping Cart
         </Typography>
 
-        <Box
-          display="flex"
-          flexDirection={{ xs: "column", md: "row" }}
-          gap={6}
-          alignItems="flex-start"
-        >
+        <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={6}>
           <Box flex={2}>
             <Box
               display="flex"
@@ -195,14 +180,11 @@ const AddToCart = () => {
                     alignItems="center"
                     gap={1.5}
                   >
-                    <IconButton
-                      onClick={() =>
-                        handleQuantityChange(item._id, quantity, "decrease")
-                      }
-                      sx={{ border: "1px solid #ccc", p: 0.5 }}
-                    >
-                      <Remove />
-                    </IconButton>
+                   <IconButton
+  onClick={() => handleQuantityChange(product._id, quantity, "decrease")}
+>
+  <Remove />
+</IconButton>
 
                     <Typography fontWeight="bold">{quantity}</Typography>
 
@@ -239,12 +221,7 @@ const AddToCart = () => {
               backgroundColor: "#f9f9f9",
             }}
           >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={2}
-            >
+            <Box display="flex" justifyContent="space-between" mb={2}>
               <Typography fontWeight="bold" fontSize="16px">
                 COUPON CODE
               </Typography>
@@ -283,75 +260,27 @@ const AddToCart = () => {
 
             <Divider sx={{ my: 2 }} />
 
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="Street"
-                variant="outlined"
-                value={shippingAddress.street}
-                onChange={(e) =>
-                  setShippingAddress({
-                    ...shippingAddress,
-                    street: e.target.value,
-                  })
-                }
-                required
-              />
-            </Box>
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="City"
-                variant="outlined"
-                value={shippingAddress.city}
-                onChange={(e) =>
-                  setShippingAddress({
-                    ...shippingAddress,
-                    city: e.target.value,
-                  })
-                }
-                required
-              />
-            </Box>
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="State"
-                variant="outlined"
-                value={shippingAddress.state}
-                onChange={(e) =>
-                  setShippingAddress({
-                    ...shippingAddress,
-                    state: e.target.value,
-                  })
-                }
-                required
-              />
-            </Box>
-            <Box mb={2}>
-              <TextField
-                fullWidth
-                label="Postal Code"
-                variant="outlined"
-                value={shippingAddress.postalCode}
-                onChange={(e) =>
-                  setShippingAddress({
-                    ...shippingAddress,
-                    postalCode: e.target.value,
-                  })
-                }
-                required
-              />
-            </Box>
+            {["street", "city", "state", "postalCode"].map((field) => (
+              <Box mb={2} key={field}>
+                <TextField
+                  fullWidth
+                  label={field[0].toUpperCase() + field.slice(1)}
+                  variant="outlined"
+                  value={shippingAddress[field]}
+                  onChange={(e) =>
+                    setShippingAddress({
+                      ...shippingAddress,
+                      [field]: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </Box>
+            ))}
 
             <Divider sx={{ my: 2 }} />
 
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              fontWeight="bold"
-              mb={2}
-            >
+            <Box display="flex" justifyContent="space-between" fontWeight="bold" mb={2}>
               <Typography variant="h6">Total</Typography>
               <Typography variant="h6">₹{total.toFixed(2)}</Typography>
             </Box>

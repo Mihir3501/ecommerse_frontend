@@ -36,6 +36,7 @@ const updateCart = async (itemId, newQuantity, token) => {
   return res.data;
 };
 
+
 const clearCart = async (token) => {
   await axios.delete(`${BASE_URL}/api/cart/clear`, authHeader(token));
 };

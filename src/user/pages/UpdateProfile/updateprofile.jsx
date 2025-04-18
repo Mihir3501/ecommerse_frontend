@@ -10,7 +10,7 @@ import {
   Card,
   Grid,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Navbar/navbar";
@@ -80,6 +80,10 @@ const UpdateProfile = () => {
     }
   };
 
+  if (loading) {
+    return <Typography align="center">Loading profile...</Typography>;
+  }
+
   return (
     <>
       <Navbar />
@@ -111,97 +115,87 @@ const UpdateProfile = () => {
               Update Profile
             </Typography>
 
-            {loading ? (
-              <Typography align="center" sx={{ mt: 2 }}>
-                Loading profile...
-              </Typography>
-            ) : userDetails ? (
-              <Formik
-                initialValues={{
-                  name: userDetails.name || "",
-                  mobile: userDetails.mobile || "",
-                  address: userDetails.address || "",
-                }}
-                enableReinitialize
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-                validateOnBlur={false}
-                validateOnChange={false}
-              >
-                {({
-                  values,
-                  errors,
-                  touched,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  isSubmitting,
-                }) => (
-                  <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Name"
-                          name="name"
-                          variant="outlined"
-                          value={values.name}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={Boolean(errors.name && touched.name)}
-                          helperText={errors.name && touched.name && errors.name}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Mobile"
-                          name="mobile"
-                          variant="outlined"
-                          value={values.mobile}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={Boolean(errors.mobile && touched.mobile)}
-                          helperText={errors.mobile && touched.mobile && errors.mobile}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Address"
-                          name="address"
-                          variant="outlined"
-                          value={values.address}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={Boolean(errors.address && touched.address)}
-                          helperText={errors.address && touched.address && errors.address}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          size="large"
-                          type="submit"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "Updating..." : "Update"}
-                        </Button>
-                      </Grid>
+            <Formik
+              initialValues={{
+                name: userDetails?.name ?? "",
+                mobile: userDetails?.mobile ?? "",
+                address: userDetails?.address ?? "",
+              }}
+              enableReinitialize
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              validateOnBlur={false}
+              validateOnChange={false}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        name="name"
+                        variant="outlined"
+                        value={values.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.name && touched.name)}
+                        helperText={errors.name && touched.name && errors.name}
+                      />
                     </Grid>
-                  </form>
-                )}
-              </Formik>
-            ) : (
-              <Typography align="center" sx={{ mt: 2 }}>
-                No user data available.
-              </Typography>
-            )}
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Mobile"
+                        name="mobile"
+                        variant="outlined"
+                        value={values.mobile}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.mobile && touched.mobile)}
+                        helperText={errors.mobile && touched.mobile && errors.mobile}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        name="address"
+                        variant="outlined"
+                        value={values.address}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.address && touched.address)}
+                        helperText={errors.address && touched.address && errors.address}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Updating..." : "Update"}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              )}
+            </Formik>
           </Card>
         </Container>
       </div>
