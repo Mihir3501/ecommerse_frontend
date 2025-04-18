@@ -49,26 +49,25 @@ const Router = () => {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/ordersuccess/:orderid" element={<OrderSuccess />} />
         <Route path="/updateproduct" element={<UpdateProduct />} />
+        <Route path="/updateprofile" element={<Updateprofile />} />
 
         {/* Protected User Routes */}
-        <Route
+        {/* <Route
           path="/updateprofile"
           element={
             <PrivateRouter userOnly={true}>
               <Updateprofile />
             </PrivateRouter>
           }
-        />
-        <Route
-          path="/selar_dashboard"
-          element={
-            <PrivateRouter sellerOnly={true}>
-              <Selar_Dashboard />
-            </PrivateRouter>
-          }
-        />
-        <Route path="/selar_login" element={<Selar_Login />} />
+        /> */}
 
+        {/* Seller Routes */}
+        <Route path="/selar_registrastion" element={<Selar_Registrastion />} />
+        <Route path="/selar_navbar" element={<Selar_Navbar />} />
+        <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
+        <Route path="/selar_Products" element={<Selar_Products />} />
+        <Route path="/selar_login" element={<Selar_Login />} />
+        <Route path="/selar_dashboard" element={<Selar_Dashboard />} />
 
         {/* Public Admin Route */}
         <Route path="/admin_login" element={<Admin_Login />} />
@@ -130,12 +129,6 @@ const Router = () => {
             </PrivateRouter>
           }
         />
-
-        {/* Seller Routes */}
-        <Route path="/selar_registrastion" element={<Selar_Registrastion />} />
-        <Route path="/selar_navbar" element={<Selar_Navbar />} />
-        <Route path="/selar_sidebar" element={<Selar_Sidebar />} />
-        <Route path="/selar_Products" element={<Selar_Products />} />
       </Routes>
     </BrowserRouter>
   );

@@ -10,34 +10,30 @@ import {
   Card,
   Grid,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Navbar/navbar";
 import backgroundImage from "/background-image-reg-loin.jpg";
 import { useSelector } from "react-redux";
- 
+
 // Validation schema
 const validationSchema = Yup.object({
   name: Yup.string().max(35, "Must be 35 characters or less").required("Enter your name"),
   mobile: Yup.string().matches(/^[0-9]{10}$/, "Enter a valid 10-digit number").required("Enter your Mobile Number"),
   address: Yup.string().required("Enter your address"),
 });
- 
+
 const UpdateProfile = () => {
   const navigate = useNavigate();
-  const token = useSelector((state) => state.auth.token);
+
+  // Fetch token from localStorage if not in Redux
+  const token = useSelector((state) => state.auth.token) || localStorage.getItem("token");
   const BASE_URL = import.meta.env.VITE_BASE_URL;
- 
+
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
- 
-  const initialValues = {
-    name: userDetails?.name ?? "",
-    mobile: userDetails?.mobile ?? "",
-    address: userDetails?.address ?? "",
-  };
- 
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -46,7 +42,6 @@ const UpdateProfile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
- 
         setUserDetails(response.data.user);
         setLoading(false);
       } catch (error) {
@@ -55,15 +50,15 @@ const UpdateProfile = () => {
         setLoading(false);
       }
     };
- 
+
     fetchUserData();
-  }, []);
- 
+  }, [token, BASE_URL]);
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { name, mobile, address } = values;
- 
-      const response = await axios.patch(
+
+      await axios.patch(
         `${BASE_URL}/api/user/profile`,
         { name, mobile, address },
         {
@@ -72,7 +67,7 @@ const UpdateProfile = () => {
           },
         }
       );
- 
+
       toast.success("Profile updated successfully!");
       setTimeout(() => {
         navigate("/mainpage");
@@ -84,7 +79,11 @@ const UpdateProfile = () => {
       setSubmitting(false);
     }
   };
- 
+
+  if (loading) {
+    return <Typography align="center">Loading profile...</Typography>;
+  }
+
   return (
     <>
       <Navbar />
@@ -112,122 +111,96 @@ const UpdateProfile = () => {
               backdropFilter: "blur(10px)",
             }}
           >
-            <Typography
-              variant="h4"
-              align="center"
-              gutterBottom
-              fontWeight="bold"
-            >
+            <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Update Profile
             </Typography>
- 
-            {loading ? (
-              <Typography align="center" sx={{ mt: 2 }}>
-                Loading profile...
-              </Typography>
-            ) : userDetails ? (
-              <Formik
-                initialValues={initialValues}
-                enableReinitialize
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-                validateOnBlur={false}
-                validateOnChange={false}
-              >
-                {({
-                  touched,
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  values,
-                  isSubmitting,
-                }) => (
-                  <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Name"
-                          name="name"
-                          variant="outlined"
-                          value={values.name}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={touched.name && Boolean(errors.name)}
-                          helperText={touched.name && errors.name}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Mobile No"
-                          name="mobile"
-                          variant="outlined"
-                          inputProps={{
-                            inputMode: "numeric",
-                            pattern: "[0-9]*",
-                          }}
-                          value={values.mobile}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={touched.mobile && Boolean(errors.mobile)}
-                          helperText={touched.mobile && errors.mobile}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Address"
-                          name="address"
-                          variant="outlined"
-                          value={values.address}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={touched.address && Boolean(errors.address)}
-                          helperText={touched.address && errors.address}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          size="large"
-                          type="submit"
-                          sx={{ mt: 2 }}
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "Submitting..." : "Submit"}
-                        </Button>
-                      </Grid>
+
+            <Formik
+              initialValues={{
+                name: userDetails?.name ?? "",
+                mobile: userDetails?.mobile ?? "",
+                address: userDetails?.address ?? "",
+              }}
+              enableReinitialize
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              validateOnBlur={false}
+              validateOnChange={false}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        name="name"
+                        variant="outlined"
+                        value={values.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.name && touched.name)}
+                        helperText={errors.name && touched.name && errors.name}
+                      />
                     </Grid>
-                    <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                      Don't want to update profile?{" "}
-                      <Link
-                        to="/mainpage"
-                        style={{
-                          textDecoration: "none",
-                          color: "#1976D2",
-                          fontWeight: "bold",
-                        }}
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Mobile"
+                        name="mobile"
+                        variant="outlined"
+                        value={values.mobile}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.mobile && touched.mobile)}
+                        helperText={errors.mobile && touched.mobile && errors.mobile}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        name="address"
+                        variant="outlined"
+                        value={values.address}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.address && touched.address)}
+                        helperText={errors.address && touched.address && errors.address}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        disabled={isSubmitting}
                       >
-                        Go to Homepage
-                      </Link>
-                    </Typography>
-                  </form>
-                )}
-              </Formik>
-            ) : (
-              <Typography color="error" align="center" sx={{ mt: 2 }}>
-                Failed to load profile data.
-              </Typography>
-            )}
+                        {isSubmitting ? "Updating..." : "Update"}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              )}
+            </Formik>
           </Card>
         </Container>
       </div>
     </>
   );
 };
- 
+
 export default UpdateProfile;

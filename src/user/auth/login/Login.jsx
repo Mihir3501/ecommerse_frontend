@@ -16,10 +16,10 @@ import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "/background-image-reg-loin.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../../redux/authSlice"; // Import the login async thunk
+import { loginUser } from "../../../redux/authSlice"; 
 import "react-toastify/dist/ReactToastify.css";
-import { setAccessToken } from "../../../redux/userSlice";
- 
+import { setAccessToken, setUser } from "../../../redux/userSlice";  // Corrected import
+
 const validationSchema = Yup.object({
   email: Yup.string()
     .max(30)
@@ -27,30 +27,37 @@ const validationSchema = Yup.object({
     .required("Enter your Email"),
   password: Yup.string()
     .length(8, "Password must be exactly 8 characters")
-    .matches(/\d/, "At least one number")
+    .matches(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+      "Password must contain at least one uppercase letter, one number, and one special character"
+    )
     .required("Enter your Password"),
 });
- 
+
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
- 
+
   const handleTogglePassword = () => setShowPassword(!showPassword);
- 
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      // Dispatch the loginUser async thunk action
       const resultAction = await dispatch(loginUser(values));
- 
-      dispatch(setAccessToken(resultAction.payload.user.token))
- 
+
       if (loginUser.fulfilled.match(resultAction)) {
-        // Login successful, navigate to the main page
+        const { user, token } = resultAction.payload;
+
+        // Dispatch both user and token to the Redux store
+        dispatch(setUser(user));              // Sets the user info
+        dispatch(setAccessToken(token));      // Sets the token
+
+        // Store the token in localStorage
+        localStorage.setItem("token", token);
+
         toast.success("Login successful!");
         setTimeout(() => navigate("/mainpage"), 2000);
       } else {
-        // Login failed, display the error
         toast.error(resultAction.payload || "Login failed");
       }
     } catch (error) {
@@ -59,7 +66,7 @@ const Login = () => {
       setSubmitting(false);
     }
   };
- 
+
   return (
     <>
       <ToastContainer />
@@ -86,7 +93,7 @@ const Login = () => {
             <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Login
             </Typography>
- 
+
             <Formik
               initialValues={{ email: "", password: "" }}
               validationSchema={validationSchema}
@@ -107,7 +114,7 @@ const Login = () => {
                         helperText={errors.email}
                       />
                     </Grid>
- 
+
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -131,7 +138,7 @@ const Login = () => {
                         }}
                       />
                     </Grid>
- 
+
                     <Grid item xs={12}>
                       <Button
                         variant="contained"
@@ -145,7 +152,7 @@ const Login = () => {
                       </Button>
                     </Grid>
                   </Grid>
- 
+
                   <Typography align="center" sx={{ mt: 2 }}>
                     Don’t have an account?{" "}
                     <Link to="/registration" style={{ color: "#1976D2", fontWeight: "bold" }}>
@@ -161,5 +168,5 @@ const Login = () => {
     </>
   );
 };
- 
+
 export default Login;

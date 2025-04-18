@@ -33,7 +33,6 @@ const pages = [
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.user.user);
   const totalQuantity = Array.isArray(cartItems)
@@ -54,13 +53,18 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("userAuth");
+    handleClose();
     navigate("/login");
-    setTimeout(() => handleClose(), 0);
   };
 
   const handleProfile = () => {
-    navigate("/updateprofile");
-    setTimeout(() => handleClose(), 0);
+    if (user) {
+      handleClose();
+      navigate("/updateprofile");
+    } else {
+      // Redirect to login page if user is not authenticated
+      navigate("/login");
+    }
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,6 +75,7 @@ const Navbar = () => {
       const response = await axios.get(
         `http://192.168.1.37:5000/api/product/search?q=${searchQuery}`
       );
+
       const products = response.data;
       if (products.length > 0) {
         navigate(`/product/${products[0]._id}`);
@@ -101,16 +106,7 @@ const Navbar = () => {
             MODERNO
           </Typography>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              backgroundColor: "#f1f1f1",
-              px: 1,
-              borderRadius: 1,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, backgroundColor: "#f1f1f1", px: 1, borderRadius: 1 }}>
             <InputBase
               placeholder="Search products..."
               value={searchQuery}
