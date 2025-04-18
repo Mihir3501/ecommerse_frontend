@@ -49,7 +49,7 @@ const Selar_Login = () => {
       if (loginSeller.fulfilled.match(resultAction)) {
         toast.success('Login successful!');
         setTimeout(() => {
-          navigate('/Selar_Dashboard');
+          navigate('/selar_dashboard');
         }, 2000);
       } else {
         toast.error(resultAction.payload || 'Login failed');

@@ -55,7 +55,7 @@ const Selar_Registrastion = () => {
       // localStorage.setItem("sellerAuth", JSON.stringify(response.data));
 
       setTimeout(() => {
-        navigate("/Selar_Login");
+        navigate("/selar_login");
       }, 2000);
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error.message);

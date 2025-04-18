@@ -36,14 +36,15 @@ const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.user.user);
   const totalQuantity = Array.isArray(cartItems)
-  ? cartItems.reduce((sum, item) => sum + (item?.quantity || 0), 0)
-  : 0;
+    ? cartItems.reduce((sum, item) => sum + (item?.quantity || 0), 0)
+    : 0;
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };  
+  };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -57,8 +58,13 @@ const Navbar = () => {
   };
 
   const handleProfile = () => {
-    handleClose();
-    navigate("/updateprofile");
+    if (user) {
+      handleClose();
+      navigate("/updateprofile");
+    } else {
+      // Redirect to login page if user is not authenticated
+      navigate("/login");
+    }
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -118,8 +124,7 @@ const Navbar = () => {
               <>
                 <IconButton onClick={handleMenuClick}>
                   <Avatar>
-                
-
+                    {user.name?.charAt(0).toUpperCase() || "U"}
                   </Avatar>
                 </IconButton>
                 <Menu

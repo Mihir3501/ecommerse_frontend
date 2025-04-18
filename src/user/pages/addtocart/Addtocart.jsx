@@ -16,8 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice"; // Make sure this is correct
-import { createOrderAsync } from "../../../redux/orderSlice";
+import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice"; 
 import { createOrder } from "../../../config/orderService";
 
 const AddToCart = () => {
@@ -25,7 +24,6 @@ const AddToCart = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
   const token = useSelector((state) => state.user.token);
-  console.log(token, ":token")
 
   const [shipping, setShipping] = useState("flat");
   const [shippingAddress, setShippingAddress] = useState({
@@ -49,37 +47,56 @@ const AddToCart = () => {
   const shippingCost = shipping === "flat" ? 30 : 0;
   const subtotal = Array.isArray(cartItems)
     ? cartItems.reduce((sum, item) => {
-      const price = item?.product?.price ?? 0;
-      const quantity = item?.quantity ?? 1;
-      return sum + price * quantity;
-    }, 0)
+        const price = item?.product?.price ?? 0;
+        const quantity = item?.quantity ?? 1;
+        return sum + price * quantity;
+      }, 0)
     : 0;
 
   const total = subtotal + shippingCost;
 
-  const handleCheckout = async() => {
+  const handleCheckout = async () => {
     const { street, city, state, postalCode } = shippingAddress;
     if (!street || !city || !state || !postalCode) {
       alert("Please fill in your complete shipping address.");
       return;
     }
-
+  
+    // Ensure each item has productId before sending to backend
+    const formattedItems = cartItems.map((item) => ({
+      productId: item?.product?._id,
+      quantity: item.quantity,
+    }));
+  
     const orderData = {
-      items: cartItems,
+      items: formattedItems,
       shippingType: shipping,
-      shippingAddress: shippingAddress,
+      shippingAddress,
       total,
     };
-
-
-       const response = await createOrder(orderData, token);
-       console.log(response , ":data")
-
-   
+  
+    try {
+      const response = await createOrder(orderData, token);
+      console.log("Order response:", response);
+  
+      // ✅ Fix here: use `id` instead of `_id`
+      const orderId = response?.order?.id.item || response?.order?._id;
+  
+      if (orderId) {
+        navigate(`/ordersuccess/${orderId}`);
+      } else {
+        alert("Something went wrong while placing your order.");
+        console.log("Unexpected order response:", response);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("An error occurred during checkout.");
+    }
   };
 
   const handleQuantityChange = (itemId, currentQuantity, type) => {
-    let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
+    let newQuantity =
+      type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
     if (newQuantity < 1) newQuantity = 1;
     dispatch(updateQuantityAsync({ itemId, newQuantity }));
   };
@@ -172,7 +189,12 @@ const AddToCart = () => {
                     </Box>
                   </Box>
 
-                  <Box width="25%" display="flex" alignItems="center" gap={1.5}>
+                  <Box
+                    width="25%"
+                    display="flex"
+                    alignItems="center"
+                    gap={1.5}
+                  >
                     <IconButton
                       onClick={() =>
                         handleQuantityChange(item._id, quantity, "decrease")
@@ -268,7 +290,10 @@ const AddToCart = () => {
                 variant="outlined"
                 value={shippingAddress.street}
                 onChange={(e) =>
-                  setShippingAddress({ ...shippingAddress, street: e.target.value })
+                  setShippingAddress({
+                    ...shippingAddress,
+                    street: e.target.value,
+                  })
                 }
                 required
               />
@@ -280,7 +305,10 @@ const AddToCart = () => {
                 variant="outlined"
                 value={shippingAddress.city}
                 onChange={(e) =>
-                  setShippingAddress({ ...shippingAddress, city: e.target.value })
+                  setShippingAddress({
+                    ...shippingAddress,
+                    city: e.target.value,
+                  })
                 }
                 required
               />
@@ -292,7 +320,10 @@ const AddToCart = () => {
                 variant="outlined"
                 value={shippingAddress.state}
                 onChange={(e) =>
-                  setShippingAddress({ ...shippingAddress, state: e.target.value })
+                  setShippingAddress({
+                    ...shippingAddress,
+                    state: e.target.value,
+                  })
                 }
                 required
               />
@@ -304,7 +335,10 @@ const AddToCart = () => {
                 variant="outlined"
                 value={shippingAddress.postalCode}
                 onChange={(e) =>
-                  setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
+                  setShippingAddress({
+                    ...shippingAddress,
+                    postalCode: e.target.value,
+                  })
                 }
                 required
               />
