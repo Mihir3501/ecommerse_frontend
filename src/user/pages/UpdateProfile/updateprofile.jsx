@@ -16,28 +16,28 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Navbar/navbar";
 import backgroundImage from "/background-image-reg-loin.jpg";
 import { useSelector } from "react-redux";
-
+ 
 // Validation schema
 const validationSchema = Yup.object({
   name: Yup.string().max(35, "Must be 35 characters or less").required("Enter your name"),
   mobile: Yup.string().matches(/^[0-9]{10}$/, "Enter a valid 10-digit number").required("Enter your Mobile Number"),
   address: Yup.string().required("Enter your address"),
 });
-
+ 
 const UpdateProfile = () => {
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+ 
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-
+ 
   const initialValues = {
     name: userDetails?.name ?? "",
     mobile: userDetails?.mobile ?? "",
     address: userDetails?.address ?? "",
   };
-
+ 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -46,7 +46,7 @@ const UpdateProfile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+ 
         setUserDetails(response.data.user);
         setLoading(false);
       } catch (error) {
@@ -55,14 +55,14 @@ const UpdateProfile = () => {
         setLoading(false);
       }
     };
-
+ 
     fetchUserData();
   }, []);
-
+ 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { name, mobile, address } = values;
-
+ 
       const response = await axios.patch(
         `${BASE_URL}/api/user/profile`,
         { name, mobile, address },
@@ -72,7 +72,7 @@ const UpdateProfile = () => {
           },
         }
       );
-
+ 
       toast.success("Profile updated successfully!");
       setTimeout(() => {
         navigate("/mainpage");
@@ -84,7 +84,7 @@ const UpdateProfile = () => {
       setSubmitting(false);
     }
   };
-
+ 
   return (
     <>
       <Navbar />
@@ -120,7 +120,7 @@ const UpdateProfile = () => {
             >
               Update Profile
             </Typography>
-
+ 
             {loading ? (
               <Typography align="center" sx={{ mt: 2 }}>
                 Loading profile...
@@ -229,5 +229,5 @@ const UpdateProfile = () => {
     </>
   );
 };
-
+ 
 export default UpdateProfile;

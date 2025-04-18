@@ -28,7 +28,7 @@ const Admin_Profile = () => {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/admin/change-password`, {
+      const response = await fetch(`${BASE_URL}/api/admin/profile/change-password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -47,6 +47,7 @@ const Admin_Profile = () => {
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
+        
       } else {
         setMessage(data.message || "Something went wrong.");
       }

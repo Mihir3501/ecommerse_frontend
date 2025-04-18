@@ -5,22 +5,22 @@ import { API } from '../config/Api';
 
 const initialState = {
   token: null,
-  user: null, // This will store seller info
+  user: null, 
   status: 'idle', // To track loading, success, and error states
   error: null, // To store any error messages
 };
 
-// Create an asynchronous thunk for login
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (loginCredentials, { rejectWithValue }) => {
     try {
-      // Replace with your login API request
+      
       const response = await DataServices().post(API.USERLOGIN , loginCredentials ); // API endpoint
 
       
 
-      return response.data; // Assuming the response contains a token and user data
+      return response.data; 
     } catch (error) {
       return rejectWithValue(error.response.data); // Handle errors
     }
