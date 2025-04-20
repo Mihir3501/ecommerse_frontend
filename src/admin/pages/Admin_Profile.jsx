@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Admin_Sidebar from "../pages/Admin_Sidebar";
 import Admin_Navbar from "../pages/Admin_Navbar";
 
@@ -7,6 +8,9 @@ const Admin_Profile = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [message, setMessage] = useState("");
 
   const token = useSelector((state) => state.admin.adminInfo?.token);
@@ -47,7 +51,6 @@ const Admin_Profile = () => {
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        
       } else {
         setMessage(data.message || "Something went wrong.");
       }
@@ -92,29 +95,59 @@ const Admin_Profile = () => {
 
             <form onSubmit={handleChangePassword}>
               <div className="space-y-4">
-                <input
-                  type="password"
-                  placeholder="Old Password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                {/* Old Password */}
+                <div className="relative">
+                  <input
+                    type={showOld ? "text" : "password"}
+                    placeholder="Old Password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  />
+                  <span
+                    onClick={() => setShowOld(!showOld)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+                  >
+                    {showOld ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
 
-                <input
-                  type="password"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                {/* New Password */}
+                <div className="relative">
+                  <input
+                    type={showNew ? "text" : "password"}
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  />
+                  <span
+                    onClick={() => setShowNew(!showNew)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+                  >
+                    {showNew ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
 
-                <input
-                  type="password"
-                  placeholder="Confirm New Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                {/* Confirm Password */}
+                <div className="relative">
+                  <input
+                    type={showConfirm ? "text" : "password"}
+                    placeholder="Confirm New Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  />
+                  <span
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+                  >
+                    {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
 
                 <button
                   type="submit"
@@ -132,3 +165,4 @@ const Admin_Profile = () => {
 };
 
 export default Admin_Profile;
+  

@@ -5,7 +5,7 @@ import axios from "axios";
 import Admin_Sidebar from "../pages/Admin_Sidebar";
 import Admin_Navbar from "../pages/Admin_Navbar";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import Switcher2 from "../managements/Switcher"; // Update the path if needed
+import Switcher2 from "../managements/Switcher";
 
 const Seller_Manage = () => {
   const { adminInfo } = useSelector((state) => state.admin);
@@ -13,10 +13,9 @@ const Seller_Manage = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10; // Number of sellers per page
+  const itemsPerPage = 10;
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  // Fetch users with pagination
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -25,13 +24,13 @@ const Seller_Manage = () => {
             Authorization: `Bearer ${adminInfo?.token}`,
           },
           params: {
-            page: currentPage, // Pass current page as a query parameter
-            limit: itemsPerPage, // Limit number of items per page
+            page: currentPage,
+            limit: itemsPerPage,
           },
         });
 
         setUsers(response?.data?.sellers ?? []);
-        setTotalPages(Math.ceil(response?.data?.total / itemsPerPage)); // Assuming the response contains the total count of items
+        setTotalPages(Math.ceil((response?.data?.total || 0) / itemsPerPage));
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
@@ -44,9 +43,8 @@ const Seller_Manage = () => {
     } else {
       setLoading(false);
     }
-  }, [adminInfo, currentPage]); // Re-fetch when page changes
+  }, [adminInfo, currentPage]);
 
-  // Toggle Active/Inactive status
   const toggleUserStatus = async (id, isActive) => {
     const confirmToggle = window.confirm(
       `Are you sure you want to ${isActive ? "deactivate" : "activate"} this seller?`
@@ -66,7 +64,6 @@ const Seller_Manage = () => {
         }
       );
 
-      // Update UI
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === id ? { ...user, isActive: !isActive } : user
@@ -78,7 +75,6 @@ const Seller_Manage = () => {
     }
   };
 
-  // Pagination Handlers
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
@@ -140,7 +136,7 @@ const Seller_Manage = () => {
                             onClick={() => toggleUserStatus(user._id, user.isActive)}
                             title={user.isActive ? "Deactivate" : "Activate"}
                           >
-                            {/* <MdOutlineDeleteForever className="h-4 w-4" /> */}
+                            {/* <MdOutlineDeleteForever className="h-5 w-5" /> */}
                           </button>
                         </td>
                       </tr>
@@ -149,17 +145,34 @@ const Seller_Manage = () => {
                 </table>
 
                 {/* Pagination Controls */}
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center items-center mt-4 gap-2">
                   <button
-                    className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-gray-100"
+                    className="px-3 py-1 border rounded-md text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     Previous
                   </button>
-                  <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
+
+                  {[...Array(totalPages)].map((_, index) => {
+                    const page = index + 1;
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-1 border rounded-md text-sm font-medium ${
+                          currentPage === page
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-200"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+
                   <button
-                    className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-gray-100"
+                    className="px-3 py-1 border rounded-md text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                   >

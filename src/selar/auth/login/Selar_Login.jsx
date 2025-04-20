@@ -21,9 +21,9 @@ import { loginSeller } from '../../../redux/sellarSlice';
  
 const validationSchema = Yup.object({
   email: Yup.string()
-    .max(30, 'Must be 30 characters or less')
-    .matches(/@gmail\.com$/, 'Email must be a Gmail address')
-    .required('Enter your Email'),
+  .max(30, 'Must be 30 characters or less')
+  .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
+  .required('Enter your Email'),
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
 .matches(

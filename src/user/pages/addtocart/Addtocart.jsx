@@ -58,29 +58,62 @@ const AddToCart = () => {
   };
   
 
+  // const handleCheckout = async () => {
+  //   const { street, city, state, postalCode } = shippingAddress;
+  //   if (!street || !city || !state || !postalCode) {
+  //     alert("Please fill in your complete shipping address.");
+  //     return;
+  //   }
+
+  //   const formattedItems = cartItems.map((item) => ({
+  //     productId: item?.product?._id,
+  //     quantity: item.quantity,
+  //   }));
+
+  //   const orderData = {
+  //     items: formattedItems,
+  //     shippingType: shipping,
+  //     shippingAddress,
+  //     total,
+  //   };
+
+  //   try {
+  //     const response = await createOrder(orderData, token);
+  //     const orderId = response?.order?.id || response?.order?._id;
+  //     if (orderId) {
+  //       navigate(`/ordersuccess/${orderId}`);
+  //     } else {
+  //       alert("Something went wrong while placing your order.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Checkout error:", error);
+  //     alert("An error occurred during checkout.");
+  //   }
+  // };
   const handleCheckout = async () => {
     const { street, city, state, postalCode } = shippingAddress;
     if (!street || !city || !state || !postalCode) {
       alert("Please fill in your complete shipping address.");
       return;
     }
-
+  
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
-
+  
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
-
+  
     try {
       const response = await createOrder(orderData, token);
       const orderId = response?.order?.id || response?.order?._id;
       if (orderId) {
+        console.log("Navigating to:", `/ordersuccess/${orderId}`);
         navigate(`/ordersuccess/${orderId}`);
       } else {
         alert("Something went wrong while placing your order.");

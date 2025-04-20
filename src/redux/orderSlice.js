@@ -1,14 +1,11 @@
-// redux/orderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createOrder } from "../config/orderService";
 
 export const createOrderAsync = createAsyncThunk(
   "order/createOrder",
-  async ({orderData , token}, {rejectWithValue }) => {
+  async ({ orderData, token }, { rejectWithValue }) => {
     try {
-
-      console.log(token , ":token")
-      // const token = getState().auth?.token || localStorage.getItem("userToken");
+      console.log(token, ":token");
 
       if (!token) {
         return rejectWithValue("Session expired. Please log in again.");

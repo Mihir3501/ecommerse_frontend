@@ -1,28 +1,49 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios'; // Assuming you're using axios for HTTP requests
 import DataServices from '../config/Dataservice';
 import { API } from '../config/Api';
+import axios from 'axios';
 
 const initialState = {
-  token: null,
-  user: null, 
-  status: 'idle', // To track loading, success, and error states
-  error: null, // To store any error messages
+  token: localStorage.getItem('token') || null,  // Load token from localStorage initially
+  user: null,
+  status: 'idle',
+  error: null,
 };
-
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (loginCredentials, { rejectWithValue }) => {
     try {
-      
-      const response = await DataServices().post(API.USERLOGIN , loginCredentials ); // API endpoint
+      const response = await DataServices().post(API.USERLOGIN, loginCredentials);
+      console.log("Response from login:", response.data);
 
-      
+      const user = response.data.user;
+      const token = user.token; 
 
-      return response.data; 
+      if (token) {
+        return { user, token }; 
+      } else {
+        return rejectWithValue("Token not found in response");
+      }
     } catch (error) {
-      return rejectWithValue(error.response.data); // Handle errors
+      return rejectWithValue(error.response?.data || "Login failed");
+    }
+  }
+);
+
+// Async thunk to fetch user data based on the token
+export const fetchUserByToken = createAsyncThunk(
+  'auth/fetchUserByToken',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('http://192.168.1.37:5000/api/user/getuserbytoken', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data; // Assuming your API sends the user data as response
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -40,21 +61,36 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
-        state.status = 'loading'; // Set loading status while the login request is in progress
+        state.status = 'loading';
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = 'succeeded'; // Set succeeded when login is successful
-        state.token = action.payload.token; // Assuming token is in the response data
-        state.user = action.payload.user; // Assuming user data is in the response
+        state.status = 'succeeded';
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+
+        // Store token in localStorage
+        localStorage.setItem('token', action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.status = 'failed'; // Set failed status if the request fails
-        state.error = action.payload; // Store error message
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(fetchUserByToken.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUserByToken.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload.user; // Assuming the response contains the user data
+      })
+      .addCase(fetchUserByToken.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
       });
   },
 });

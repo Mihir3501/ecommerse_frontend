@@ -125,7 +125,7 @@ const Selar_Products = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+<div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
@@ -308,15 +308,16 @@ const Selar_Products = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 space-x-2">
-                        <button className="text-blue-600 hover:underline cursor-pointer">
+                        {/* <button className="text-blue-600 hover:underline cursor-pointer">
                           <FaEye className="h-4 w-4" />
-                        </button>
-                        <button className="text-yellow-600 hover:underline cursor-pointer"  onClick={() => navigate ("/UpdateProduct")}>
+                        </button> */}
+                        <button className="text-yellow-600 hover:underline cursor-pointer"  onClick={() => navigate(`/UpdateProduct/${product._id}`)}
+                        >
                           <FaEdit className="h-4 w-4" />
                         </button>
-                        <button className="text-red-600 hover:underline cursor-pointer">
+                        {/* <button className="text-red-600 hover:underline cursor-pointer">
                           <MdOutlineDeleteForever className="h-4 w-4" />
-                        </button>
+                        </button> */}
                       </td>
                     </tr>
                   ))}

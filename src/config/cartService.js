@@ -10,13 +10,11 @@ const authHeader = (token) => ({
   withCredentials: true,
 });
 
-// 🛒 Get cart
 const getCart = async (token) => {
   const res = await axios.get(`${BASE_URL}/api/cart/view`, authHeader(token));
   return res.data.data?.items || [];
 };
 
-// ➕ Add to cart
 const addToCart = async (item, token) => {
   const res = await axios.post(
     `${BASE_URL}/api/cart/addIn`,
@@ -26,8 +24,8 @@ const addToCart = async (item, token) => {
   return res.data;
 };
 
-// 🔄 Update quantity
 const updateCart = async (itemId, newQuantity, token) => {
+  console.log("UpdateCart called with:", itemId);
   const res = await axios.patch( 
     `${BASE_URL}/api/cart/updateCart/${itemId}`,
     { quantity: newQuantity },
