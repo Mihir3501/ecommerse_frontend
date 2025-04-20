@@ -29,6 +29,7 @@ const Order = () => {
 
         setOrders(data.orders || []);
       } catch (err) {
+        console.error("Error fetching orders:", err);
         setError(err.response?.data?.message || "Something went wrong");
       } finally {
         setLoading(false);
@@ -37,6 +38,37 @@ const Order = () => {
 
     fetchOrders();
   }, [token]);
+
+  const handleStatusChange = async (orderId, itemId, newStatus) => {
+    try {
+      await axios.put(
+        `${BASE_URL}/api/seller/updateOrderItemStatus/${orderId}/${itemId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update state locally
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === orderId
+            ? {
+                ...order,
+                items: order.items.map(item =>
+                  item._id === itemId ? { ...item, status: newStatus } : item
+                )
+              }
+            : order
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      alert("Failed to update status. Try again.");
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -49,8 +81,9 @@ const Order = () => {
           <Selar_Navbar />
         </div>
 
-        <div className="p-4 pt-24">
-          <h1 className="text-2xl font-bold mb-4">Seller Orders</h1>
+        <div className="p-4 pt-24 pl-25">
+          <h1 className="text-2xl font-bold mb-2">Seller Orders</h1>
+          <p className="text-sm text-gray-600 mb-4">Total Orders: {orders.length}</p>
 
           {loading ? (
             <p>Loading...</p>
@@ -59,38 +92,51 @@ const Order = () => {
           ) : orders.length === 0 ? (
             <p>No orders found.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full table-auto border border-gray-300">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="border px-4 py-2">Order ID</th>
-                    <th className="border px-4 py-2">Buyer</th>
-                    <th className="border px-4 py-2">Products</th>
-                    <th className="border px-4 py-2">Status</th>
-                    <th className="border px-4 py-2">Actions</th>
+            <div className="overflow-x-auto ">
+              <table className="min-w-[1000px] bg-white shadow-md rounded-xl overflow-hidden">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr className="text-sm font-semibold text-left">
+                    <th className="px-6 py-3">Order ID</th>
+                    <th className="px-6 py-3">Buyer</th>
+                    <th className="px-6 py-3">Products</th>
+                    <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order._id}>
-                      <td className="border px-4 py-2">{order._id}</td>
-                      <td className="border px-4 py-2">{order.buyer?.user || "N/A"}</td>
-                      <td className="border px-4 py-2">
-                        <ul>
+                    <tr key={order._id} className="border-b hover:bg-gray-50 text-sm text-gray-800">
+                      <td className="px-6 py-4 font-medium">{order._id}</td>
+                      <td className="px-6 py-4">{order.buyer?.user || "N/A"}</td>
+                      <td className="px-6 py-4">
+                        <ul className="list-disc list-inside space-y-1">
                           {order.items?.map((item) => (
                             <li key={item._id}>
-                              {item.product?.title || "Product"} (x{item.quantity})
+                              {item.product?.title || "Product"} <span className="text-gray-500">(x{item.quantity})</span>
                             </li>
                           ))}
                         </ul>
                       </td>
-                      <td className="border px-4 py-2">
-                        {order.items?.[0]?.status || "Pending"}
+                      <td className="px-6 py-4">
+                        <ul className="space-y-2">
+                          {order.items?.map((item) => (
+                            <li key={item._id}>
+                              <select
+                                value={item.status}
+                                onChange={(e) => handleStatusChange(order._id, item._id, e.target.value)}
+                                className="text-sm bg-white border rounded px-2 py-1 shadow-sm"
+                              >
+                                <option value="Pending">Pending</option>
+                                <option value="Ready for Shipping">Ready for Shipping</option>
+                                <option value="Ready for Delivery">Ready for Delivery</option>
+                                <option value="Delivered">Delivered</option>
+                              </select>
+                            </li>
+                          ))}
+                        </ul>
                       </td>
-                      <td className="border px-4 py-2">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                          Update Status
-                        </button>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-gray-400 text-sm">Auto Save</span>
                       </td>
                     </tr>
                   ))}
