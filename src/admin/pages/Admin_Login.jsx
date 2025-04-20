@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../../redux/adminSlice"; // Thunk action from adminSlice
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👈 Import eye icons
+import { loginAdmin } from "../../redux/adminSlice";
 
 const Admin_Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 State for show/hide
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { loading, error, isAuthenticated } = useSelector((state) => state.admin);
 
   useEffect(() => {
-    console.log(" isAuthenticated:", isAuthenticated);  
     if (isAuthenticated) {
       navigate("/admin");
     }
@@ -20,13 +21,8 @@ const Admin_Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("🟡 Submitting login with:", { email, password });
-    console.log("🚀 LOGIN FORM SUBMITTED"); // <== this MUST show in console
-
-    dispatch(loginAdmin({ email, password })); 
+    dispatch(loginAdmin({ email, password }));
   };
-
-
 
   return (
     <div className="flex min-h-screen bg-green-400 items-center justify-center p-4">
@@ -51,20 +47,27 @@ const Admin_Login = () => {
             </div>
             <div className="mt-3">
               <label className="block text-gray-700 text-sm">Password</label>
-              <input
-                type="password"
-                placeholder="********"
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 text-sm"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="w-full mt-1 p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 text-sm"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <span
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                </span>
+              </div>
             </div>
             <div className="mt-4 flex gap-3">
               <button
                 type="submit"
                 className="w-full bg-green-700 text-white p-2 rounded-md shadow-md hover:bg-green-800 text-sm"
-                // disabled={loading}
               >
                 {loading ? "Logging in..." : "LOGIN"}
               </button>

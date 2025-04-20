@@ -41,7 +41,10 @@ const Selar_Sidebar = () => {
             text="Products"
             onClick={() => navigate("/Selar_Products")}
           />
-          <SidebarItem Icon={FaCartPlus} text="Orders" />
+          <SidebarItem Icon={FaCartPlus} text="Orders" 
+                      onClick={() => navigate("/orders")}
+
+          />
         </ul>
       </div>
 

@@ -9,22 +9,28 @@ const Product_Catalog = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Adjust items per page as needed
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Number of products per page
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
         const adminToken = JSON.parse(localStorage.getItem("adminAuth"))?.token;
         const res = await axios.get(`${BASE_URL}/api/admin/product-list`, {
-          params: { page: currentPage, limit: itemsPerPage },
+          params: {
+            page: currentPage,
+            limit: itemsPerPage, // Ensure the backend limits the number of products
+          },
           headers: {
             Authorization: `Bearer ${adminToken}`,
           },
         });
+        
+        // Ensure the response is correctly parsed
         setProducts(res.data.products);
-        setTotalPages(res.data.totalPages); // Assuming the response contains totalPages
+        setTotalPages(res.data.totalPages); // Assuming the API response includes totalPages
       } catch (err) {
         console.error("Failed to fetch products:", err.response?.data || err.message);
       } finally {
@@ -33,10 +39,12 @@ const Product_Catalog = () => {
     };
 
     fetchProducts();
-  }, [currentPage]);
+  }, [currentPage, itemsPerPage]); // Dependency array ensures fetch is called when currentPage or itemsPerPage changes
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -107,7 +115,9 @@ const Product_Catalog = () => {
             >
               Previous
             </button>
-            <span className="px-4 py-2">{currentPage}</span>
+            <span className="px-4 py-2">
+              {currentPage} / {totalPages}
+            </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}

@@ -28,12 +28,20 @@ import Selar_Navbar from "../selar/page/dashboard/Selar_Navbar";
 import Selar_Sidebar from "../selar/page/dashboard/Selar_Sidebar";
 import Selar_Products from "../selar/page/products/Selar_Products";
 import UpdateProduct from "../selar/page/updateProduct/UpdateProduct";
-
+import restoreUserSession from "../../utils/restoreUser";
+import Order from "../selar/page/order/Order";
 import PrivateRouter from "./PrivateRouter";
 import Order_Manage from "../admin/managements/Order_Manage";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 const Router = () => {
-  return (
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    restoreUserSession(dispatch);
+  }, [dispatch])
+  return (  
     <BrowserRouter>
       <Routes>
         {/* Public User Routes */}
@@ -47,7 +55,7 @@ const Router = () => {
         <Route path="/footer" element={<Footer />} />
         <Route path="/addtocart" element={<Addtocart />} />
         <Route path="/product/:id" element={<ProductPage />} />
-        <Route path="/ordersuccess/:orderid" element={<OrderSuccess />} />
+        <Route path="/ordersuccess/:orderId" element={<OrderSuccess />} />
         <Route path="/updateproduct" element={<UpdateProduct />} />
         <Route path="/updateprofile" element={<Updateprofile />} />
 
@@ -68,6 +76,9 @@ const Router = () => {
         <Route path="/selar_Products" element={<Selar_Products />} />
         <Route path="/selar_login" element={<Selar_Login />} />
         <Route path="/selar_dashboard" element={<Selar_Dashboard />} />
+        <Route path="/updateproduct/:productId" element={<UpdateProduct />} />
+        <Route path="/orders" element={<Order />} />
+
 
         {/* Public Admin Route */}
         <Route path="/admin_login" element={<Admin_Login />} />

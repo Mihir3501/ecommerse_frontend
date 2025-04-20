@@ -18,18 +18,23 @@ const Admin_Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/analytics/users", {
+        const config = {
           headers: {
             Authorization: `Bearer ${adminInfo?.token}`,
           },
-        });
-
-        const data = response.data;
+        };
+  
+        const [usersRes, salesRes, productsRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/admin/analytics/users", config),
+          axios.get("http://localhost:5000/api/admin/analytics/sales", config),
+          axios.get("http://localhost:5000/api/admin/analytics/products", config),
+        ]);
+  
         setStats({
-          totalUsers: data.totalUsers || 0,
-          totalSellers: data.totalSellers || 0,
-          totalProducts: data.totalProducts || 0,
-          totalRevenue: data.totalRevenue || 0,
+          totalUsers: usersRes.data.totalUsers || 0,
+          totalSellers: usersRes.data.totalSellers || 0,
+          totalProducts: productsRes.data.totalProducts || 0,
+          totalRevenue: salesRes.data.totalRevenue || 0,
         });
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
@@ -37,11 +42,12 @@ const Admin_Dashboard = () => {
         setLoading(false);
       }
     };
-
+  
     if (adminInfo?.token) {
       fetchStats();
     }
   }, [adminInfo]);
+  
 
   return (
     <div className="flex h-screen bg-gray-100">

@@ -36,23 +36,33 @@ const UpdateProfile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!token) {
+        toast.error("No token found, please log in again.");
+        navigate("/login");
+        return;
+      }
+
       try {
+        // Log the token to ensure it's valid
+        console.log("Token:", token);
+
         const response = await axios.get(`${BASE_URL}/api/user/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setUserDetails(response.data.user);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error.response?.data || error.message);
-        toast.error("Failed to fetch user data.");
+        toast.error("Failed to fetch user data. Please login again.");
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [token, BASE_URL]);
+  }, [token, BASE_URL, navigate]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {

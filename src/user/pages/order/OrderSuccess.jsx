@@ -1,57 +1,101 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Divider, CircularProgress } from "@mui/material";
+import { Box, Typography, Divider, CircularProgress, Card, CardContent, CardMedia, Grid } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getOrderHistory } from "../../../config/orderService"; // 👈 import the API
+import { getOrderHistory } from "../../../config/orderService";
+import Navbar from "../navbar/Navbar";
+import Footer from "../footer/Footer";
+const formatDate = (dateString) => {
+  const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const token = useSelector((state) => state.user?.user?.token);
+  const token = useSelector((state) => state.auth?.user?.token);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setError("User is not authenticated.");
+      setLoading(false);
+      return;
+    }
 
     getOrderHistory(token)
-      .then((orders) => {
-        console.log("Orders from API:", orders);
-        console.log("Searching for orderId:", orderId);
-        const order = orders.find((o) => o.id === orderId);
-        console.log("Found order:", order);
+      .then((response) => {
+        const ordersArray = response.orders;
+        const order = ordersArray.find((o) => String(o.id) === String(orderId));
+
         if (order) {
-          setOrderDetails(order);  // set order if found
+          setOrderDetails(order);
         } else {
-          setOrderDetails(null);  // explicitly set to null if no order found
+          setError("Order not found.");
         }
       })
       .catch((err) => {
-        console.error("Error loading order", err);
-        setOrderDetails(null); // set to null if there's an error
+        console.error("Error loading order:", err);
+        setError("An error occurred while fetching your order.");
       })
-      .finally(() => setLoading(false)); // Ensure loading is false when done
+      .finally(() => setLoading(false));
   }, [orderId, token]);
 
   if (loading) return <Box p={5}><CircularProgress /></Box>;
-  if (!orderDetails) return <Box p={5}><Typography>Order not found.</Typography></Box>;
+  if (error) return <Box p={5}><Typography color="error">{error}</Typography></Box>;
 
   return (
-    <Box p={5}>
-      <Typography variant="h4" fontWeight="bold">Order Confirmed!</Typography>
-      <Typography variant="subtitle1" mb={2}>
-        Thank you for your purchase. Your order ID is <strong>{orderDetails.id}</strong>
+    <>
+    <Navbar/>
+    <Box p={{ xs: 3, md: 5 }} maxWidth="900px" mx="auto">
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Order Confirmed!
       </Typography>
-      <Divider sx={{ mb: 2 }} />
-      <Typography variant="h6" mb={1}>Items:</Typography>
-      {orderDetails.items.map((item, index) => (
-        <Box key={index} mb={1}>
-          <Typography>{item.name} × {item.quantity}</Typography>
-        </Box>
-      ))}
+      <Typography variant="subtitle1" mb={2}>
+        Thank you for your purchase.
+      </Typography>
+
+      <Box mb={2}>
+        <Typography variant="body1"><strong>Order ID:</strong> {orderDetails.id}</Typography>
+        <Typography variant="body1"><strong>Status:</strong> {orderDetails.status}</Typography>
+        <Typography variant="body1"><strong>Date:</strong> {formatDate(orderDetails.date)}</Typography>
+      </Box>
+
       <Divider sx={{ my: 2 }} />
-      <Typography><strong>Total:</strong> ₹{orderDetails.totalAmount.toFixed(2)}</Typography>
+
+      <Typography variant="h6" mb={2}>Ordered Items</Typography>
+      <Grid container spacing={2}>
+        {(orderDetails.items || []).map((item, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card>
+              {item.image && (
+                <CardMedia
+                  component="img"
+                  height="160"
+                  image={item.image}
+                  alt={item.name}
+                />
+              )}
+              <CardContent>
+                <Typography variant="subtitle1" fontWeight="bold">{item.name}</Typography>
+                <Typography variant="body2">Quantity: {item.quantity}</Typography>
+                <Typography variant="body2">Price: ₹{item.price}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Divider sx={{ my: 3 }} />
+
+      <Box mt={2}>
+        <Typography variant="h6"><strong>Total Amount:</strong> ₹{orderDetails.totalAmount?.toFixed(2)}</Typography>
+      </Box>
     </Box>
+    <Footer/>
+    </>
   );
 };
 

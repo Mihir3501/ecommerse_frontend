@@ -3,12 +3,11 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
-import { MdOutlineDeleteForever } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateProduct = () => {
-  const { productId } = useParams(); 
+  const { productId } = useParams();
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -22,10 +21,9 @@ const UpdateProduct = () => {
   const [newProduct, setNewProduct] = useState({ ...product });
   const [images, setImages] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const token = useSelector((state) => state.auth.token); 
+  const token = useSelector((state) => state.auth.token);
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 
   useEffect(() => {
     if (productId) {
@@ -48,6 +46,7 @@ const UpdateProduct = () => {
     } catch (error) {
       console.error("Error fetching product:", error);
       setLoading(false);
+      alert("Failed to load product data.");
     }
   };
 
@@ -66,26 +65,33 @@ const UpdateProduct = () => {
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
+
     formData.append("name", newProduct.name);
     formData.append("price", newProduct.price);
     formData.append("stock", newProduct.stock);
     formData.append("category", newProduct.category);
     formData.append("subcategory", newProduct.subcategory);
     formData.append("description", newProduct.description);
+
     if (images) {
-      formData.append("images", images);
+      formData.append("images", images); // Use "images" or "image" based on your backend
     }
 
     try {
-      const response = await axios.put(`${BASE_URL}/api/seller/products/${productId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.patch(
+        `${BASE_URL}/api/seller/products/${productId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       alert("Product updated successfully!");
-      navigate("/sellerproducts"); // Redirect to the product list after success
+      navigate("/sellerproducts");
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.error("Error updating product:", error.response || error);
       alert("Failed to update product.");
     }
   };
@@ -99,26 +105,21 @@ const UpdateProduct = () => {
 
       {/* Main Content */}
       <div className="flex-1 ml-64">
-        {/* Navbar */}
         <div className="sticky top-0 z-10 bg-white shadow">
           <Selar_Navbar />
         </div>
 
-        {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold text-gray-800">Update Product</h1>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-              >
-                <FaPlus /> {showForm ? "Close Form" : "Edit Product"}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+            >
+              <FaPlus /> {showForm ? "Close Form" : "Edit Product"}
+            </button>
           </div>
 
-          {/* Product Form */}
           {loading ? (
             <p>Loading product data...</p>
           ) : showForm ? (
