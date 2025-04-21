@@ -50,7 +50,6 @@ const Navbar = () => {
   //   }
   // };
 
-
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user); // User from Redux state
 
@@ -90,12 +89,19 @@ const Navbar = () => {
     }
   };
 
+  const handleOrders = () => {
+    handleClose();
+    navigate("/ordersuccess");
+  };
+
   // Search functionality
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     try {
-      const response = await axios.get(`${BASE_URL}/api/product/search?q=${searchQuery}`);
+      const response = await axios.get(
+        `${BASE_URL}/api/product/search?q=${searchQuery}`
+      );
       console.log("Making request to:", response.data.products);
 
       setSearchResults(response.data.products);
@@ -125,6 +131,23 @@ const Navbar = () => {
             MODERNO
           </Typography>
 
+
+          <Box sx={{ backgroundColor: "#fff", py: 1 }}>
+        <Container maxWidth="xl">
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 4 }}>
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => navigate(page.path)}
+                sx={{ color: "#000", fontWeight: "bold" }}
+              >
+                {page.name}
+              </Button>
+            ))}
+          </Box>
+        </Container>
+      </Box>
+
           {/* Search Box */}
           <ClickAwayListener onClickAway={() => setShowSearchResults(false)}>
             <Box sx={{ position: "relative", width: 300 }}>
@@ -151,7 +174,9 @@ const Navbar = () => {
               </Box>
 
               {showSearchResults && searchResults.length > 0 && (
-                <ClickAwayListener onClickAway={() => setShowSearchResults(false)}>
+                <ClickAwayListener
+                  onClickAway={() => setShowSearchResults(false)}
+                >
                   <Box
                     sx={{
                       position: "absolute",
@@ -188,28 +213,39 @@ const Navbar = () => {
                         <img
                           src={`${BASE_URL}${product.images[0]}`}
                           alt={product.name}
-                          style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            objectFit: "cover",
+                            borderRadius: 4,
+                          }}
                         />
                         <Box>
-                          <Typography variant="subtitle2">{product.name}</Typography>
+                          <Typography variant="subtitle2">
+                            {product.name}
+                          </Typography>
                           <Typography variant="body2" color="text.secondary">
                             ₹{product.price}
                           </Typography>
                         </Box>
                       </Box>
                     ))}
-
                   </Box>
                 </ClickAwayListener>
               )}
             </Box>
           </ClickAwayListener>
 
-
           {/* Icons */}
           <Box sx={{ display: "flex", gap: 2 }}>
             {user ? (
               <>
+                <IconButton onClick={() => navigate("/addtocart")}>
+                  <Badge badgeContent={totalQuantity} color="primary">
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
+
                 <IconButton onClick={handleMenuClick}>
                   <Avatar>{user.name?.charAt(0).toUpperCase() || "U"}</Avatar>
                 </IconButton>
@@ -221,6 +257,7 @@ const Navbar = () => {
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                 >
                   <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                  <MenuItem onClick={handleOrders}>My Orders</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </>
@@ -230,36 +267,16 @@ const Navbar = () => {
               </IconButton>
             )}
 
-            <IconButton>
+            {/* <IconButton>
               <FavoriteBorderIcon />
-            </IconButton>
-
-            <IconButton onClick={() => navigate("/addtocart")}>
-              <Badge badgeContent={totalQuantity} color="primary">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Toolbar>
       </Container>
 
       {/* Divider and Page Links */}
       <Divider />
-      <Box sx={{ backgroundColor: "#fff", py: 1 }}>
-        <Container maxWidth="xl">
-          <Box sx={{ display: "flex", justifyContent: "center", gap: 4 }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                onClick={() => navigate(page.path)}
-                sx={{ color: "#000", fontWeight: "bold" }}
-              >
-                {page.name}
-              </Button>
-            ))}
-          </Box>
-        </Container>
-      </Box>
+     
     </AppBar>
   );
 };
