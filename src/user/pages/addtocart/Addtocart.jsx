@@ -18,15 +18,13 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice";
 import { createOrder } from "../../../config/orderService";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+ 
 const AddToCart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
   const token = useSelector((state) => state.user.token);
-
+ 
   const [shipping, setShipping] = useState("flat");
   const [shippingAddress, setShippingAddress] = useState({
     street: "",
@@ -34,65 +32,98 @@ const AddToCart = () => {
     state: "",
     postalCode: "",
   });
-
+ 
   useEffect(() => {
     dispatch(fetchCartItems());
   }, [dispatch]);
-
+ 
   const shippingCost = shipping === "flat" ? 30 : 0;
-
+ 
   const subtotal = Array.isArray(cartItems)
     ? cartItems.reduce((sum, item) => {
-        const price = item?.product?.price ?? 0;
-        const quantity = item?.quantity ?? 1;
-        return sum + price * quantity;
-      }, 0)
+      const price = item?.product?.price ?? 0;
+      const quantity = item?.quantity ?? 1;
+      return sum + price * quantity;
+    }, 0)
     : 0;
-
+ 
   const total = subtotal + shippingCost;
-
+ 
   const handleQuantityChange = (productId, currentQuantity, type) => {
     let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
     if (newQuantity < 1) newQuantity = 1;
-
+ 
+    // 🔄 Use productId instead of cart item ID
     dispatch(updateQuantityAsync({ productId, quantity: newQuantity }));
-    toast.info("Quantity updated.");
   };
-
+ 
+ 
+  // const handleCheckout = async () => {
+  //   const { street, city, state, postalCode } = shippingAddress;
+  //   if (!street || !city || !state || !postalCode) {
+  //     alert("Please fill in your complete shipping address.");
+  //     return;
+  //   }
+ 
+  //   const formattedItems = cartItems.map((item) => ({
+  //     productId: item?.product?._id,
+  //     quantity: item.quantity,
+  //   }));
+ 
+  //   const orderData = {
+  //     items: formattedItems,
+  //     shippingType: shipping,
+  //     shippingAddress,
+  //     total,
+  //   };
+ 
+  //   try {
+  //     const response = await createOrder(orderData, token);
+  //     const orderId = response?.order?.id || response?.order?._id;
+  //     if (orderId) {
+  //       navigate(`/ordersuccess/${orderId}`);
+  //     } else {
+  //       alert("Something went wrong while placing your order.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Checkout error:", error);
+  //     alert("An error occurred during checkout.");
+  //   }
+  // };
   const handleCheckout = async () => {
     const { street, city, state, postalCode } = shippingAddress;
     if (!street || !city || !state || !postalCode) {
-      toast.error("Please fill in your complete shipping address.");
+      alert("Please fill in your complete shipping address.");
       return;
     }
-
+ 
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
-
+ 
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
-
+ 
     try {
       const response = await createOrder(orderData, token);
       const orderId = response?.order?.id || response?.order?._id;
       if (orderId) {
-        toast.success("Order placed successfully!");
+        console.log("Navigating to:", `/ordersuccess/${orderId}`);
         navigate(`/ordersuccess/${orderId}`);
       } else {
-        toast.error("Something went wrong while placing your order.");
+        alert("Something went wrong while placing your order.");
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("An error occurred during checkout.");
+      alert("An error occurred during checkout.");
     }
   };
-
+ 
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return (
       <>
@@ -102,7 +133,7 @@ const AddToCart = () => {
           <Button
             variant="outlined"
             sx={{ mt: 2 }}
-            onClick={() => navigate("/#ishika")}
+            onClick={() => navigate("/#shop")}
           >
             Return to Shop
           </Button>
@@ -111,7 +142,7 @@ const AddToCart = () => {
       </>
     );
   }
-
+ 
   return (
     <>
       <Navbar />
@@ -119,7 +150,7 @@ const AddToCart = () => {
         <Typography variant="h4" fontWeight="bold" mb={4}>
           Shopping Cart
         </Typography>
-
+ 
         <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={6}>
           <Box flex={2}>
             <Box
@@ -133,7 +164,7 @@ const AddToCart = () => {
               <Box width="25%">Quantity</Box>
               <Box width="25%">Subtotal</Box>
             </Box>
-
+ 
             {cartItems.map((item) => {
               const product = item?.product || {};
               const imageUrl = product?.images?.[0]
@@ -143,7 +174,7 @@ const AddToCart = () => {
               const quantity = item?.quantity ?? 1;
               const price = product?.price ?? 0;
               const subtotalPerItem = price * quantity;
-
+ 
               return (
                 <Box
                   key={item._id}
@@ -175,26 +206,31 @@ const AddToCart = () => {
                       </Typography>
                     </Box>
                   </Box>
-
-                  <Box width="25%" display="flex" alignItems="center" gap={1.5}>
+ 
+                  <Box
+                    width="25%"
+                    display="flex"
+                    alignItems="center"
+                    gap={1.5}
+                  >
                     <IconButton
-                      onClick={() =>
-                        handleQuantityChange(product._id, quantity, "decrease")
-                      }
+                      onClick={() => handleQuantityChange(product._id, quantity, "decrease")}
                     >
                       <Remove />
                     </IconButton>
+ 
                     <Typography fontWeight="bold">{quantity}</Typography>
+ 
                     <IconButton
                       onClick={() =>
-                        handleQuantityChange(product._id, quantity, "increase")
+                        handleQuantityChange(item._id, quantity, "increase")
                       }
                       sx={{ border: "1px solid #ccc", p: 0.5 }}
                     >
                       <Add />
                     </IconButton>
                   </Box>
-
+ 
                   <Box width="25%">
                     <Typography fontWeight="bold" color="primary">
                       ₹{subtotalPerItem.toFixed(2)}
@@ -204,7 +240,7 @@ const AddToCart = () => {
               );
             })}
           </Box>
-
+ 
           <Box
             flex={1}
             border="1px solid #ddd"
@@ -226,14 +262,14 @@ const AddToCart = () => {
                 +
               </Button>
             </Box>
-
+ 
             <Divider sx={{ my: 2 }} />
-
+ 
             <Box display="flex" justifyContent="space-between" mb={1}>
               <Typography>Subtotal</Typography>
               <Typography>₹{subtotal.toFixed(2)}</Typography>
             </Box>
-
+ 
             <Box mt={2}>
               <Typography fontWeight="bold" mb={1}>
                 Shipping
@@ -254,9 +290,9 @@ const AddToCart = () => {
                 />
               </RadioGroup>
             </Box>
-
+ 
             <Divider sx={{ my: 2 }} />
-
+ 
             {["street", "city", "state", "postalCode"].map((field) => (
               <Box mb={2} key={field}>
                 <TextField
@@ -274,14 +310,14 @@ const AddToCart = () => {
                 />
               </Box>
             ))}
-
+ 
             <Divider sx={{ my: 2 }} />
-
+ 
             <Box display="flex" justifyContent="space-between" fontWeight="bold" mb={2}>
               <Typography variant="h6">Total</Typography>
               <Typography variant="h6">₹{total.toFixed(2)}</Typography>
             </Box>
-
+ 
             <Button
               variant="contained"
               fullWidth
@@ -304,5 +340,5 @@ const AddToCart = () => {
     </>
   );
 };
-
+ 
 export default AddToCart;

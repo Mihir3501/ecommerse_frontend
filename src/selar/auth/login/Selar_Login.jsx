@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
   Card,
-  Grid,
+  Box,
   IconButton,
   InputAdornment
 } from '@mui/material';
@@ -18,31 +18,31 @@ import { ToastContainer, toast } from 'react-toastify';
 import Navbar from '../../../user/pages/navbar/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSeller } from '../../../redux/sellarSlice';
- 
+
 const validationSchema = Yup.object({
   email: Yup.string()
-  .max(30, 'Must be 30 characters or less')
-  .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
-  .required('Enter your Email'),
+    .max(30, 'Must be 30 characters or less')
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
+    .required('Enter your Email'),
   password: Yup.string()
     .length(8, 'Must be exactly 8 characters')
-.matches(
+    .matches(
       /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
       "Password must contain at least one uppercase letter, one number, and one special character"
     )
     .required('Enter your Password')
 });
- 
+
 const Selar_Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const { loading } = useSelector((state) => state.seller);
- 
+
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
- 
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const resultAction = await dispatch(loginSeller(values));
@@ -60,10 +60,10 @@ const Selar_Login = () => {
       setSubmitting(false);
     }
   };
-  
+
   return (
     <>
-      
+
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,
@@ -99,56 +99,53 @@ const Selar_Login = () => {
             >
               {({ touched, errors, handleChange, handleBlur, handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Email"
-                        name="email"
-                        variant="outlined"
-                        type="email"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.email && Boolean(errors.email)}
-                        helperText={touched.email && errors.email}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Password"
-                        name="password"
-                        variant="outlined"
-                        type={showPassword ? 'text' : 'password'}
-                        inputProps={{ maxLength: 8 }}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.password && Boolean(errors.password)}
-                        helperText={touched.password && errors.password}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton onClick={handleTogglePassword} edge="end">
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        size="large"
-                        type="submit"
-                        disabled={loading}
-                      >
-                        {loading ? 'Logging in...' : 'Login'}
-                      </Button>
-                    </Grid>
-                  </Grid>
+                  <Box mb={2}>
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      name="email"
+                      variant="outlined"
+                      type="email"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.email && Boolean(errors.email)}
+                      helperText={touched.email && errors.email}
+                    />
+                  </Box>
+                  <Box mb={2}> 
+                    <TextField
+                      fullWidth
+                      label="Password"
+                      name="password"
+                      variant="outlined"
+                      type={showPassword ? 'text' : 'password'}
+                      inputProps={{ maxLength: 8 }}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.password && Boolean(errors.password)}
+                      helperText={touched.password && errors.password}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={handleTogglePassword} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? 'Logging in...' : 'Login'}
+                  </Button>
                   <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                     Don't have an account?{' '}
                     <Link
@@ -172,5 +169,5 @@ const Selar_Login = () => {
     </>
   );
 };
- 
+
 export default Selar_Login;

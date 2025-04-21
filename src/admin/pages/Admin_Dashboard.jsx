@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Admin_Sidebar from "./Admin_Sidebar";
 import Admin_Navbar from "./Admin_Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Admin_Dashboard = () => {
   const { adminInfo } = useSelector((state) => state.admin);
@@ -13,6 +14,7 @@ const Admin_Dashboard = () => {
     totalRevenue: 0,
   });
 
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -8,6 +8,11 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateProduct = () => {
   const { productId } = useParams();
+  const token = useSelector((state) => state.seller.sellerInfo.token);
+  const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -21,10 +26,7 @@ const UpdateProduct = () => {
   const [newProduct, setNewProduct] = useState({ ...product });
   const [images, setImages] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const token = useSelector((state) => state.auth.token);
-  const navigate = useNavigate();
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+  
   useEffect(() => {
     if (productId) {
       fetchProduct();
@@ -40,8 +42,8 @@ const UpdateProduct = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setProduct(response.data.product);
-      setNewProduct(response.data.product);
+      setProduct(response.data.products);
+      setNewProduct(response.data.products);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching product:", error);
