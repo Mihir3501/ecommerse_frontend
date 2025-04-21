@@ -104,7 +104,7 @@ const Mainpage = () => {
           px: { xs: 2, sm: 4 },
           textAlign: "center",
         }}
-        id="ishika"
+        id="shop"
       >
         <Typography variant="h4" fontWeight="bold" mb={2}>
           BEST OUTFIT FOR YOUR HAPPINESS

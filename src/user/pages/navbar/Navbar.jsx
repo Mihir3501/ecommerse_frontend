@@ -26,7 +26,7 @@ import axios from "axios";
 
 const pages = [
   { name: "HOME", path: "/" },
-  { name: "SHOP", path: "/#ishika" },
+  { name: "SHOP", path: "/#shop" },
   { name: "BLOG", path: "/blog" },
   { name: "CONTACT", path: "/contact" },
 ];
