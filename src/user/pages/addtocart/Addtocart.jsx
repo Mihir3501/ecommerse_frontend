@@ -18,6 +18,8 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import { fetchCartItems, updateQuantityAsync } from "../../../redux/createSlice";
 import { createOrder } from "../../../config/orderService";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddToCart = () => {
   const dispatch = useDispatch();
@@ -52,75 +54,42 @@ const AddToCart = () => {
   const handleQuantityChange = (productId, currentQuantity, type) => {
     let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
     if (newQuantity < 1) newQuantity = 1;
-  
-    // 🔄 Use productId instead of cart item ID
+
     dispatch(updateQuantityAsync({ productId, quantity: newQuantity }));
+    toast.info("Quantity updated.");
   };
-  
 
-  // const handleCheckout = async () => {
-  //   const { street, city, state, postalCode } = shippingAddress;
-  //   if (!street || !city || !state || !postalCode) {
-  //     alert("Please fill in your complete shipping address.");
-  //     return;
-  //   }
-
-  //   const formattedItems = cartItems.map((item) => ({
-  //     productId: item?.product?._id,
-  //     quantity: item.quantity,
-  //   }));
-
-  //   const orderData = {
-  //     items: formattedItems,
-  //     shippingType: shipping,
-  //     shippingAddress,
-  //     total,
-  //   };
-
-  //   try {
-  //     const response = await createOrder(orderData, token);
-  //     const orderId = response?.order?.id || response?.order?._id;
-  //     if (orderId) {
-  //       navigate(`/ordersuccess/${orderId}`);
-  //     } else {
-  //       alert("Something went wrong while placing your order.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Checkout error:", error);
-  //     alert("An error occurred during checkout.");
-  //   }
-  // };
   const handleCheckout = async () => {
     const { street, city, state, postalCode } = shippingAddress;
     if (!street || !city || !state || !postalCode) {
-      alert("Please fill in your complete shipping address.");
+      toast.error("Please fill in your complete shipping address.");
       return;
     }
-  
+
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
-  
+
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
-  
+
     try {
       const response = await createOrder(orderData, token);
       const orderId = response?.order?.id || response?.order?._id;
       if (orderId) {
-        console.log("Navigating to:", `/ordersuccess/${orderId}`);
+        toast.success("Order placed successfully!");
         navigate(`/ordersuccess/${orderId}`);
       } else {
-        alert("Something went wrong while placing your order.");
+        toast.error("Something went wrong while placing your order.");
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("An error occurred during checkout.");
+      toast.error("An error occurred during checkout.");
     }
   };
 
@@ -207,23 +176,18 @@ const AddToCart = () => {
                     </Box>
                   </Box>
 
-                  <Box
-                    width="25%"
-                    display="flex"
-                    alignItems="center"
-                    gap={1.5}
-                  >
-                   <IconButton
-  onClick={() => handleQuantityChange(product._id, quantity, "decrease")}
->
-  <Remove />
-</IconButton>
-
-                    <Typography fontWeight="bold">{quantity}</Typography>
-
+                  <Box width="25%" display="flex" alignItems="center" gap={1.5}>
                     <IconButton
                       onClick={() =>
-                        handleQuantityChange(item._id, quantity, "increase")
+                        handleQuantityChange(product._id, quantity, "decrease")
+                      }
+                    >
+                      <Remove />
+                    </IconButton>
+                    <Typography fontWeight="bold">{quantity}</Typography>
+                    <IconButton
+                      onClick={() =>
+                        handleQuantityChange(product._id, quantity, "increase")
                       }
                       sx={{ border: "1px solid #ccc", p: 0.5 }}
                     >

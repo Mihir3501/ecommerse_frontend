@@ -335,7 +335,7 @@ const validationSchema = Yup.object({
     .matches(/^[0-9]{10}$/, "Enter valid 10-digit number")
     .required("Enter your Mobile Number"),
   password: Yup.string()
-    .length(8)
+  .length(8, 'Must be exactly 8 characters')
     .matches(
       /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
       "Password must contain at least one uppercase letter, one number, and one special character"
@@ -397,6 +397,7 @@ const Registration = () => {
                     { name: "mobile", label: "Mobile", icon: <PhoneAndroidIcon />, type: "tel" },
                     {
                       name: "password",
+                    
                       label: "Password",
                       icon: <LockIcon />,
                       type: showPassword ? "text" : "password",

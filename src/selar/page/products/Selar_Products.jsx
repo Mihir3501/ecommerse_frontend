@@ -3,22 +3,26 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Selar_Sidebar from "../dashboard/Selar_Sidebar";
 import Selar_Navbar from "../dashboard/Selar_Navbar";
-import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import { FaEdit, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+
 
 const Selar_Products = () => {
-  const token = useSelector((state) => state.seller.sellerInfo?.token);
+  const sellerInfo = useSelector((state) => state.seller?.sellerInfo);
+  const token = sellerInfo?.token;
+
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const ImageBaseURL = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
+  const fileInputRef = useRef();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [images, setImages] = useState(null);
-  const fileInputRef = useRef();
 
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -36,8 +40,7 @@ const Selar_Products = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Response from API:", response.data.products); 
-      setProducts(response.data.products); 
+      setProducts(response.data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -46,8 +49,11 @@ const Selar_Products = () => {
   };
 
   useEffect(() => {
-    if (token) fetchProducts();
-    else setLoading(false);
+    if (token) {
+      fetchProducts();
+    } else {
+      setLoading(false);
+    }
   }, [token]);
 
   const handleImageUpload = async (e) => {
@@ -124,8 +130,12 @@ const Selar_Products = () => {
     }
   };
 
+
+    // const ImageURL = 'http://192.168.1.32:5000/products'
+ 
+
   return (
-<div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 fixed h-full bg-white shadow z-10">
         <Selar_Sidebar />
@@ -141,16 +151,8 @@ const Selar_Products = () => {
         {/* Content */}
         <div className="p-6 pt-24">
           <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Seller Products
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-800">Seller Products</h1>
             <div className="flex flex-wrap gap-4">
-              {/* <button
-                onClick={() => fileInputRef.current.click()}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                <FaPlus /> Upload Product Image
-              </button> */}
               <input
                 type="file"
                 accept="image/*"
@@ -168,93 +170,181 @@ const Selar_Products = () => {
           </div>
 
           {/* Product Form */}
-          {showForm && (
-            <form
-              onSubmit={handleProductSubmit}
-              className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200"
+{showForm && (
+  <Formik
+    initialValues={{
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
+      category: "",
+      subcategories: "",
+    }}
+    validationSchema={Yup.object({
+      name: Yup.string().required("Name is required"),
+      description: Yup.string().required("Description is required"),
+      price: Yup.number().required("Price is required").positive(),
+      stock: Yup.number().required("Stock is required").integer().min(0),
+      category: Yup.string().required("Category is required"),
+      subcategories: Yup.string().required("Subcategories are required"),
+    })}
+    onSubmit={async (values, { resetForm }) => {
+      const subcategoryArray = values.subcategories
+        .split(",")
+        .map((item) => item.trim());
+
+      if (!images) return alert("Please select an image");
+
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("price", values.price);
+      formData.append("stock", values.stock);
+      formData.append("category", values.category);
+      formData.append("subcategories", JSON.stringify(subcategoryArray));
+      formData.append("images", images);
+
+      try {
+        await axios.post(`${BASE_URL}/api/seller/add-product`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Product added successfully!");
+        setShowForm(false);
+        resetForm();
+        setImages(null);
+        fetchProducts();
+      } catch (err) {
+        console.error("Error adding product:", err);
+        alert("Failed to add product.");
+      }
+    }}
+  >
+    {({ setFieldValue }) => (
+      <Form className="mb-8 bg-white p-6 rounded shadow space-y-4 border border-gray-200">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Field
+              name="name"
+              type="text"
+              placeholder="Name"
+              className="border p-2 rounded w-full"
+            />
+            <ErrorMessage
+              name="name"
+              component="div"
+              className="text-red-500 text-sm"
+            />
+          </div>
+
+          <div>
+            <Field
+              name="category"
+              as="select"
+              className="border p-2 rounded w-full"
             >
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="name"
-                  value={newProduct.name}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full"
-                  required
-                />
+              <option value="">Select Category</option>
+              <option value="men">Men</option>
+              <option value="women">Women</option>
+            </Field>
+            <ErrorMessage
+              name="category"
+              component="div"
+              className="text-red-500 text-sm"
+            />
+          </div>
 
-                <select
-                  name="category"
-                  value={newProduct.category}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option value="men">Men</option>
-                  <option value="women">Women</option>
-                </select>
+          <div>
+            <Field
+              name="price"
+              type="number"
+              placeholder="Price"
+              className="border p-2 rounded w-full"
+            />
+            <ErrorMessage
+              name="price"
+              component="div"
+              className="text-red-500 text-sm"
+            />
+          </div>
 
-                <input
-                  type="text"
-                  name="price"
-                  placeholder="Price"
-                  value={newProduct.price}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full"
-                  required
-                />
-                <input
-                  type="text"
-                  name="stock"
-                  placeholder="Stock"
-                  value={newProduct.stock}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full"
-                  required
-                />
-              </div>
+          <div>
+            <Field
+              name="stock"
+              type="number"
+              placeholder="Stock"
+              className="border p-2 rounded w-full"
+            />
+            <ErrorMessage
+              name="stock"
+              component="div"
+              className="text-red-500 text-sm"
+            />
+          </div>
+        </div>
 
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={newProduct.description}
-                onChange={handleChange}
-                className="border p-2 rounded w-full"
-                required
-              />
+        <div>
+          <Field
+            name="description"
+            as="textarea"
+            placeholder="Description"
+            className="border p-2 rounded w-full"
+          />
+          <ErrorMessage
+            name="description"
+            component="div"
+            className="text-red-500 text-sm"
+          />
+        </div>
 
-              <select
-                name="subcategories"
-                value={newProduct.subcategories}
-                onChange={handleChange}
-                className="border p-2 rounded w-full"
-                required
-              >
-                <option value="">Select Subcategories</option>
-                <option value="dress">Dress</option>
-                <option value="jwellery">jwellary</option>
-                <option value="footware">Footwear</option>
-                <option value="shirt">Shirt</option>
-                <option value="watch">Watch</option>
-              </select>
+        <div>
+          <Field
+            name="subcategories"
+            as="select"
+            className="border p-2 rounded w-full"
+          >
+            <option value="">Select Subcategories</option>
+            <option value="dress">Dress</option>
+            <option value="jwellery">Jwellery</option>
+            <option value="footwear">Footwear</option>
+            <option value="shirt">Shirt</option>
+            <option value="watch">Watch</option>
+          </Field>
+          <ErrorMessage
+            name="subcategories"
+            component="div"
+            className="text-red-500 text-sm"
+          />
+        </div>
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImages(e.target.files[0])}
-                className="block"
-                required
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-              >
-                Add Product
-              </button>
-            </form>
-          )}
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            // src={`${ImageURL}/${products.image}`}
+
+            onChange={(e) => {
+              const file = e.currentTarget.files[0];
+              setImages(file);
+            }}
+            className="block"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Add Product
+        </button>
+      </Form>
+    )}
+  </Formik>
+)}
+
 
           {/* Product Table */}
           <div className="overflow-x-auto shadow rounded-lg border border-gray-200 bg-white">
@@ -266,13 +356,13 @@ const Selar_Products = () => {
               <table className="min-w-full text-sm text-left">
                 <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
                   <tr>
+                    <th className="px-6 py-3">Image</th>
                     <th className="px-6 py-3">Name</th>
-                    <th className="px-6 py-3">Description</th>
-                    <th className="px-6 py-3">Price</th>
-                    <th className="px-6 py-3">Stock</th>
                     <th className="px-6 py-3">Category</th>
                     <th className="px-6 py-3">Subcategories</th>
-                    <th className="px-6 py-3">Image</th>
+                    <th className="px-6 py-3">Price</th>
+                    <th className="px-6 py-3">Stock</th>
+                    <th className="px-6 py-3">Description</th>
                     <th className="px-6 py-3">Actions</th>
                   </tr>
                 </thead>
@@ -282,20 +372,6 @@ const Selar_Products = () => {
                       key={product._id || product.id}
                       className="hover:bg-gray-50"
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {product.name || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {product.description || "N/A"}
-                      </td>
-                      <td className="px-6 py-4">{product.price || "N/A"}</td>
-                      <td className="px-6 py-4">{product.stock || "N/A"}</td>
-                      <td className="px-6 py-4">{product.category?.name || "N/A"}</td>
-                      <td className="px-6 py-4">
-                        {Array.isArray(product.subcategories)
-                          ? product.subcategories?.toString()
-                          : "N/A"}
-                      </td>
                       <td className="px-6 py-4">
                         {product.images?.length > 0 ? (
                           <img
@@ -307,17 +383,31 @@ const Selar_Products = () => {
                           "No Image"
                         )}
                       </td>
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        {product.name || "N/A"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {product.category?.name || product.category || "N/A"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {Array.isArray(product.subcategories)
+                          ? product.subcategories.join(", ")
+                          : "N/A"}
+                      </td>
+                      <td className="px-6 py-4">{product.price || "N/A"}</td>
+                      <td className="px-6 py-4">{product.stock || "N/A"}</td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {product.description || "N/A"}
+                      </td>
                       <td className="px-6 py-4 space-x-2">
-                        {/* <button className="text-blue-600 hover:underline cursor-pointer">
-                          <FaEye className="h-4 w-4" />
-                        </button> */}
-                        <button className="text-yellow-600 hover:underline cursor-pointer"  onClick={() => navigate(`/UpdateProduct/${product._id}`)}
+                        <button
+                          className="text-yellow-600 hover:underline cursor-pointer"
+                          onClick={() =>
+                            navigate(`/UpdateProduct/${product._id}`)
+                          }
                         >
                           <FaEdit className="h-4 w-4" />
                         </button>
-                        {/* <button className="text-red-600 hover:underline cursor-pointer">
-                          <MdOutlineDeleteForever className="h-4 w-4" />
-                        </button> */}
                       </td>
                     </tr>
                   ))}
