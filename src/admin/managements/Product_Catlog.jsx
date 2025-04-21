@@ -21,16 +21,16 @@ const Product_Catalog = () => {
         const res = await axios.get(`${BASE_URL}/api/admin/product-list`, {
           params: {
             page: currentPage,
-            limit: itemsPerPage, // Ensure the backend limits the number of products
+            limit: itemsPerPage, 
           },
           headers: {
             Authorization: `Bearer ${adminToken}`,
           },
         });
         
-        // Ensure the response is correctly parsed
+        
         setProducts(res.data.products);
-        setTotalPages(res.data.totalPages); // Assuming the API response includes totalPages
+        setTotalPages(res.data.totalPages); 
       } catch (err) {
         console.error("Failed to fetch products:", err.response?.data || err.message);
       } finally {
@@ -39,8 +39,8 @@ const Product_Catalog = () => {
     };
 
     fetchProducts();
-  }, [currentPage, itemsPerPage]); // Dependency array ensures fetch is called when currentPage or itemsPerPage changes
-
+  }, [currentPage, itemsPerPage]); 
+  
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👈 Import eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { loginAdmin } from "../../redux/adminSlice";
 
 const Admin_Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👈 State for show/hide
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,10 +19,27 @@ const Admin_Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    dispatch(loginAdmin({ email, password }));
-  };
+ 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+      .max(30, 'Must be 30 characters or less')
+      .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
+      .required('Enter your Email'),
+      password: Yup.string()
+      .matches(
+        /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+        "Password must contain at least one uppercase letter, one number, and one special character") 
+        .required("Password is required"),
+    }),
+    onSubmit: (values) => {
+      dispatch(loginAdmin(values));
+    },
+  });
 
   return (
     <div className="flex min-h-screen bg-green-400 items-center justify-center p-4">
@@ -33,28 +50,45 @@ const Admin_Login = () => {
             Please login to your account by filling in this form:
           </p>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <form className="mt-4" onSubmit={handleLogin}>
+
+          <form className="mt-4" onSubmit={formik.handleSubmit}>
+            {/* Email Field */}
             <div>
               <label className="block text-gray-700 text-sm">Email Address</label>
               <input
                 type="email"
+                name="email"
                 placeholder="coolname@name.com"
-                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 text-sm"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                className={`w-full mt-1 p-2 border rounded-md text-sm ${
+                  formik.touched.email && formik.errors.email
+                    ? "border-red-500"
+                    : "border-gray-300"
+                } focus:outline-none focus:border-green-500`}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.email && formik.errors.email && (
+                <p className="text-red-500 text-sm">{formik.errors.email}</p>
+              )}
             </div>
+
+            {/* Password Field */}
             <div className="mt-3">
               <label className="block text-gray-700 text-sm">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
                   placeholder="********"
-                  className="w-full mt-1 p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 text-sm"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  className={`w-full mt-1 p-2 pr-10 border rounded-md text-sm ${
+                    formik.touched.password && formik.errors.password
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } focus:outline-none focus:border-green-500`}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
                 <span
                   className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
@@ -63,7 +97,12 @@ const Admin_Login = () => {
                   {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </span>
               </div>
+              {formik.touched.password && formik.errors.password && (
+                <p className="text-red-500 text-sm">{formik.errors.password}</p>
+              )}
             </div>
+
+            {/* Submit Button */}
             <div className="mt-4 flex gap-3">
               <button
                 type="submit"
@@ -74,6 +113,8 @@ const Admin_Login = () => {
             </div>
           </form>
         </div>
+
+        {/* Side Image */}
         <div className="w-full md:w-1/2 h-56 md:h-auto bg-cover bg-center">
           <img
             src="/login_side.jpg"

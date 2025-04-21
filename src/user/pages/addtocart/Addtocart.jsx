@@ -41,10 +41,10 @@ const AddToCart = () => {
 
   const subtotal = Array.isArray(cartItems)
     ? cartItems.reduce((sum, item) => {
-        const price = item?.product?.price ?? 0;
-        const quantity = item?.quantity ?? 1;
-        return sum + price * quantity;
-      }, 0)
+      const price = item?.product?.price ?? 0;
+      const quantity = item?.quantity ?? 1;
+      return sum + price * quantity;
+    }, 0)
     : 0;
 
   const total = subtotal + shippingCost;
@@ -52,11 +52,11 @@ const AddToCart = () => {
   const handleQuantityChange = (productId, currentQuantity, type) => {
     let newQuantity = type === "increase" ? currentQuantity + 1 : currentQuantity - 1;
     if (newQuantity < 1) newQuantity = 1;
-  
+
     // 🔄 Use productId instead of cart item ID
     dispatch(updateQuantityAsync({ productId, quantity: newQuantity }));
   };
-  
+
 
   // const handleCheckout = async () => {
   //   const { street, city, state, postalCode } = shippingAddress;
@@ -96,19 +96,19 @@ const AddToCart = () => {
       alert("Please fill in your complete shipping address.");
       return;
     }
-  
+
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
-  
+
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
-  
+
     try {
       const response = await createOrder(orderData, token);
       const orderId = response?.order?.id || response?.order?._id;
@@ -133,7 +133,7 @@ const AddToCart = () => {
           <Button
             variant="outlined"
             sx={{ mt: 2 }}
-            onClick={() => navigate("/#ishika")}
+            onClick={() => navigate("/#shop")}
           >
             Return to Shop
           </Button>
@@ -213,11 +213,11 @@ const AddToCart = () => {
                     alignItems="center"
                     gap={1.5}
                   >
-                   <IconButton
-  onClick={() => handleQuantityChange(product._id, quantity, "decrease")}
->
-  <Remove />
-</IconButton>
+                    <IconButton
+                      onClick={() => handleQuantityChange(product._id, quantity, "decrease")}
+                    >
+                      <Remove />
+                    </IconButton>
 
                     <Typography fontWeight="bold">{quantity}</Typography>
 
