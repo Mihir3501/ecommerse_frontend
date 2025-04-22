@@ -15,6 +15,8 @@ import axios from "axios";
 
 const ProductPage = () => {
   const { id } = useParams();
+  console.log("Product ID from URL:", id);
+
   const dispatch = useDispatch();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -26,7 +28,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/product/product/${id}`, {
+        const res = await axios.get(`${BASE_URL}/api//product/product/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -48,7 +50,7 @@ const ProductPage = () => {
 
   if (loading) return <CircularProgress />;
   if (!product) return <Typography>Product not found</Typography>;
-
+ 
   return (
     <>
       <Navbar />

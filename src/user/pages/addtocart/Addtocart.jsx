@@ -96,33 +96,41 @@ const AddToCart = () => {
       alert("Please fill in your complete shipping address.");
       return;
     }
- 
+  
     const formattedItems = cartItems.map((item) => ({
       productId: item?.product?._id,
       quantity: item.quantity,
     }));
- 
+  
     const orderData = {
       items: formattedItems,
       shippingType: shipping,
       shippingAddress,
       total,
     };
- 
+  
     try {
+      console.log("Creating order with:", orderData);
+      console.log("Using token:", token);
+      
       const response = await createOrder(orderData, token);
-      const orderId = response?.order?.id || response?.order?._id;
+      console.log("Order Response:", response);
+  
+      const orderId = response?.order?.OrderId;
       if (orderId) {
+        console.log("Order Response:", response);
+
         console.log("Navigating to:", `/ordersuccess/${orderId}`);
         navigate(`/ordersuccess/${orderId}`);
       } else {
         alert("Something went wrong while placing your order.");
       }
     } catch (error) {
-      console.error("Checkout error:", error);
+      console.error("Checkout error:", error.response?.data || error.message);
       alert("An error occurred during checkout.");
     }
   };
+  
  
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return (
