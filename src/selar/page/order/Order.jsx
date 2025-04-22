@@ -19,6 +19,8 @@ const Order = () => {
         setLoading(false);
         return;
       }
+      console.log("Order Items Sample:", orders[0]?.items);
+
 
       try {
         const { data } = await axios.get(`${BASE_URL}/api/seller/allOrders`, {
@@ -28,6 +30,7 @@ const Order = () => {
         });
 
         setOrders(data.orders || []);
+        console.log("Fetched Orders:", data.orders);  // Logging fetched orders for better debugging
       } catch (err) {
         console.error("Error fetching orders:", err);
         setError(err.response?.data?.message || "Something went wrong");
@@ -40,9 +43,18 @@ const Order = () => {
   }, [token]);
 
   const handleStatusChange = async (orderId, itemId, newStatus) => {
+    console.log("Updating status:", { orderId, itemId, newStatus });
+    
+    // Check if orderId and itemId are valid before making the request
+    if (!orderId || !itemId) {
+      console.error("Invalid orderId or itemId");
+      alert("Invalid order or item ID");
+      return;
+    }
+
     try {
-      await axios.put(
-        `${BASE_URL}/api/seller/updateOrderItemStatus/${orderId}/${itemId}`,
+      const response = await axios.patch(
+        `${BASE_URL}/api/seller/orders/${orderId}/items/${itemId}`,
         { status: newStatus },
         {
           headers: {
@@ -50,8 +62,9 @@ const Order = () => {
           }
         }
       );
+      console.log("Status updated successfully:", response.data);
 
-      // Update state locally
+      // Update state locally if needed
       setOrders(prevOrders =>
         prevOrders.map(order =>
           order._id === orderId
@@ -105,9 +118,12 @@ const Order = () => {
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order._id} className="border-b hover:bg-gray-50 text-sm text-gray-800">
-                      <td className="px-6 py-4 font-medium">{order._id}</td>
-                      <td className="px-6 py-4">{order.buyer?.user || "N/A"}</td>
+                    <tr key={order._id || order.orderId}>
+  <td className="px-6 py-4 font-medium">{order._id || order.orderId}</td>
+                      <td className="px-6 py-4">
+                        {order.user ? (order.user.name || order.user.email || "N/A") : "N/A"}
+                      </td>
+
                       <td className="px-6 py-4">
                         <ul className="list-disc list-inside space-y-1">
                           {order.items?.map((item) => (
@@ -123,7 +139,7 @@ const Order = () => {
                             <li key={item._id}>
                               <select
                                 value={item.status}
-                                onChange={(e) => handleStatusChange(order._id, item._id, e.target.value)}
+                                onChange={(e) => handleStatusChange(order._id || order.orderId, item._id, e.target.value)}
                                 className="text-sm bg-white border rounded px-2 py-1 shadow-sm"
                               >
                                 <option value="Pending">Pending</option>
