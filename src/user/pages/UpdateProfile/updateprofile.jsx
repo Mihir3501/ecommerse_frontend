@@ -20,6 +20,10 @@ import { useSelector } from "react-redux";
 // Validation schema
 const validationSchema = Yup.object({
   name: Yup.string().max(35, "Must be 35 characters or less").required("Enter your name"),
+  email: Yup.string()
+      .max(30)
+      .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter valid email")
+      .required("Enter your Email"),
   mobile: Yup.string().matches(/^[0-9]{10}$/, "Enter a valid 10-digit number").required("Enter your Mobile Number"),
   address: Yup.string().required("Enter your address"),
 });
@@ -70,7 +74,7 @@ const UpdateProfile = () => {
 
       await axios.patch(
         `${BASE_URL}/api/user/profile`,
-        { name, mobile, address },
+        { name,   mobile, address },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,7 +116,7 @@ const UpdateProfile = () => {
         }}
       >
         <Container maxWidth="sm">
-          <Card
+          {/* <Card
             sx={{
               p: 4,
               boxShadow: 6,
@@ -120,7 +124,7 @@ const UpdateProfile = () => {
               backgroundColor: "rgba(255, 255, 255, 0.85)",
               backdropFilter: "blur(10px)",
             }}
-          >
+          > */}
             <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
               Update Profile
             </Typography>
@@ -128,6 +132,7 @@ const UpdateProfile = () => {
             <Formik
               initialValues={{
                 name: userDetails?.name ?? "",
+                email: userDetails ?. email ?? "" ,
                 mobile: userDetails?.mobile ?? "",
                 address: userDetails?.address ?? "",
               }}
@@ -147,7 +152,7 @@ const UpdateProfile = () => {
                 isSubmitting,
               }) => (
                 <form onSubmit={handleSubmit}>
-                  <Grid container spacing={2}>
+                  <Grid container direction="column" spacing={2}>
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -161,6 +166,23 @@ const UpdateProfile = () => {
                         helperText={errors.name && touched.name && errors.name}
                       />
                     </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        disabled
+                        variant="outlined"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.email && touched.email)}
+                        helperText={errors.email && touched.email && errors.email}
+                      />
+                    </Grid>
+
+
 
                     <Grid item xs={12}>
                       <TextField
@@ -202,11 +224,13 @@ const UpdateProfile = () => {
                         {isSubmitting ? "Updating..." : "Update"}
                       </Button>
                     </Grid>
+
+
                   </Grid>
                 </form>
               )}
             </Formik>
-          </Card>
+          
         </Container>
       </div>
     </>

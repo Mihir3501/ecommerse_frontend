@@ -18,21 +18,21 @@ import Footer from "../footer/Footer";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addToCartAsync } from "../../../redux/createSlice";
-
+ 
 const Mainpage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const productSectionRef = useRef(null);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
+ 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ 
   const scrollToProducts = () => {
     productSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+ 
   useEffect(() => {
     if (location.hash) {
       const elementId = location.hash.replace("#", "");
@@ -42,11 +42,11 @@ const Mainpage = () => {
       }
     }
   }, [location]);
-
+ 
   const handleAddToCart = useCallback((product) => {
     dispatch(addToCartAsync(product));
   }, [dispatch]);
-
+ 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -58,14 +58,14 @@ const Mainpage = () => {
         setLoading(false);
       }
     };
-
+ 
     fetchProducts();
   }, [BASE_URL]);
-
+ 
   return (
     <>
       <Navbar />
-
+ 
       {/* Hero Section */}
       <Box
         sx={{
@@ -95,7 +95,7 @@ const Mainpage = () => {
           </Button>
         </Box>
       </Box>
-
+ 
       {/* Products Section */}
       <Box
         ref={productSectionRef}
@@ -108,7 +108,7 @@ const Mainpage = () => {
         <Typography variant="h6" color="text.secondary" mb={4}>
           LOWER PRICES
         </Typography>
-
+ 
         {loading ? (
           <CircularProgress />
         ) : products.length === 0 ? (
@@ -153,7 +153,7 @@ const Mainpage = () => {
                       <TagBox text={`-${item.discount}%`} bgColor="#f44336" />
                     )}
                   </Box>
-
+ 
                   <CardMedia
                     component="img"
                     image={
@@ -169,7 +169,7 @@ const Mainpage = () => {
                       borderRadius: "12px 12px 0 0",
                     }}
                   />
-
+ 
                   <CardContent
                     sx={{
                       flexGrow: 1,
@@ -197,7 +197,7 @@ const Mainpage = () => {
                     >
                       {item.description || "Product description..."}
                     </Typography>
-
+ 
                     <Typography variant="body1" fontWeight="bold">
                       ₹{item.price}
                       {item.originalPrice && (
@@ -220,7 +220,7 @@ const Mainpage = () => {
                         : "Out of Stock"}
                     </Typography>
                   </CardContent>
-
+ 
                   <Box mt="auto" textAlign="center" pb={2}>
                     <IconButton
                       color="primary"
@@ -239,7 +239,7 @@ const Mainpage = () => {
           </Grid>
         )}
       </Box>
-
+ 
       {/* Footer */}
       <Box sx={{ maxWidth: "100%", mx: "auto" }}>
         <Footer />
@@ -247,7 +247,7 @@ const Mainpage = () => {
     </>
   );
 };
-
+ 
 // Reusable Tag Box
 const TagBox = ({ text, bgColor }) => (
   <Box
@@ -263,5 +263,5 @@ const TagBox = ({ text, bgColor }) => (
     {text}
   </Box>
 );
-
+ 
 export default Mainpage;

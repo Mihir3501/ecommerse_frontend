@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -18,15 +18,16 @@ const ProductPage = () => {
   console.log("Product ID from URL:", id);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
     const fetchProduct = async () => {
+      const token = localStorage.getItem("token");
+
       try {
         const res = await axios.get(`${BASE_URL}/api//product/product/${id}`, {
           headers: {
@@ -42,9 +43,16 @@ const ProductPage = () => {
     };
 
     fetchProduct();
-  }, [id, BASE_URL, token]);
+  }, [id, BASE_URL]);
 
   const handleAddToCart = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     dispatch(addToCartAsync(product));
   };
 
@@ -61,7 +69,8 @@ const ProductPage = () => {
             product?.images?.length
               ? `${BASE_URL}${product.images[0]}`
               : "./18505047_SL-070720-32260-21.svg"
-          }          alt={product.name}
+          }
+          alt={product.name}
           sx={{ width: "100%", maxWidth: 500, objectFit: "contain" }}
         />
         <Box>
