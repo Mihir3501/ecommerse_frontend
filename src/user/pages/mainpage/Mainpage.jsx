@@ -18,6 +18,7 @@ import Footer from "../footer/Footer";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addToCartAsync } from "../../../redux/createSlice"; // ✅ correct import
+import { toast } from "react-toastify"; // ✅ Import toastify
 
 const Mainpage = () => {
   const navigate = useNavigate();
@@ -45,6 +46,15 @@ const Mainpage = () => {
 
   const handleAddToCart = (product) => {
     dispatch(addToCartAsync(product));
+    toast.success(`${product.name} has been added to your cart!`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   useEffect(() => {
