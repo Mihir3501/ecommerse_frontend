@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -17,7 +17,7 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { addToCartAsync } from "../../../redux/createSlice"; // ✅ correct import
+import { addToCartAsync } from "../../../redux/createSlice";
 
 const Mainpage = () => {
   const navigate = useNavigate();
@@ -35,17 +35,17 @@ const Mainpage = () => {
 
   useEffect(() => {
     if (location.hash) {
-      const elementId = location.hash.replace('#', '');
+      const elementId = location.hash.replace("#", "");
       const element = document.getElementById(elementId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
   }, [location]);
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = useCallback((product) => {
     dispatch(addToCartAsync(product));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -99,11 +99,7 @@ const Mainpage = () => {
       {/* Products Section */}
       <Box
         ref={productSectionRef}
-        sx={{
-          py: { xs: 4, sm: 6 },
-          px: { xs: 2, sm: 4 },
-          textAlign: "center",
-        }}
+        sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 4 }, textAlign: "center" }}
         id="shop"
       >
         <Typography variant="h4" fontWeight="bold" mb={2}>
@@ -119,8 +115,8 @@ const Mainpage = () => {
           <Typography color="error">No products found.</Typography>
         ) : (
           <Grid container spacing={4} justifyContent="center">
-            {products.map((item, index) => (
-              <Grid item key={item._id || index} xs={12} sm={6} md={4} lg={3}>
+            {products.map((item) => (
+              <Grid item key={item._id} xs={12} sm={6} md={4} lg={3}>
                 <Card
                   onClick={() => navigate(`/product/${item._id}`)}
                   sx={{
@@ -132,6 +128,7 @@ const Mainpage = () => {
                     position: "relative",
                     transition: "transform 0.3s ease-in-out",
                     "&:hover": { transform: "scale(1.02)" },
+                    cursor: "pointer",
                   }}
                 >
                   {/* Tags */}
@@ -147,55 +144,22 @@ const Mainpage = () => {
                     }}
                   >
                     {item.isBestSeller && (
-                      <Box
-                        sx={{
-                          bgcolor: "black",
-                          color: "white",
-                          fontSize: "12px",
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        BEST SELLER
-                      </Box>
+                      <TagBox text="BEST SELLER" bgColor="black" />
                     )}
                     {item.isFeatured && (
-                      <Box
-                        sx={{
-                          bgcolor: "#616161",
-                          color: "white",
-                          fontSize: "12px",
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        FEATURED
-                      </Box>
+                      <TagBox text="FEATURED" bgColor="#616161" />
                     )}
                     {item.discount && (
-                      <Box
-                        sx={{
-                          bgcolor: "#f44336",
-                          color: "white",
-                          fontSize: "12px",
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        -{item.discount}%
-                      </Box>
+                      <TagBox text={`-${item.discount}%`} bgColor="#f44336" />
                     )}
                   </Box>
 
                   <CardMedia
                     component="img"
                     image={
-                      item?.images?.length
+                      item?.images?.[0]
                         ? `${BASE_URL}${item.images[0]}`
-                        : "./18505047_SL-070720-32260-21.svg"
+                        : "/placeholder.svg"
                     }
                     alt={item.name}
                     sx={{
@@ -234,8 +198,8 @@ const Mainpage = () => {
                       {item.description || "Product description..."}
                     </Typography>
 
-                    <Typography variant="body1" fontWeight="bold" gutterBottom>
-                      ₹{item.price}{" "}
+                    <Typography variant="body1" fontWeight="bold">
+                      ₹{item.price}
                       {item.originalPrice && (
                         <Typography
                           component="span"
@@ -257,11 +221,11 @@ const Mainpage = () => {
                     </Typography>
                   </CardContent>
 
-                  <Box mt="auto" textAlign="center">
+                  <Box mt="auto" textAlign="center" pb={2}>
                     <IconButton
                       color="primary"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click
+                        e.stopPropagation();
                         handleAddToCart(item);
                       }}
                       sx={{ border: "1px solid", borderRadius: 2 }}
@@ -277,11 +241,27 @@ const Mainpage = () => {
       </Box>
 
       {/* Footer */}
-      <Box sx={{ maxWidth: "full", mx: "auto" }}>
+      <Box sx={{ maxWidth: "100%", mx: "auto" }}>
         <Footer />
       </Box>
     </>
   );
 };
+
+// Reusable Tag Box
+const TagBox = ({ text, bgColor }) => (
+  <Box
+    sx={{
+      bgcolor: bgColor,
+      color: "white",
+      fontSize: "12px",
+      px: 1,
+      py: 0.5,
+      borderRadius: 1,
+    }}
+  >
+    {text}
+  </Box>
+);
 
 export default Mainpage;

@@ -47,7 +47,7 @@ const Seller_Manage = () => {
 
   const toggleUserStatus = async (id, isActive) => {
     const confirmToggle = window.confirm(
-      `Are you sure you want to ${isActive ? "deactivate" : "activate"} this seller?`
+      // `Are you sure you want to ${isActive ? "deactivate" : "activate"} this seller?`
     );
     if (!confirmToggle) return;
 
