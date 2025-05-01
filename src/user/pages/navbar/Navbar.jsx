@@ -16,10 +16,13 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
+  // import { getOrderHistory } from "../../../config/orderService";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../redux/authSlice";
+  // import { useParams } from "react-router-dom";
+
 import axios from "axios";
 
 // Pages in the navbar
@@ -103,6 +106,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
   const cartItems = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
@@ -112,10 +117,13 @@ const Navbar = () => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
+  // const { orderId } = useParams();
+  // const [orderDetails, setOrderDetails] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  // const token = useSelector((state) => state.auth?.user?.token);
+
 
   const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -135,12 +143,12 @@ const Navbar = () => {
       navigate("/login");
     }
   };
-
   const handleOrders = () => {
     handleClose();
-    navigate("/ordersuccess");
+    navigate("/order-history");
   };
-
+  
+  
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     try {
