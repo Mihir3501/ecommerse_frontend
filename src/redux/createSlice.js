@@ -19,6 +19,8 @@ export const addToCartAsync = createAsyncThunk(
   async (item, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user?.token;
+      console.log(item, "item...");
+      
       await cartService.addToCart(item, token);
       const updatedCart = await cartService.getCart(token);
       return updatedCart;
@@ -34,8 +36,8 @@ export const updateQuantityAsync = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user?.token;
       const newQuantity =
-        type === "increment" ? currentQuantity + 1 :
-        type === "decrement" ? currentQuantity - 1 : 
+        type === "increase" ? currentQuantity + 1 :
+        type === "decrease" ? currentQuantity - 1 : 
         currentQuantity;
 
       if (newQuantity < 1) {
@@ -43,6 +45,7 @@ export const updateQuantityAsync = createAsyncThunk(
       }
 
       await cartService.updateCart(itemId, newQuantity, token);
+      console.log("item id:", itemId)
       const updatedCart = await cartService.getCart(token);
       return updatedCart;
     } catch (error) {

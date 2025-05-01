@@ -34,6 +34,7 @@ import PrivateRouter from "./PrivateRouter";
 import Order_Manage from "../admin/managements/Order_Manage";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import OrderHistoryPage from "../user/pages/order-history/OrderHistoryPage";
 
 const Router = () => {
   const dispatch = useDispatch();
@@ -58,6 +59,8 @@ const Router = () => {
         <Route path="/ordersuccess/:orderId" element={<OrderSuccess />} />
         <Route path="/updateproduct" element={<UpdateProduct />} />
         <Route path="/updateprofile" element={<Updateprofile />} />
+        <Route path="/order-history" element={<OrderHistoryPage />} />
+
 
         {/* Protected User Routes */}
         {/* <Route

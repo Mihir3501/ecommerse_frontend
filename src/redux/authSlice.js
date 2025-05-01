@@ -10,7 +10,7 @@ const initialState = {
   error: null,
 };
 
-export const loginUser = createAsyncThunk(
+export const loginUser = createAsyncThunk(  
   'auth/loginUser',
   async (loginCredentials, { rejectWithValue }) => {
     try {
