@@ -54,18 +54,18 @@ const CategoryMenu = () => {
     navigate(path);  // Navigate to the subcategory path
   };
 
-  const subcategories = {
-    Women: [
-      { name: "Dress", path: "/women/dress" },
-      { name: "Jewelry", path: "/women/jewelry" },
-      { name: "Footwear", path: "/women/footwear" },
-    ],
-    Men: [
-      { name: "Shirt", path: "/men/shirt" },
-      { name: "Watch", path: "/men/watch" },
-      { name: "Shoes", path: "/men/shoes" },
-    ],
-  };
+  // const subcategories = {
+  //   Women: [
+  //     { name: "Dress"},
+  //     { name: "Jewelry" },
+  //     { name: "Footwear"},
+  //   ],
+  //   Men: [
+  //     { name: "Shirt" },
+  //     { name: "Watch" },
+  //     { name: "Shoes" },
+  //   ],
+  // };
 
   return (
     <Box sx={{ backgroundColor: "#fff", py: 1 }}>
@@ -323,7 +323,7 @@ const Navbar = () => {
       </AppBar>
 
       {/* Category Menu */}
-      <CategoryMenu />
+      {/* <CategoryMenu />s */}
     </>
   );
 };
